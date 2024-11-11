@@ -4,19 +4,33 @@ import { toggleSetting } from 'modules/global';
 import { useAppDispatch } from 'modules/store';
 import React, { memo } from 'react';
 import { useTranslation } from 'react-i18next';
+// eslint-disable-next-line import/no-duplicates
+// eslint-disable-next-line import/no-duplicates
+import { useNavigate } from 'react-router-dom';
 import { HelpCircleIcon, Icon, LogoGithubIcon, SettingIcon } from 'tdesign-icons-react';
 import { Button, Col, Dropdown, Popup, Row } from 'tdesign-react';
-
+import { removeUserInfo } from 'utils/user';
 export default memo(() => {
   const { t } = useTranslation();
   const dispatch = useAppDispatch();
-
+  const navigate = useNavigate();
   const gotoWiki = () => {
     window.open('https://gocrane.io/docs');
   };
 
   const gotoGitHub = () => {
     window.open('https://github.com/gocrane/crane');
+  };
+
+  const setting = (e) => {
+    console.log('setting', e);
+    if (e.value === 1) {
+      dispatch(toggleSetting());
+    } else if (e.value === 2) {
+      removeUserInfo();
+      navigate('/login');
+      window.location.reload();
+    }
   };
   return (
     <Row align='middle' style={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
@@ -55,11 +69,32 @@ export default memo(() => {
         </Button>
       </Col>
       <Col>
-        <Button shape='square' size='large' variant='text' onClick={() => dispatch(toggleSetting())}>
+        {/* <Button shape='square' size='large' variant='text' onClick={() => dispatch(toggleSetting())}>
           <Popup content='页面设置' placement='bottom' showArrow destroyOnClose>
             <SettingIcon />
           </Popup>
-        </Button>
+        </Button> */}
+        <Dropdown
+          direction='right'
+          hideAfterItemClick
+          options={[
+            {
+              content: '页面设置',
+              value: 1,
+            },
+            {
+              content: '退出登录',
+              value: 2,
+            },
+          ]}
+          placement='bottom-left'
+          trigger='hover'
+          onClick={setting}
+        >
+          <Button shape='square' size='large' variant='text'>
+            <SettingIcon />
+          </Button>
+        </Dropdown>
       </Col>
     </Row>
   );

@@ -1,5 +1,5 @@
 import React, { memo, Suspense } from 'react';
-import { Navigate, Route, Routes } from 'react-router-dom';
+import { Navigate, Route, Routes, useLocation } from 'react-router-dom';
 import { Layout, Loading } from 'tdesign-react';
 import { useRouteConfig, IRouter } from 'router';
 import { resolve } from 'utils/path';
@@ -18,6 +18,12 @@ type TRenderRoutes = (routes: IRouter[], parentPath?: string, breadcrumbs?: stri
 const renderRoutes: TRenderRoutes = (routes, parentPath = '', breadcrumb = []) =>
   routes.map((route, index: number) => {
     const { Component, children, redirect, meta } = route;
+    // console.log('route', route);
+    // console.log('routes1', Component);
+    // console.log('routes2', children);
+    // console.log('routes3', redirect);
+    // console.log('routes4', meta);
+
     const currentPath = resolve(parentPath, route.path);
     let currentBreadcrumb = breadcrumb;
 
@@ -50,6 +56,15 @@ const renderRoutes: TRenderRoutes = (routes, parentPath = '', breadcrumb = []) =
 
 const AppRouter = () => {
   const routers = useRouteConfig();
+
+  const location = useLocation();
+  console.log(location.pathname);
+
+  // 如果当前路径是 '/login'，则不显示 AppRouter
+  // if (location.pathname === '/login') {
+  //   return null;
+  // }
+
   return (
     <Content>
       <Suspense

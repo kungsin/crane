@@ -3,9 +3,13 @@ import otherRoutes from './modules/others';
 import React from 'react';
 import { BrowserRouterProps } from 'react-router-dom';
 import { useDashboardRouteConfig } from './modules/dashboard';
+import { useUserRouteConfig } from './modules/user';
+import { useMenuRouteConfig } from './modules/menu';
+import { useLoginRouteConfig } from './modules/login';
+import { useClusterRouteConfig } from './modules/cluster';
 import { useRecommendRouteConfig } from './modules/recommend';
 import { useSettingRouteConfig } from './modules/settings';
-
+import { getUserInfo } from 'utils/user';
 export interface IRouter {
   path: string;
   redirect?: string;
@@ -33,17 +37,63 @@ export interface IRouter {
 }
 
 const routes: IRouter[] = [
+  // {
+  //   path: '/',
+  //   redirect: '/login',
+  // },
   {
     path: '/',
-    redirect: '/dashboard',
+    redirect: '/login',
   },
 ];
 
 export const useRouteConfig = () => {
+  // console.log('===', getUserInfo().IsAdmin);
+  const userInfo = JSON.parse(getUserInfo());
+  console.log('userInfo', userInfo);
   const cost = useCostRouteConfig();
   const dashboard = useDashboardRouteConfig();
   const recommend = useRecommendRouteConfig();
   const settings = useSettingRouteConfig();
+  const user = useUserRouteConfig();
+  const menu = useMenuRouteConfig();
+  const cluster = useClusterRouteConfig();
+  const login = useLoginRouteConfig();
 
-  return [...routes, ...dashboard, ...cost, ...recommend, ...settings, ...otherRoutes];
+  if (!userInfo) {
+    return [...login, ...otherRoutes];
+  }
+  // eslint-disable-next-line no-else-return
+  else {
+    const IsAdmin = userInfo.IsAdmin;
+    if (IsAdmin) {
+      return [
+        ...routes,
+        ...dashboard,
+        ...cost,
+        ...recommend,
+        ...settings,
+        ...user,
+        ...menu,
+        ...cluster,
+        ...otherRoutes,
+        ...login,
+      ];
+    }
+    // eslint-disable-next-line no-else-return
+    else {
+      return [
+        ...routes,
+        ...dashboard,
+        ...cost,
+        ...recommend,
+        ...settings,
+        // ...user,
+        // ...menu,
+        // ...cluster,
+        ...login,
+        ...otherRoutes,
+      ];
+    }
+  }
 };

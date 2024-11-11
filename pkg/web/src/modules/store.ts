@@ -11,6 +11,8 @@ import { combineReducers, configureStore } from '@reduxjs/toolkit';
 import { TypedUseSelectorHook, useDispatch, useSelector } from 'react-redux';
 import { recommendationApi } from '../services/recommendationApi';
 import { prometheusApi } from '../services/prometheusApi';
+// 新加的
+import { userApi } from '../services/userApi';
 
 const reducer = combineReducers({
   global,
@@ -25,6 +27,7 @@ const reducer = combineReducers({
   [recommendationRuleApi.reducerPath]: recommendationRuleApi.reducer,
   [recommendationApi.reducerPath]: recommendationApi.reducer,
   [prometheusApi.reducerPath]: prometheusApi.reducer,
+  [userApi.reducerPath]: userApi.reducer,
 });
 
 export const store = configureStore({
@@ -41,6 +44,7 @@ export const store = configureStore({
       recommendationRuleApi.middleware,
       recommendationApi.middleware,
       prometheusApi.middleware,
+      userApi.middleware,
     );
 
     return middlewares;
