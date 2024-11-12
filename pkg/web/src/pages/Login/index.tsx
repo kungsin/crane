@@ -39,7 +39,7 @@ export default function Login() {
             navigate('/dashboard');
           }, 1000);
         } else {
-          MessagePlugin.error('登录失败,请检查账号和密码');
+          MessagePlugin.error('登录失败,请检查账号和密码!');
         }
       } catch (error) {
         MessagePlugin.error('接口调用失败');
@@ -48,6 +48,8 @@ export default function Login() {
   };
 
   const onReset: FormProps['onReset'] = (e) => {
+    console.log(e);
+    console.log('==================');
     console.log(e);
     MessagePlugin.info('重置成功');
   };
