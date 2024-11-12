@@ -51,20 +51,24 @@ export default (params) => ({
 
   server: {
     host: '0.0.0.0',
-    port: 3003,
+
+    // port: 3003,
+    port: 80,
     proxy: {
       '/api': {
         // 用于开发环境下的转发请求
         // 更多请参考：https://vitejs.dev/config/#server-proxy
         // Set to your craned address
-        // target: 'http://localhost:9090',
-        target: 'http://dashboard.gocrane.io/',
+        target: 'http://localhost:9090',
+        // target: 'http://10.1.60.127:9090',
+        // target: 'http://dashboard.gocrane.io/',
         changeOrigin: true,
       },
       '/grafana': {
         // Set to your craned address
-        target: 'http://dashboard.gocrane.io/',
-        // target: 'http://localhost:9090',
+        // target: 'http://10.1.60.127:9090',
+        // target: 'http://dashboard.gocrane.io/',
+        target: 'http://localhost:9090',
         changeOrigin: true,
       },
       // 接口
@@ -72,8 +76,8 @@ export default (params) => ({
         // 用于开发环境下的转发请求
         // 更多请参考：https://vitejs.dev/config/#server-proxy
         // Set to your craned address
-        // target: 'http://localhost:9090',
-        target: 'http://10.1.60.127:9999',
+        target: 'http://localhost:9999',
+        // target: 'http://10.1.60.127:9999',
         // target: 'http://192.168.3.92:9999',
         changeOrigin: true,
         rewrite: (path) => path.replace(/^\/req/, ''),
