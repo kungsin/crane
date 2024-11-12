@@ -25,8 +25,8 @@ interface UserLoginResult {
 
 // const URI = 'http://192.168.3.92:9999/user';
 // const URI = '/req/user';
-// const URI = 'http://10.1.60.127:9999/user';
-const URI = '/req/user';
+const URI = 'http://10.1.60.127:9999/user';
+// const URI = '/req/user';
 
 export const userApi = createApi({
   reducerPath: 'user',
