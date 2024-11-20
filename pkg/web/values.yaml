@@ -1339,7 +1339,7 @@ dashboards:
               "refId": "B"
              }
             ],
-            "title": "Cluster Memory (GB)",
+            "title": "内存",
             "type": "timeseries"
            },
            {

@@ -7,7 +7,8 @@ import { useTranslation } from 'react-i18next';
 const GpuChart = () => {
   const { t } = useTranslation();
 
-  const gpuMetrics: ISeriesLineChart = {
+  // const gpuMetrics: ISeriesLineChart = {
+  const item: ISeriesLineChart = {
     title: t('GPU 资源使用'),
     subTitle: '(%)',
     datePicker: true,
@@ -29,7 +30,7 @@ const GpuChart = () => {
       {
         name: 'temperature',
         query: `sum(DCGM_FI_DEV_GPU_TEMP) * on (instance) group_left() max(kube_node_labels{label_beta_kubernetes_io_instance_type!="eklet", label_node_kubernetes_io_instance_type!~"eklet"}) by (instance)`,
-      }
+      },
     ],
   };
 

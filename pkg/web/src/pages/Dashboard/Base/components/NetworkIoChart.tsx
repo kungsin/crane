@@ -4,14 +4,15 @@ import Style from './NetworkIoChart.module.less';
 import SeriesLineChart, { ISeriesLineChart } from '../../../../components/SeriesLineChart';
 import { useTranslation } from 'react-i18next';
 
-const MemoryChart = () => {
+const NetworkIoChart = () => {
   const { t } = useTranslation();
 
   // 网络 IO 监控配置
-  const networkIOMetrics: ISeriesLineChart = {
+  // const networkIOMetrics: ISeriesLineChart = {
+  const item: ISeriesLineChart = {
     title: t('网络 IO 使用'),
     subTitle: '(bytes/second)',
-    datePicker: true, 
+    datePicker: true,
     step: '1h',
     xAxis: { type: 'time' },
     lines: [
@@ -30,7 +31,7 @@ const MemoryChart = () => {
       {
         name: 'transmit_packets',
         query: `sum(rate(node_network_transmit_packets_total{device!~"veth.*|docker.*|cni.*|flannel.*|cali.*|cbr.*"}[5m]) * on (instance) group_left() max(kube_node_labels{label_beta_kubernetes_io_instance_type!="eklet", label_node_kubernetes_io_instance_type!~"eklet"}) by (instance))`,
-      }
+      },
     ],
   };
 

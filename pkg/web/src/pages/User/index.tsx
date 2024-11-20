@@ -32,30 +32,10 @@ let data: TableProps['data'] = [];
 // eslint-disable-next-line prefer-const
 let total = 1;
 type SizeEnum = 'small' | 'medium' | 'large';
-// for (let i = 0; i < total; i++) {
-//   data.push({
-//     index: i + 1,
-//     applicant: ['贾明', '张三', '王芳'][i % 3],
-//     channel: ['电子签署', '纸质签署', '纸质签署'][i % 3],
-//     detail: {
-//       email: ['w.cezkdudy@lhll.au', 'r.nmgw@peurezgn.sl', 'p.cumx@rampblpa.ru'][i % 3],
-//     },
-//     matters: ['宣传物料制作费用', 'algolia 服务报销', '相关周边制作费', '激励奖品快递费'][i % 4],
-//     time: [2, 3, 1, 4][i % 4],
-//     createTime: ['2022-01-01', '2022-02-01', '2022-03-01', '2022-04-01', '2022-05-01'][i % 4],
-
-//     id: i + 1,
-//     name: ['王小', '李四', '张三'][i % 3],
-//     phone: ['13000000000', '18600000000', '15200000000'][i % 3],
-//     status: i % 3,
-//     registCode: ['123456', '123457', '123458'][i % 3],
-//     userPermission: ['0', '1'][i % 2],
-//   });
-// }
 
 const statusNameListMap = {
-  0: { label: '正常', theme: 'success', icon: <CheckCircleFilledIcon /> },
-  1: { label: '已禁用', theme: 'danger', icon: <CloseCircleFilledIcon /> },
+  0: { label: '已禁用', theme: 'danger', icon: <CloseCircleFilledIcon /> },
+  1: { label: '正常', theme: 'success', icon: <CheckCircleFilledIcon /> },
   2: { label: '待审核', theme: 'warning', icon: <ErrorCircleFilledIcon /> },
 };
 
@@ -94,9 +74,10 @@ export const SelectTable = () => {
       id: userList[i].Id,
       name: userList[i].Username,
       phone: userList[i].Phone,
-      status: 0,
-      registCode: ['123456', '123457', '123458'][i % 3],
+      status: userList[i].Status,
+      registCode: userList[i].RegistCode,
       userPermission: userList[i].IsAdmin ? 0 : 1,
+      updateTime: userList[i].UpdateTime,
     });
   }
   // data = userInfo.data;
@@ -113,7 +94,7 @@ export const SelectTable = () => {
       columns={[
         { colKey: 'id', title: 'id', width: '100' },
         { colKey: 'name', title: '用户名', width: '100' },
-        { colKey: 'phone', title: '手机号', width: '200' },
+        { colKey: 'phone', title: '手机号', width: '160' },
         {
           colKey: 'status',
           title: '用户状态',
@@ -135,8 +116,9 @@ export const SelectTable = () => {
               {statusNameListMap[row.status as keyof typeof statusNameListMap].label}
             </Tag>
           ),
+          width: '120',
         },
-        { colKey: 'registCode', title: '用户注册码' },
+        { colKey: 'registCode', title: '用户注册码', width: '120' },
         // userListMap
         {
           colKey: 'userPermission',
@@ -167,7 +149,7 @@ export const SelectTable = () => {
           ),
         },
         // { colKey: 'userPermission', title: '用户权限', ellipsis: true },
-        { colKey: 'createTime', title: '操作时间' },
+        { colKey: 'updateTime', title: '操作时间' },
         {
           colKey: 'operation',
           title: '操作',
@@ -197,7 +179,7 @@ export const SelectTable = () => {
             // eslint-disable-next-line prettier/prettier
             <Space align='center'>
               {(() => {
-                if (row.status === 0) {
+                if (row.status === 1) {
                   return (
                     <>
                       <Link hover='color' theme='primary' onClick={() => navigate('/user/add?flag=2')}>
@@ -209,7 +191,7 @@ export const SelectTable = () => {
                     </>
                   );
                   // eslint-disable-next-line no-else-return
-                } else if (row.status === 1) {
+                } else if (row.status === 0) {
                   return (
                     <>
                       <Link hover='color' theme='primary'>

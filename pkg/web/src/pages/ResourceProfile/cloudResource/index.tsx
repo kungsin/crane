@@ -1,4 +1,3 @@
-import { OverviewSearchPanel } from './OverviewSearchPanel';
 import { PanelWrapper } from './PanelWrapper';
 import { useCraneUrl } from 'hooks';
 import React, { memo } from 'react';
@@ -22,7 +21,6 @@ export default memo(() => {
   console.log('dashboardDetail', dashboardDetail);
   return (
     <>
-      <OverviewSearchPanel />
       <Row style={{ marginTop: 10 }}>
         {!selectedDashboard?.uid || dashboardDetail?.data?.dashboard?.panels?.length === 0 ? (
           <span>{t('暂无数据')}</span>

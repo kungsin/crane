@@ -9,6 +9,7 @@ import { useLoginRouteConfig } from './modules/login';
 import { useClusterRouteConfig } from './modules/cluster';
 import { useRecommendRouteConfig } from './modules/recommend';
 import { useSettingRouteConfig } from './modules/settings';
+import { useResourceProfile } from './modules/resourceProfile';
 import { getUserInfo } from 'utils/user';
 export interface IRouter {
   path: string;
@@ -59,6 +60,7 @@ export const useRouteConfig = () => {
   const menu = useMenuRouteConfig();
   const cluster = useClusterRouteConfig();
   const login = useLoginRouteConfig();
+  const resourceProfile = useResourceProfile();
 
   if (!userInfo) {
     return [...login, ...otherRoutes];
@@ -70,6 +72,7 @@ export const useRouteConfig = () => {
       return [
         ...routes,
         ...dashboard,
+        ...resourceProfile,
         ...cost,
         ...recommend,
         ...settings,

@@ -1,3 +1,4 @@
+/* eslint-disable arrow-body-style */
 import { buildRetryFetchBaseQuery } from './retryFetchBaseQuery';
 import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react';
 import { IBoardProps } from '../components/BoardChart';
@@ -5,6 +6,9 @@ import queryString from 'query-string';
 
 interface UserInfoArgs extends IBoardProps {
   craneUrl: string;
+  id: any;
+  status: any;
+  adminName: any;
 }
 
 interface UserInfoResult {
@@ -28,6 +32,10 @@ interface UserLoginResult {
 const URI = 'http://10.1.60.127:9999/user';
 // const URI = '/req/user';
 
+// 获取token
+const token = JSON.parse(localStorage.getItem('userInfo'))?.Token;
+console.log('token', token);
+
 export const userApi = createApi({
   reducerPath: 'user',
   tagTypes: ['user'],
@@ -36,10 +44,6 @@ export const userApi = createApi({
       baseUrl: ``,
       cache: 'no-cache',
       timeout: 15000,
-      // prepareHeaders: (headers, _api) => {
-      //   headers.set('Content-Type', 'application/x-www-form-urlencoded');
-      //   return headers;
-      // },
     }),
   ),
   endpoints: (builder) => ({
@@ -53,6 +57,7 @@ export const userApi = createApi({
           method: 'get',
           headers: {
             'Content-Type': 'application/json',
+            Token: token || '',
           },
         };
       },
@@ -86,7 +91,26 @@ export const userApi = createApi({
         return res;
       },
     }),
+    updateUserStatus: builder.query<UserInfoResult, UserInfoArgs>({
+      providesTags: ['user'],
+      query: (args) => {
+        // const url = `${args.craneUrl}${URI}/list`;
+        const url = `${URI}/update`;
+        return {
+          url,
+          method: 'put',
+          headers: {
+            'Content-Type': 'application/json',
+            Token: token || '',
+          },
+        };
+      },
+      transformResponse: (res: UserInfoResult, _meta, _arg: UserInfoArgs) => {
+        // 根据实际需求处理返回的数据
+        return res;
+      },
+    }),
   }),
 });
 
-export const { useGetUserInfoQuery, useLazyGetUserInfoQuery, useLoginUserMutation } = userApi;
+export const { useGetUserInfoQuery, useLazyGetUserInfoQuery, useLoginUserMutation, useUpdateUserStatusQuery } = userApi;
