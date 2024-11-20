@@ -62,41 +62,55 @@ export const useRouteConfig = () => {
   const login = useLoginRouteConfig();
   const resourceProfile = useResourceProfile();
 
-  if (!userInfo) {
-    return [...login, ...otherRoutes];
-  }
-  // eslint-disable-next-line no-else-return
-  else {
-    const IsAdmin = userInfo.IsAdmin;
-    if (IsAdmin) {
-      return [
-        ...routes,
-        ...dashboard,
-        ...resourceProfile,
-        ...cost,
-        ...recommend,
-        ...settings,
-        ...user,
-        ...menu,
-        ...cluster,
-        ...otherRoutes,
-        ...login,
-      ];
-    }
-    // eslint-disable-next-line no-else-return
-    else {
-      return [
-        ...routes,
-        ...dashboard,
-        ...cost,
-        ...recommend,
-        ...settings,
-        // ...user,
-        // ...menu,
-        // ...cluster,
-        ...login,
-        ...otherRoutes,
-      ];
-    }
-  }
+  return [
+    ...routes,
+    ...dashboard,
+    ...resourceProfile,
+    ...cost,
+    ...recommend,
+    ...settings,
+    ...user,
+    ...menu,
+    ...cluster,
+    ...otherRoutes,
+    ...login,
+  ];
+
+  // if (!userInfo) {
+  //   return [...login, ...otherRoutes];
+  // }
+  // // eslint-disable-next-line no-else-return
+  // else {
+  //   const IsAdmin = userInfo.IsAdmin;
+  //   if (IsAdmin) {
+  //     return [
+  //       ...routes,
+  //       ...dashboard,
+  //       ...resourceProfile,
+  //       ...cost,
+  //       ...recommend,
+  //       ...settings,
+  //       ...user,
+  //       ...menu,
+  //       ...cluster,
+  //       ...otherRoutes,
+  //       ...login,
+  //     ];
+  //   }
+  //   // eslint-disable-next-line no-else-return
+  //   else {
+  //     return [
+  //       ...routes,
+  //       ...dashboard,
+  //       ...cost,
+  //       ...recommend,
+  //       ...settings,
+  //       // ...user,
+  //       // ...menu,
+  //       // ...cluster,
+  //       ...login,
+  //       ...otherRoutes,
+  //     ];
+  //   }
+  // }
 };
