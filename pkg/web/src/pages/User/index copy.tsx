@@ -6,7 +6,7 @@ import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
 import { CheckCircleFilledIcon, CloseCircleFilledIcon, ErrorCircleFilledIcon } from 'tdesign-icons-react';
 import { Dialog, DialogProps, Link, Space, Table, TableProps, Tag } from 'tdesign-react';
-import { useGetUserListQuery, useUpdateUserStatusMutation } from '../../services/mineApi';
+import { useGetUserListQuery, useUpdateUserStatusQuery } from '../../services/mineApi';
 
 // eslint-disable-next-line prefer-const
 let data: TableProps['data'] = [];
@@ -25,11 +25,9 @@ const userListMap = {
   1: { label: '普通用户', theme: 'default', variant: 'light' },
 };
 
-const adminName = JSON.parse(localStorage.getItem('userInfo'))?.Username;
-
 export const SelectTable = () => {
   const { t } = useTranslation();
-  const [updateUserStatus, { data: statusInfo, error }] = useUpdateUserStatusMutation();
+
   const navigate = useNavigate();
 
   // 分页参数
@@ -46,12 +44,22 @@ export const SelectTable = () => {
     pageSize,
   };
   const { data: userInfo } = useGetUserListQuery(params);
-
+  // const { data: userInfo } = useGetUserInfoQuery();
+  // console.log(11111, userInfo?.data);
+  // let userList = null;
   const userList = userInfo?.data;
   data = [];
   total = userInfo?.count || 0;
   for (let i = 0; i < userList?.length; i++) {
     data.push({
+      index: i + 1,
+      applicant: ['贾明', '张三', '王芳'][i % 3],
+      channel: ['电子签署', '纸质签署', '纸质签署'][i % 3],
+      detail: {
+        email: ['w.cezkdudy@lhll.au', 'r.nmgw@peurezgn.sl', 'p.cumx@rampblpa.ru'][i % 3],
+      },
+      matters: ['宣传物料制作费用', 'algolia 服务报销', '相关周边制作费', '激励奖品快递费'][i % 4],
+      time: [2, 3, 1, 4][i % 4],
       createTime: ['2022-01-01', '2022-02-01', '2022-03-01', '2022-04-01', '2022-05-01'][i % 4],
 
       id: userList[i].Id,
@@ -63,16 +71,6 @@ export const SelectTable = () => {
       updateTime: userList[i].UpdateTime,
     });
   }
-
-  const changeState = async (id: any, status: any) => {
-    console.log(id, status);
-    await updateUserStatus({
-      id,
-      status: status === 1 ? 0 : 1,
-      adminName,
-    });
-    console.log(data);
-  };
 
   // table
   const [stripe, setStripe] = useState(false);
@@ -141,18 +139,41 @@ export const SelectTable = () => {
             </Tag>
           ),
         },
+        // { colKey: 'userPermission', title: '用户权限', ellipsis: true },
         { colKey: 'updateTime', title: '操作时间' },
         {
           colKey: 'operation',
           title: '操作',
           cell: ({ row }) => (
+            // <Space>
+            //   {/* eslint-disable-next-line no-nested-ternary */}
+            //   {row.status === 0 ? (
+            //     <>
+            //       <Link hover='color' theme='primary'>
+            //         修改
+            //       </Link>
+            //       <Link hover='color' theme='primary'>
+            //         禁用
+            //       </Link>
+            //     </>
+            //   ) : row.status === 1 ? (
+            //     <Link hover='color' theme='primary'>
+            //       审核
+            //     </Link>
+            //   ) : (
+            //     <Link hover='color' theme='primary'>
+            //       进入
+            //     </Link>
+            //   )}
+            // </Space>
+
             // eslint-disable-next-line prettier/prettier
             <Space align='center'>
               {(() => {
                 if (row.status === 1) {
                   return (
                     <>
-                      <Link hover='color' theme='primary' onClick={() => navigate(`/user/add?flag=2&id=${row.id}`)}>
+                      <Link hover='color' theme='primary' onClick={() => navigate('/user/add?flag=2')}>
                         修改
                       </Link>
                       <Link hover='color' theme='danger' onClick={() => changeState(row.id, 1)}>
@@ -255,8 +276,93 @@ export const SelectTable = () => {
     setVisible(false);
   };
 
+  const adminName = JSON.parse(localStorage.getItem('userInfo'))?.Username;
+
+  const changeState = async (id: any, status: any) => {
+    const { data } = await useUpdateUserStatusQuery({
+      id,
+      status: status === 1 ? 0 : 1,
+      adminName,
+    });
+    console.log(data);
+  };
+
   return (
     <>
+      {/* 按钮 */}
+      {/* <Row>
+        <Col span={1}>
+          <Button onClick={() => navigate('/user/add?flag=1')}>{t('创建用户')}</Button>
+        </Col>
+        <Col span={1}>
+          <Button onClick={handleClick}>{t('生成注册码')}</Button>
+        </Col>
+      </Row>
+      <Divider></Divider> */}
+      {/* 选择器 */}
+      {/* <Row justify='start' style={{ marginBottom: '20px' }}>
+        <Col span={3} style={{ display: 'flex', alignItems: 'center' }}>
+          <span>角色权限</span>
+          <Select
+            value={value}
+            onChange={onChange}
+            style={{ marginLeft: '20px', width: '200px' }}
+            clearable
+            options={[
+              { label: '架构云', value: '1', title: '架构云选项' },
+              { label: '大数据', value: '2' },
+              { label: '区块链', value: '3' },
+              { label: '物联网', value: '4', disabled: true },
+              {
+                label: '人工智能',
+                value: '5',
+                content: (
+                  <Tooltip content='人工智能'>
+                    <span>人工智能（新）</span>
+                  </Tooltip>
+                ),
+                title: null,
+              },
+            ]}
+          />
+        </Col>
+        <Col span={3} style={{ display: 'flex', alignItems: 'center' }}>
+          <span>用户状态</span>
+          <Select
+            value={value}
+            onChange={onChange}
+            style={{ marginLeft: '20px', width: '200px' }}
+            clearable
+            options={[
+              { label: '架构云', value: '1', title: '架构云选项' },
+              { label: '大数据', value: '2' },
+              { label: '区块链', value: '3' },
+              { label: '物联网', value: '4', disabled: true },
+              {
+                label: '人工智能',
+                value: '5',
+                content: (
+                  <Tooltip content='人工智能'>
+                    <span>人工智能（新）</span>
+                  </Tooltip>
+                ),
+                title: null,
+              },
+            ]}
+          />
+        </Col>
+        <Col span={3} style={{ display: 'flex', alignItems: 'center' }}>
+          <span>用户名</span>
+          <Input
+            style={{ marginLeft: '20px', width: '200px' }}
+            placeholder='请输入用户名（无默认值）'
+            onChange={(value) => {
+              console.log(value);
+            }}
+          />
+        </Col>
+      </Row> */}
+
       <Space direction='vertical' style={{ marginTop: '10px' }}>
         {table}
       </Space>

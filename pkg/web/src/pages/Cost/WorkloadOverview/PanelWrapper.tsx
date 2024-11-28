@@ -22,6 +22,10 @@ export const PanelWrapper = React.memo(({ panel, selectedDashboard }: PanelWrapp
   const span = panel?.gridPos?.w > 0 && panel?.gridPos?.w <= 24 ? Math.floor(panel.gridPos.w / 2) : 6;
   const minHeight = panel?.gridPos?.h ? Math.max(panel.gridPos.h * baselineHeight, defaultHeight) : defaultHeight;
 
+  console.log('=========================================');
+  console.log('isNeedSelectNamespace', isNeedSelectNamespace);
+  console.log('selectedNamespace', selectedNamespace);
+  console.log('isValidPanel', isValidPanel);
   return (isNeedSelectNamespace && !selectedNamespace) || !isValidPanel ? null : (
     <Col key={panel.id} span={span}>
       <Card style={{ marginBottom: '0.5rem', marginTop: '0.5rem', height: minHeight }}>

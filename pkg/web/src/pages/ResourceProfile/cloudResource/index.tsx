@@ -12,7 +12,7 @@ export default memo(() => {
   console.log('craneUrl', craneUrl);
   const dashboardList = useFetchDashboardListQuery({ craneUrl }, { skip: !craneUrl });
   console.log('dashboardList', dashboardList);
-  const selectedDashboard = (dashboardList?.data ?? []).find((dashboard: any) => dashboard.uid === 'cluster-overview');
+  const selectedDashboard = (dashboardList?.data ?? []).find((dashboard: any) => dashboard.uid === 'CloudResource');
   console.log('selectedDashboard', selectedDashboard);
   const dashboardDetail = useFetchDashboardDetailQuery(
     { dashboardUid: selectedDashboard?.uid },

@@ -1,75 +1,56 @@
-import React, { memo } from 'react';
-import CpuChart from './components/CpuChart';
-import MemoryChart from './components/MemoryChart';
-
-import { PanelWrapper } from './PanelWrapper';
-import { useCraneUrl } from 'hooks';
+import React, { memo, useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useFetchDashboardDetailQuery, useFetchDashboardListQuery } from 'services/grafanaApi';
 import { Row } from 'tdesign-react';
-import cluster from 'cluster';
-
-const DashBoard = () => (
-  <div style={{ overflowX: 'hidden' }}>
-    <CpuChart />
-    <MemoryChart />
-  </div>
-);
-
-// export default memo(DashBoard);
+import { PanelWrapper } from './PanelWrapper';
+import { OverviewSearchPanel } from './OverviewSearchPanel';
+import { useCraneUrl } from 'hooks';
 
 export default memo(() => {
   const { t } = useTranslation();
+  const craneUrl = useCraneUrl();
+  const [selectedDashboard, setSelectedDashboard] = useState<any>(null);
+  const [dashboardDetail, setDashboardDetail] = useState<any>(null);
 
-  const craneUrl: any = useCraneUrl();
-  console.log('craneUrl', craneUrl);
-  const dashboardList = useFetchDashboardListQuery({ craneUrl }, { skip: !craneUrl });
-  console.log('dashboardList', dashboardList);
-  // cluster-overview
-  const selectedDashboard1 = (dashboardList?.data ?? []).find((dashboard: any) => dashboard.uid === 'cluster-overview');
-  console.log('selectedDashboard', selectedDashboard1);
-  const dashboardDetail1 = useFetchDashboardDetailQuery(
-    { dashboardUid: selectedDashboard1?.uid },
-    { skip: !selectedDashboard1?.uid },
-  );
-  console.log('dashboardDetail', dashboardDetail1);
+  const dashboardListQuery = useFetchDashboardListQuery({ craneUrl }, { skip: !craneUrl });
+  const dashboardList = dashboardListQuery.data || [];
 
-  // workload-overview
-  const selectedDashboard2 = (dashboardList?.data ?? []).find(
-    (dashboard: any) => dashboard.uid === 'workload-overview',
+  useEffect(() => {
+    if (dashboardList.length > 0) {
+      const selected = dashboardList.find((dashboard: any) => dashboard.uid === 'resourceProfile');
+      setSelectedDashboard(selected);
+    }
+  }, [dashboardList]);
+
+  const dashboardDetailQuery = useFetchDashboardDetailQuery(
+    { dashboardUid: selectedDashboard?.uid },
+    { skip: !selectedDashboard?.uid },
   );
-  console.log('selectedDashboard', selectedDashboard2);
-  const dashboardDetail2 = useFetchDashboardDetailQuery(
-    { dashboardUid: selectedDashboard2?.uid },
-    { skip: !selectedDashboard2?.uid },
-  );
-  console.log('dashboardDetail', dashboardDetail2);
+
+  useEffect(() => {
+    if (dashboardDetailQuery.data) {
+      setDashboardDetail(dashboardDetailQuery.data);
+    }
+  }, [dashboardDetailQuery.data]);
+
+  useEffect(() => {
+    console.log('dashboardDetail', dashboardDetail);
+  }, [dashboardDetail]);
+
   return (
     <>
-      <DashBoard />
-      <div>
-        {/* workload-overview */}
-        <Row style={{ marginTop: 10 }}>
-          {!selectedDashboard2?.uid || dashboardDetail2?.data?.dashboard?.panels?.length === 0 ? (
-            <span>{t('暂无数据')}</span>
-          ) : (
-            (dashboardDetail2?.data?.dashboard?.panels ?? []).map((panel: any) => (
-              <PanelWrapper key={panel.id} panel={panel} selectedDashboard={selectedDashboard2} />
-            ))
-          )}
-        </Row>
-        {/* cluster-overview */}
-        <Row style={{ marginTop: 100 }}>
-          {!selectedDashboard1?.uid || dashboardDetail1?.data?.dashboard?.panels?.length === 0 ? (
-            <span>{t('暂无数据')}</span>
-          ) : (
-            (dashboardDetail1?.data?.dashboard?.panels ?? []).map((panel: any) => (
-              <PanelWrapper key={panel.id} panel={panel} selectedDashboard={selectedDashboard1} />
-            ))
-          )}
-        </Row>
-        -----------------------
-      </div>
+      <OverviewSearchPanel />
+      <Row style={{ marginTop: 10 }}>
+        {!selectedDashboard?.uid ||
+        !dashboardDetail?.dashboard?.panels ||
+        dashboardDetail.dashboard.panels.length === 0 ? (
+          <span>{t('暂无数据')}</span>
+        ) : (
+          dashboardDetail.dashboard.panels.map((panel: any) => (
+            <PanelWrapper key={panel.id} panel={panel} selectedDashboard={selectedDashboard} />
+          ))
+        )}
+      </Row>
     </>
   );
 });

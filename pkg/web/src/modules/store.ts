@@ -12,7 +12,7 @@ import { TypedUseSelectorHook, useDispatch, useSelector } from 'react-redux';
 import { recommendationApi } from '../services/recommendationApi';
 import { prometheusApi } from '../services/prometheusApi';
 // 新加的
-import { userApi } from '../services/userApi';
+import { userApi } from '../services/mineApi';
 
 const reducer = combineReducers({
   global,

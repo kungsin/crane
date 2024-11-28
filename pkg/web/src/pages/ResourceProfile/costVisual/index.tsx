@@ -1,55 +1,53 @@
-import { PanelWrapper } from './PanelWrapper';
-import { useCraneUrl } from 'hooks';
-import React, { memo } from 'react';
+import React, { memo, useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useFetchDashboardDetailQuery, useFetchDashboardListQuery } from 'services/grafanaApi';
 import { Row } from 'tdesign-react';
+import { PanelWrapper } from './PanelWrapper';
+import { useCraneUrl } from 'hooks';
+import { OverviewSearchPanel } from './OverviewSearchPanel';
 
 export default memo(() => {
   const { t } = useTranslation();
+  const craneUrl = useCraneUrl();
+  const [selectedDashboard, setSelectedDashboard] = useState<any>(null);
+  const [dashboardDetail, setDashboardDetail] = useState<any>(null);
 
-  const craneUrl: any = useCraneUrl();
-  console.log('craneUrl', craneUrl);
-  const dashboardList = useFetchDashboardListQuery({ craneUrl }, { skip: !craneUrl });
-  console.log('dashboardList', dashboardList);
+  const dashboardListQuery = useFetchDashboardListQuery({ craneUrl }, { skip: !craneUrl });
+  const dashboardList = dashboardListQuery.data || [];
 
-  // cluster-overview
-  const selectedDashboard1 = (dashboardList?.data ?? []).find((dashboard: any) => dashboard.uid === 'cluster-overview');
-  console.log('selectedDashboard1', selectedDashboard1);
-  const dashboardDetail1 = useFetchDashboardDetailQuery(
-    { dashboardUid: selectedDashboard1?.uid },
-    { skip: !selectedDashboard1?.uid },
+  useEffect(() => {
+    if (dashboardList.length > 0) {
+      const selected = dashboardList.find((dashboard: any) => dashboard.uid === 'CostVisual');
+      setSelectedDashboard(selected);
+    }
+  }, [dashboardList]);
+
+  const dashboardDetailQuery = useFetchDashboardDetailQuery(
+    { dashboardUid: selectedDashboard?.uid },
+    { skip: !selectedDashboard?.uid },
   );
-  console.log('dashboardDetail1', dashboardDetail1);
 
-  // namespace-costs
-  const selectedDashboard2 = (dashboardList?.data ?? []).find((dashboard: any) => dashboard.uid === 'namespace-costs');
+  useEffect(() => {
+    if (dashboardDetailQuery.data) {
+      setDashboardDetail(dashboardDetailQuery.data);
+    }
+  }, [dashboardDetailQuery.data]);
 
-  const dashboardDetail2 = useFetchDashboardDetailQuery(
-    { dashboardUid: selectedDashboard2?.uid },
-    { skip: !selectedDashboard2?.uid },
-  );
-  console.log('dashboardDetail2', dashboardDetail2);
+  useEffect(() => {
+    console.log('dashboardDetail', dashboardDetail);
+  }, [dashboardDetail]);
+
   return (
     <>
-      {/* cluster-overview */}
+      <OverviewSearchPanel />
       <Row style={{ marginTop: 10 }}>
-        {!selectedDashboard1?.uid || dashboardDetail1?.data?.dashboard?.panels?.length === 0 ? (
+        {!selectedDashboard?.uid ||
+        !dashboardDetail?.dashboard?.panels ||
+        dashboardDetail.dashboard.panels.length === 0 ? (
           <span>{t('暂无数据')}</span>
         ) : (
-          (dashboardDetail1?.data?.dashboard?.panels ?? []).map((panel: any) => (
-            <PanelWrapper key={panel.id} panel={panel} selectedDashboard={selectedDashboard1} />
-          ))
-        )}
-      </Row>
-
-      {/* namespace-costs */}
-      <Row style={{ marginTop: 10 }}>
-        {!selectedDashboard2?.uid || dashboardDetail2?.data?.dashboard?.panels?.length === 0 ? (
-          <span>{t('暂无数据')}</span>
-        ) : (
-          (dashboardDetail2?.data?.dashboard?.panels ?? []).map((panel: any) => (
-            <PanelWrapper key={panel.id} panel={panel} selectedDashboard={selectedDashboard2} />
+          dashboardDetail.dashboard.panels.map((panel: any) => (
+            <PanelWrapper key={panel.id} panel={panel} selectedDashboard={selectedDashboard} />
           ))
         )}
       </Row>
