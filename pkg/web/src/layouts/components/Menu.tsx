@@ -99,7 +99,7 @@ export default memo((props: IMenuProps) => {
 
   const { version } = globalState;
   const bottomText = globalState.collapsed ? version : `Crane Dashboard ${version}`;
-  // // 如果当前路径是 '/login'，则不显示 Menu
+  // 如果当前路径是 '/login'，则不显示 Menu
   // if (location.pathname === '/login') {
   //   return null;
   // }
@@ -113,7 +113,7 @@ export default memo((props: IMenuProps) => {
       operations={props.showOperation ? <div className={Style.menuTip}>{bottomText}</div> : undefined}
       logo={props.showLogo ? <MenuLogo collapsed={globalState.collapsed} /> : undefined}
     >
-      {location.pathname !== '/login' && renderMenuItems(router)}
+      {renderMenuItems(router)}
     </Menu>
   );
 });

@@ -18,7 +18,7 @@ export const SelectTable = () => {
   // eslint-disable-next-line unused-imports/no-unused-vars
   const flag = searchParams.get('flag');
   const id = searchParams.get('id');
-
+  const [loading, setLoading] = useState(false);
   const { data: UserInfo } = useGetUserInfoQuery({ id });
   const userInfo = UserInfo?.data;
   const clusterList = useFetchClusterListQuery({});
@@ -67,6 +67,7 @@ export const SelectTable = () => {
     console.log('body', body);
 
     try {
+      setLoading(true);
       const { data } = await updateUser({ ...params, body });
       console.log('data', data);
       if (data.code === 200) {
@@ -79,6 +80,8 @@ export const SelectTable = () => {
       }
     } catch (error) {
       MessagePlugin.error('接口调用失败');
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -124,14 +127,14 @@ export const SelectTable = () => {
         </FormItem>
 
         <FormItem label='集群配置' name='clusters'>
-          <Select style={{ width: '300px' }} options={CLUSTER_OPTIONS} clearable></Select>
+          <Select style={{ width: '300px' }} options={CLUSTER_OPTIONS} clearable multiple></Select>
         </FormItem>
         <FormItem label='用户状态' name='status'>
           <Select style={{ width: '300px' }} options={STATUS_OPTIONS} clearable></Select>
         </FormItem>
 
         <FormItem style={{ marginLeft: 100 }}>
-          <Button theme='primary' type='submit'>
+          <Button theme='primary' type='submit' loading={loading}>
             修改
           </Button>
           {/* <Button onClick={setMessage}>设置信息</Button> */}

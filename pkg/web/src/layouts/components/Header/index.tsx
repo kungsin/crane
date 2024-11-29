@@ -11,7 +11,7 @@ import { useLocation, useNavigate } from 'react-router-dom';
 import { ViewListIcon } from 'tdesign-icons-react';
 import { Button, Col, Layout, MessagePlugin, Row, Select } from 'tdesign-react';
 import { useFetchClusterListQuery } from '../../../services/clusterApi';
-
+import { removeUserInfo } from 'utils/user';
 const { Header } = Layout;
 
 export default memo((props: { showMenu?: boolean }) => {
@@ -24,23 +24,29 @@ export default memo((props: { showMenu?: boolean }) => {
   const location = useLocation();
 
   const IsAdmin = JSON.parse(localStorage.getItem('userInfo'))?.IsAdmin || false;
-  const Clusters = JSON.parse(localStorage.getItem('userInfo'))?.Clusters || ['cls-ktwhkqzt'];
+  const Clusters = JSON.parse(localStorage.getItem('userInfo'))?.Clusters || [];
+  console.log('=-===Clusters', Clusters);
+  console.log('IsAdmin', IsAdmin);
 
   useEffect(() => {
+    let items = clusterList?.data?.data?.items;
     // 如果是管理员,显示全部的集群
     if (IsAdmin) {
+      console.log('===============来这里====================');
+
       // eslint-disable-next-line @typescript-eslint/ban-ts-comment
       // @ts-ignore
-      if (selectedClusterId === '' && clusterList?.data?.data?.items?.length > 0) {
+      if (selectedClusterId === '' && items?.length > 0) {
+        console.log('显示显示');
         // eslint-disable-next-line @typescript-eslint/ban-ts-comment
         // @ts-ignore
-        dispatch(insightAction.selectedClusterId(clusterList.data.data.items[0].id));
+        dispatch(insightAction.selectedClusterId(items[0].id));
       }
 
-      if (clusterList?.data?.data?.items?.length === 0) {
+      if (items?.length === 0) {
+        console.log('返回返回');
         dispatch(insightAction.selectedClusterId(''));
-        if (location.pathname !== '/settings/cluster') {
-          console.log(`From ${location.pathname} to /settings/cluster`);
+        if (location.pathname !== '/login') {
           MessagePlugin.error(
             {
               // content: t('添加一个集群以启用Dashboard'),
@@ -50,30 +56,32 @@ export default memo((props: { showMenu?: boolean }) => {
             10000,
           );
           // navigate('/settings/cluster');
+          removeUserInfo();
           navigate('/login');
+          window.location.reload();
         }
       }
     }
     // 否则,只显示已配置的集群
     else {
+      console.log('===============来我这====================');
       // 筛选集群列表
       console.log('Clusters', Clusters);
-      console.log('clusterList', clusterList?.data?.data?.items);
-      const filteredClusters = clusterList?.data?.data?.items?.filter((item) => Clusters.includes(item.id)) || [];
+      console.log('clusterList', items);
+      const filteredClusters = items?.filter((item) => Clusters.includes(item.id));
       console.log('filteredClusters', filteredClusters);
 
-      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-      // @ts-ignore
-      if (selectedClusterId === '' && filteredClusters.length > 0) {
+      if (selectedClusterId === '' && filteredClusters?.length > 0) {
+        console.log('显示显示');
         // eslint-disable-next-line @typescript-eslint/ban-ts-comment
         // @ts-ignore
         dispatch(insightAction.selectedClusterId(filteredClusters[0].id));
       }
 
-      if (filteredClusters.length === 0) {
+      if (filteredClusters?.length === 0) {
+        console.log('返回返回');
         dispatch(insightAction.selectedClusterId(''));
-        if (location.pathname !== '/settings/cluster') {
-          console.log(`From ${location.pathname} to /settings/cluster`);
+        if (location.pathname !== '/login') {
           MessagePlugin.error(
             {
               // content: t('添加一个集群以启用Dashboard'),
@@ -82,21 +90,33 @@ export default memo((props: { showMenu?: boolean }) => {
             },
             10000,
           );
+          removeUserInfo();
+          // navigate('/settings/cluster');
           navigate('/login');
+          window.location.reload();
         }
       }
     }
   });
 
-  const options = React.useMemo(
-    () =>
-      // const list = IsAdmin ? clusterList.data?.data?.items ? [] :
-      (clusterList.data?.data?.items ?? []).map((item) => ({
-        text: `${item.name} (${item.id})`,
-        value: item.id,
-      })),
-    [clusterList.data?.data?.items],
-  );
+  // const options = React.useMemo(
+  //   () =>
+  //     (clusterList.data?.data?.items ?? []).map((item) => ({
+  //       text: `${item.name} (${item.id})`,
+  //       value: item.id,
+  //     })),
+  //   [clusterList.data?.data?.items],
+  // );
+  const options = React.useMemo(() => {
+    const items = clusterList.data?.data?.items ?? [];
+
+    const filteredItems = IsAdmin ? items : items.filter((item) => Clusters.includes(item.id));
+
+    return filteredItems.map((item) => ({
+      text: `${item.name} (${item.id})`,
+      value: item.id,
+    }));
+  }, [clusterList.data?.data?.items, IsAdmin, Clusters]);
 
   if (!globalState.showHeader) {
     return null;

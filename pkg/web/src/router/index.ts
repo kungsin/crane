@@ -50,8 +50,10 @@ const routes: IRouter[] = [
 
 export const useRouteConfig = () => {
   // console.log('===', getUserInfo().IsAdmin);
-  const userInfo = JSON.parse(getUserInfo());
-  console.log('userInfo', userInfo);
+  // const userInfo = JSON.parse(getUserInfo());
+  const IsAdmin = JSON.parse(getUserInfo())?.IsAdmin;
+  // console.log('userInfo', userInfo);
+  console.log('IsAdmin', IsAdmin);
   const cost = useCostRouteConfig();
   const dashboard = useDashboardRouteConfig();
   const recommend = useRecommendRouteConfig();
@@ -62,20 +64,31 @@ export const useRouteConfig = () => {
   const login = useLoginRouteConfig();
   const resourceProfile = useResourceProfile();
 
-  return [
-    ...routes,
-    ...dashboard,
-    ...resourceProfile,
-    // ...cost,
-    ...recommend,
-    ...user,
-    ...settings,
-    // ...menu,
-    // ...cluster,
-    ...otherRoutes,
-    ...login,
-  ];
+  // 是否为管理员
+  if (IsAdmin) {
+    return [...routes, ...dashboard, ...resourceProfile, ...recommend, ...user, ...settings, ...otherRoutes, ...login];
+  }
+  // eslint-disable-next-line prettier/prettier, no-else-return
+  else {
+    return [...routes, ...dashboard, ...resourceProfile, ...recommend, ...otherRoutes, ...login];
+  }
 
+  // 全菜单
+  // return [
+  //   ...routes,
+  //   ...dashboard,
+  //   ...resourceProfile,
+  //   // ...cost,
+  //   ...recommend,
+  //   ...user,
+  //   ...settings,
+  //   // ...menu,
+  //   // ...cluster,
+  //   ...otherRoutes,
+  //   ...login,
+  // ];
+
+  // 是否登录
   // if (!userInfo) {
   //   return [...login, ...otherRoutes];
   // }

@@ -17,8 +17,6 @@ export default function Login() {
   const dispatch = useDispatch();
   const [loginUser, { data, error, isLoading }] = useLoginUserMutation();
 
-  const [loading, setLoading] = useState(false);
-
   const onSubmit: FormProps['onSubmit'] = async (e) => {
     console.log(e);
     console.log(e.fields);
@@ -29,38 +27,22 @@ export default function Login() {
       };
       // console.log(data);
       try {
-        setLoading(true);
         // const { data } = await loginUser({ data: body });
         const { data } = await loginUser({ username: body.username, password: body.password });
         console.log(data.code);
         console.log(data.msg);
         console.log(data.data);
         if (data.code === 200) {
-          console.log('============111');
-          console.log(data.data);
-          console.log(data.data.Clusters);
-          const Clusters = data.data.Clusters || [];
-          const IsAdmin = data.data.IsAdmin || false;
-          console.log('============');
-          console.log(IsAdmin);
-          console.log(Clusters);
-          if (Clusters.length > 0 || IsAdmin) {
-            MessagePlugin.success('登录成功');
-
-            setUserInfo(JSON.stringify(data.data));
-            setTimeout(() => {
-              navigate('/dashboard');
-            }, 1000);
-          } else {
-            MessagePlugin.error('需要添加一个集群以启用Dashboard,请联系管理员添加集群');
-          }
+          MessagePlugin.success('登录成功');
+          setUserInfo(JSON.stringify(data.data));
+          setTimeout(() => {
+            navigate('/dashboard');
+          }, 1000);
         } else {
           MessagePlugin.error('登录失败,请检查账号和密码!');
         }
       } catch (error) {
         MessagePlugin.error('接口调用失败');
-      } finally {
-        setLoading(false);
       }
     }
   };
@@ -135,7 +117,7 @@ export default function Login() {
             <Input type='password' prefixIcon={<LockOnIcon />} clearable={true} placeholder='请输入密码' />
           </FormItem>
           <FormItem>
-            <Button theme='primary' type='submit' block loading={loading}>
+            <Button theme='primary' type='submit' block>
               登录
             </Button>
           </FormItem>

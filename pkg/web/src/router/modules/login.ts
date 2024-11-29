@@ -12,6 +12,7 @@ export const useLoginRouteConfig = (): IRouter[] => {
       meta: {
         title: t('登录'),
         Icon: DashboardIcon,
+        hidden: true,
       },
       isFullPage: true,
 

@@ -3,6 +3,7 @@ import { buildRetryFetchBaseQuery } from './retryFetchBaseQuery';
 import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react';
 import { IBoardProps } from '../components/BoardChart';
 import queryString from 'query-string';
+import { useEffect, useState } from 'react';
 
 // updateUser
 interface updateUserInfoArgs extends IBoardProps {
@@ -55,8 +56,11 @@ const URI = 'http://10.1.60.127:9999/user';
 // const URI = '/req/user';
 
 // 获取token
-const token = JSON.parse(localStorage.getItem('userInfo'))?.Token;
-console.log('token', token);
+// const token = JSON.parse(localStorage.getItem('userInfo'))?.Token;
+// console.log('token', token);
+const getToken = () => {
+  return JSON.parse(localStorage.getItem('userInfo'))?.Token || '';
+};
 
 export const userApi = createApi({
   reducerPath: 'user',
@@ -86,7 +90,7 @@ export const userApi = createApi({
           params: params.toString(),
           headers: {
             'Content-Type': 'application/json',
-            Token: token || '',
+            Token: getToken() || '',
           },
         };
       },
@@ -158,7 +162,7 @@ export const userApi = createApi({
           params: params.toString(),
           headers: {
             'Content-Type': 'application/json',
-            Token: token || '',
+            Token: getToken() || '',
           },
         };
       },
@@ -183,7 +187,7 @@ export const userApi = createApi({
           params: params.toString(),
           headers: {
             'Content-Type': 'application/json',
-            Token: token || '',
+            Token: getToken() || '',
           },
         };
       },
@@ -210,7 +214,7 @@ export const userApi = createApi({
           headers: {
             // 'Content-Type': 'application/x-www-form-urlencoded',
             'Content-Type': 'application/json',
-            Token: token || '',
+            Token: getToken() || '',
           },
         };
       },
