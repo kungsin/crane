@@ -61,13 +61,13 @@ export default (params) => ({
         // Set to your craned address
         // target: 'http://localhost:9090',
         // target: 'http://10.1.60.127:9090',
-        target: 'http://10.1.60.129:31369',
+        target: 'http://10.1.60.129:31864',
         // target: 'http://dashboard.gocrane.io/',
         changeOrigin: true,
       },
       '/grafana': {
         // Set to your craned address
-        target: 'http://10.1.60.129:31789',
+        target: 'http://10.1.60.129:30389',
         // target: 'http://dashboard.gocrane.io/',
         // target: 'http://localhost:9090',
         changeOrigin: true,
