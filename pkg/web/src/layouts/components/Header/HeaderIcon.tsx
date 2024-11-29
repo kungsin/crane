@@ -34,7 +34,7 @@ export default memo(() => {
   };
   return (
     <Row align='middle' style={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-      <Col>
+      {/* <Col>
         <Dropdown
           className={Style.dropdown}
           trigger={'click'}
@@ -53,21 +53,21 @@ export default memo(() => {
             </span>
           </Button>
         </Dropdown>
-      </Col>
-      <Col>
+      </Col> */}
+      {/* <Col>
         <Button shape='square' size='large' variant='text' onClick={gotoGitHub}>
           <Popup content='代码仓库' placement='bottom' showArrow destroyOnClose>
             <LogoGithubIcon />
           </Popup>
         </Button>
-      </Col>
-      <Col>
+      </Col> */}
+      {/* <Col>
         <Button shape='square' size='large' variant='text' onClick={gotoWiki}>
           <Popup content='帮助文档' placement='bottom' showArrow destroyOnClose>
             <HelpCircleIcon />
           </Popup>
         </Button>
-      </Col>
+      </Col> */}
       <Col>
         {/* <Button shape='square' size='large' variant='text' onClick={() => dispatch(toggleSetting())}>
           <Popup content='页面设置' placement='bottom' showArrow destroyOnClose>
