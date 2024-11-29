@@ -32,7 +32,8 @@ COPY cmd cmd/
 
 # Build
 RUN env
-RUN go build -ldflags="${LDFLAGS}" -a -o ${PKGNAME} /go/src/github.com/gocrane/crane/cmd/${PKGNAME}/main.go
+# RUN go build -ldflags="${LDFLAGS}" -a -o ${PKGNAME} /go/src/github.com/gocrane/crane/cmd/${PKGNAME}/main.go
+RUN go build -ldflags="${LDFLAGS}" -a -o ${PKGNAME} /go/src/https://github.com/kungsin/crane/cmd/${PKGNAME}/main.go
 FROM alpine:3.13.5
 RUN apk add --no-cache tzdata
 WORKDIR /
