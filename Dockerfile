@@ -18,11 +18,11 @@ COPY go.sum go.sum
 # cache deps before building and copying source so that we don't need to re-download as much
 # and so that source changes don't invalidate our downloaded layer
 # 官方
-RUN if [[ "${BUILD}" != "CI" ]]; then go env -w GOPROXY=https://goproxy.io,direct; fi
+# RUN if [[ "${BUILD}" != "CI" ]]; then go env -w GOPROXY=https://goproxy.io,direct; fi
 # 阿里云
 # RUN if [[ "${BUILD}" != "CI" ]]; then go env -w GOPROXY=https://mirrors.aliyun.com/goproxy/,direct; fi
 # 七牛cdn
-# RUN if [[ "${BUILD}" != "CI" ]]; then go env -w GOPROXY=https://goproxy.cn,direct; fi
+RUN if [[ "${BUILD}" != "CI" ]]; then go env -w GOPROXY=https://goproxy.cn,direct; fi
 RUN go env
 RUN go mod download
 
