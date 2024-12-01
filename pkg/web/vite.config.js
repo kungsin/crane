@@ -61,7 +61,7 @@ export default (params) => ({
         // Set to your craned address
         // target: 'http://localhost:9090',
         // target: 'http://10.1.60.127:9090',
-        target: 'http://10.1.60.129:31864',
+        target: 'http://10.1.60.129:31890',
         // target: 'http://dashboard.gocrane.io/',
         changeOrigin: true,
       },

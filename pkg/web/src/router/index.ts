@@ -12,6 +12,7 @@ import { useSettingRouteConfig } from './modules/settings';
 import { useResourceProfile } from './modules/resourceProfile';
 import { useresourceRecommendRouteConfig } from './modules/resourceRecommend';
 import { useresourceForecasRouteConfig } from './modules/resourceForecas';
+import {useApplicationPriorityRouteConfig} from './modules/applicationPriority'
 import { getUserInfo } from 'utils/user';
 
 export interface IRouter {
@@ -68,6 +69,7 @@ export const useRouteConfig = () => {
   const resourceProfile = useResourceProfile();
   const resourceRecommend = useresourceRecommendRouteConfig();
   const resourceForecas = useresourceForecasRouteConfig();
+  const applicationPriority = useApplicationPriorityRouteConfig();
 
   // 是否为管理员
   if (IsAdmin) {
@@ -77,7 +79,8 @@ export const useRouteConfig = () => {
       ...resourceProfile,
       ...resourceRecommend,
       ...resourceForecas,
-      ...recommend,
+      ...applicationPriority,
+      // ...recommend,
       ...user,
       ...settings,
       ...otherRoutes,
@@ -92,7 +95,8 @@ export const useRouteConfig = () => {
       ...resourceProfile,
       ...resourceRecommend,
       ...resourceForecas,
-      ...recommend,
+      ...applicationPriority,
+      // ...recommend,
       ...otherRoutes,
       ...login,
     ];

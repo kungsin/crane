@@ -14,6 +14,13 @@ export const useResourceProfile = (): IRouter[] => {
       },
       children: [
         {
+          path: 'base-monitor',
+          Component: lazy(() => import('pages/ResourceProfile/baseMonitor/index')),
+          meta: {
+            title: t('基础监控'),
+          },
+        },
+        {
           path: 'cluster-overview',
           Component: lazy(() => import('pages/ResourceProfile/profile/index')),
           meta: {

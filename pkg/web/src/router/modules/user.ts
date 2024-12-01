@@ -15,6 +15,7 @@ export const useUserRouteConfig = (): IRouter[] => {
       },
       Component: lazy(() => import('pages/User')),
     },
+
     {
       path: 'user/add',
       Component: lazy(() => import('pages/User/AddUser')),
