@@ -10,6 +10,8 @@ import { useLoginUserMutation } from '../../services/mineApi';
 import { setUserInfo } from '../../utils/user';
 import { useDispatch } from 'react-redux';
 
+import Logo from '../../assets/logo.jpg'
+
 const { FormItem } = Form;
 
 export default function Login() {
@@ -77,7 +79,8 @@ export default function Login() {
 
   useEffect(() => {
     const timer = setTimeout(() => {
-      setSrc('https://tdesign.gtimg.com/demo/demo-image-1.png');
+      // setSrc('https://tdesign.gtimg.com/demo/demo-image-1.png');
+      setSrc(Logo);
     }, 100);
 
     return () => {

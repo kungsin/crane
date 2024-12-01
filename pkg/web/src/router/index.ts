@@ -10,7 +10,10 @@ import { useClusterRouteConfig } from './modules/cluster';
 import { useRecommendRouteConfig } from './modules/recommend';
 import { useSettingRouteConfig } from './modules/settings';
 import { useResourceProfile } from './modules/resourceProfile';
+import { useresourceRecommendRouteConfig } from './modules/resourceRecommend';
+import { useresourceForecasRouteConfig } from './modules/resourceForecas';
 import { getUserInfo } from 'utils/user';
+
 export interface IRouter {
   path: string;
   redirect?: string;
@@ -63,14 +66,36 @@ export const useRouteConfig = () => {
   const cluster = useClusterRouteConfig();
   const login = useLoginRouteConfig();
   const resourceProfile = useResourceProfile();
+  const resourceRecommend = useresourceRecommendRouteConfig();
+  const resourceForecas = useresourceForecasRouteConfig();
 
   // 是否为管理员
   if (IsAdmin) {
-    return [...routes, ...dashboard, ...resourceProfile, ...recommend, ...user, ...settings, ...otherRoutes, ...login];
+    return [
+      ...routes,
+      ...dashboard,
+      ...resourceProfile,
+      ...resourceRecommend,
+      ...resourceForecas,
+      ...recommend,
+      ...user,
+      ...settings,
+      ...otherRoutes,
+      ...login,
+    ];
   }
   // eslint-disable-next-line prettier/prettier, no-else-return
   else {
-    return [...routes, ...dashboard, ...resourceProfile, ...recommend, ...otherRoutes, ...login];
+    return [
+      ...routes,
+      ...dashboard,
+      ...resourceProfile,
+      ...resourceRecommend,
+      ...resourceForecas,
+      ...recommend,
+      ...otherRoutes,
+      ...login,
+    ];
   }
 
   // 全菜单

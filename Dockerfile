@@ -1,5 +1,3 @@
-ARG PKGNAME
-
 # Build the manager binary
 FROM golang:1.17.2-alpine as builder
 
@@ -9,21 +7,17 @@ ARG BUILD
 
 WORKDIR /go/src/github.com/gocrane/crane
 
-# Add build deps
-RUN apk add build-base
+# Add build deps, including git
+RUN apk add --no-cache build-base git
+
+# Set GOPROXY to a reliable source
+RUN go env -w GOPROXY=https://proxy.golang.org,direct
 
 # Copy the Go Modules manifests
 COPY go.mod go.mod
 COPY go.sum go.sum
-# cache deps before building and copying source so that we don't need to re-download as much
-# and so that source changes don't invalidate our downloaded layer
-# 官方
-# RUN if [[ "${BUILD}" != "CI" ]]; then go env -w GOPROXY=https://goproxy.io,direct; fi
-# 阿里云
-# RUN if [[ "${BUILD}" != "CI" ]]; then go env -w GOPROXY=https://mirrors.aliyun.com/goproxy/,direct; fi
-# 七牛cdn
-RUN if [[ "${BUILD}" != "CI" ]]; then go env -w GOPROXY=https://goproxy.cn,direct; fi
-RUN go env
+
+# Cache dependencies before building the source
 RUN go mod download
 
 # Copy the go source
@@ -31,9 +25,9 @@ COPY pkg pkg/
 COPY cmd cmd/
 
 # Build
-RUN env
-# RUN go build -ldflags="${LDFLAGS}" -a -o ${PKGNAME} /go/src/github.com/gocrane/crane/cmd/${PKGNAME}/main.go
-RUN go build -ldflags="${LDFLAGS}" -a -o ${PKGNAME} /go/src/https://github.com/kungsin/crane/cmd/${PKGNAME}/main.go
+RUN go build -ldflags="${LDFLAGS}" -a -o ${PKGNAME} /go/src/github.com/gocrane/crane/cmd/${PKGNAME}/main.go
+
+# Final image
 FROM alpine:3.13.5
 RUN apk add --no-cache tzdata
 WORKDIR /
