@@ -3,6 +3,7 @@ import { lazy } from 'react';
 import { SettingIcon } from 'tdesign-icons-react';
 import { useTranslation } from 'react-i18next';
 
+
 export const useSettingRouteConfig = (): IRouter[] => {
   const { t } = useTranslation();
   // return [
@@ -26,11 +27,19 @@ export const useSettingRouteConfig = (): IRouter[] => {
   return [
     {
       path: '/settings',
-      Component: lazy(() => import('pages/Settings/cluster/OverviewPanel')),
       meta: {
         title: t('集群管理'),
         Icon: SettingIcon,
       },
+      Component: lazy(() => import('pages/Settings/cluster/OverviewPanel')),
     },
+    // {
+    //   path: '/settings',
+    //   Component: lazy(() => import('pages/Settings/cluster/OverviewPanel')),
+    //   meta: {
+    //     title: t('集群管理'),
+    //     Icon: SettingIcon,
+    //   },
+    // },
   ];
 };

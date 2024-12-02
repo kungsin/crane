@@ -110,7 +110,8 @@ export const OverviewSearchPanel = React.memo(() => {
             }}
           />
         </div>
-        <div
+
+        {/* <div
           style={{
             display: 'flex',
             flexDirection: 'row',
@@ -152,7 +153,7 @@ export const OverviewSearchPanel = React.memo(() => {
               dispatch(insightAction.discount(value));
             }}
           />
-        </div>
+        </div> */}
       </Card>
     </div>
   );

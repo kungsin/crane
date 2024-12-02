@@ -33,6 +33,13 @@ export const useresourceRecommendRouteConfig = () => {
             title: t('副本数推荐'),
           },
         },
+        {
+          path: 'monitor',
+          Component: lazy(() => import('pages/resourceRecommend/WorkloadInsight/WorkloadInsightPanel')),
+          meta: {
+            title: t('监控'),
+          },
+        },
       ],
     },
   ];

@@ -222,7 +222,7 @@ export const SelectTable = () => {
                       dispatch(insightAction.selectedWorkloadType(record.row.spec.targetRef.kind));
                       dispatch(insightAction.selectedWorkload(record.row.spec.targetRef.name));
                       dispatch(insightAction.selectedNamespace(record.row.namespace));
-                      navigate('/cost/workload-insight');
+                      navigate('/resourceRecommend/monitor');
                     }}
                   >
                     {t('查看监控')}
@@ -274,7 +274,7 @@ export const SelectTable = () => {
                       dispatch(insightAction.selectedWorkloadType(record.row.spec.targetRef.kind));
                       dispatch(insightAction.selectedWorkload(record.row.spec.targetRef.name));
                       dispatch(insightAction.selectedNamespace(record.row.namespace));
-                      navigate('/cost/workload-insight');
+                      navigate('/resourceRecommend/monitor');
                     }}
                   >
                     {t('查看监控')}
