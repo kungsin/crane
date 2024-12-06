@@ -17,17 +17,18 @@ const DiskIoChart = () => {
     lines: [
       {
         name: 'read_bytes',
-        // query: `sum(rate(container_fs_writes_bytes_total[5m]) * on (node) group_left() max(kube_node_labels{label_beta_kubernetes_io_instance_type!="eklet", label_node_kubernetes_io_instance_type!~"eklet"}) by (node))`,
-        // 原有的
-        query: `sum(rate(node_disk_read_bytes_total[5m]) * on (instance) group_left() max(kube_node_labels{label_beta_kubernetes_io_instance_type!="eklet", label_node_kubernetes_io_instance_type!~"eklet"}) by (instance))`,
+        // query: `sum(rate(node_disk_read_bytes_total[5m]) * on (instance) group_left() max(kube_node_labels{label_beta_kubernetes_io_instance_type!="eklet", label_node_kubernetes_io_instance_type!~"eklet"}) by (instance))`,
+        query: `sum(rate(node_disk_read_bytes_total[5m]) )`,
       },
       {
         name: 'written_bytes',
-        query: `sum(rate(node_disk_written_bytes_total{device!~"dm-.*"}[5m]) * on (instance) group_left() max(kube_node_labels{label_beta_kubernetes_io_instance_type!="eklet", label_node_kubernetes_io_instance_type!~"eklet"}) by (instance))`,
+        // query: `sum(rate(node_disk_written_bytes_total{device!~"dm-.*"}[5m]) * on (instance) group_left() max(kube_node_labels{label_beta_kubernetes_io_instance_type!="eklet", label_node_kubernetes_io_instance_type!~"eklet"}) by (instance))`,
+        query: `sum(rate(node_disk_written_bytes_total{device!~"dm-.*"}[5m]) )`,
       },
       {
         name: 'io_time',
-        query: `sum(rate(node_disk_io_time_seconds_total{device!~"dm-.*"}[5m]) * on (instance) group_left() max(kube_node_labels{label_beta_kubernetes_io_instance_type!="eklet", label_node_kubernetes_io_instance_type!~"eklet"}) by (instance))`,
+        // query: `sum(rate(node_disk_io_time_seconds_total{device!~"dm-.*"}[5m]) * on (instance) group_left() max(kube_node_labels{label_beta_kubernetes_io_instance_type!="eklet", label_node_kubernetes_io_instance_type!~"eklet"}) by (instance))`,
+        query: `sum(rate(node_disk_io_time_seconds_total{device!~"dm-.*"}[5m]) )`,
       },
     ],
   };
