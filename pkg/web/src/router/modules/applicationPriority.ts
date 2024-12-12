@@ -14,9 +14,16 @@ export const useApplicationPriorityRouteConfig = () => {
       children: [
         {
           path: 'resourceForecas',
-          Component: lazy(() => import('pages/ApplicationPriority/costVisual')),
+          Component: lazy(() => import('pages/ApplicationPriority/applicationPriority')),
           meta: {
             title: t('应用优先级'),
+          },
+        },
+        {
+          path: 'resourceManage',
+          Component: lazy(() => import('pages/ApplicationPriority/manage')),
+          meta: {
+            title: t('应用管理'),
           },
         },
       ],

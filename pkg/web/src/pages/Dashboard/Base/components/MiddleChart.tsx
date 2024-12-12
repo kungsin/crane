@@ -53,12 +53,20 @@ sum(
           ]}
         ></SeriesLineChart>
       </Col>
-      <Col xs={12} xl={3}>
+      {/* <Col xs={12} xl={3}>
         <PieChart
           title={t('命名空间成本分布')}
           datePicker={true}
           step={'24h'}
           query={`sum(sum_over_time(namespace:container_cpu_usage_costs_hourly:sum_rate{}[{DURATION}m]) + sum_over_time(namespace:container_memory_usage_costs_hourly:sum_rate{}[{DURATION}m])) by (namespace) * (${craneDiscount}/100.0)`}
+        ></PieChart>
+      </Col> */}
+      <Col xs={12} xl={3}>
+        <PieChart
+          title={t('节点成本分布')}
+          datePicker={true}
+          step={'24h'}
+          query={`sum(sum_over_time(node:node_cpu_hourly_cost:avg{}[{DURATION}m]) + sum_over_time(node:node_ram_hourly_cost:avg{}[{DURATION}m])) by (node) * (${craneDiscount}/100.0)`}
         ></PieChart>
       </Col>
     </Row>

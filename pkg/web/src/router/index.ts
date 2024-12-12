@@ -81,6 +81,7 @@ export const useRouteConfig = () => {
       ...resourceForecas,
       ...applicationPriority,
       // ...recommend,
+      // ...cost,
       ...user,
       ...settings,
       ...otherRoutes,

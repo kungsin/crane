@@ -124,22 +124,18 @@ export const EditClusterModal = React.memo(() => {
     if (mode === 'create') {
       return (
         addClusterMutationOptions.isError && (
-          <Alert
-            message={getErrorMsg(addClusterMutationOptions.error)}
-            style={{ marginBottom: 0, marginTop: '1rem' }}
-            theme='error'
-          />
+          // message={getErrorMsg(addClusterMutationOptions.error)}
+
+          <Alert style={{ marginBottom: 0, marginTop: '1rem' }} theme='error' />
         )
       );
     }
     if (mode === 'update') {
       return (
         updateClusterMutationOptions.isError && (
-          <Alert
-            message={getErrorMsg(updateClusterMutationOptions.error)}
-            style={{ marginBottom: 0, marginTop: '1rem' }}
-            theme='error'
-          />
+          // message={getErrorMsg(updateClusterMutationOptions.error)}
+
+          <Alert style={{ marginBottom: 0, marginTop: '1rem' }} theme='error' />
         )
       );
     }

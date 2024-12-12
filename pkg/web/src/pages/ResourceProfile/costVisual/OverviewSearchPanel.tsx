@@ -31,10 +31,10 @@ export const OverviewSearchPanel = React.memo(() => {
 
   const namespaceOptions = React.useMemo(
     () => [
-      {
-        value: ALL_NAMESPACE_VALUE,
-        label: 'All',
-      },
+      // {
+      //   value: ALL_NAMESPACE_VALUE,
+      //   label: 'All',
+      // },
       ...(namespaceList?.data?.data?.items ?? []).map((namespace) => ({
         label: namespace,
         value: namespace,

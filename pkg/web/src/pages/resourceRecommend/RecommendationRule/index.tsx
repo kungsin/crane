@@ -36,6 +36,8 @@ export const SelectTable = () => {
   const filterResult = recommendationRuleList
     .filter((recommendationRule) => {
       console.log(recommendationRule);
+      console.log('ahh', filterParams.name);
+      console.log('ahh', recommendationRule.name);
       if (filterParams?.name) {
         return new RegExp(`${filterParams.name}.*`).test(recommendationRule.name);
       }
@@ -43,6 +45,13 @@ export const SelectTable = () => {
     })
     .filter((recommendationRule) => {
       if (filterParams?.recommenderType) return filterParams?.recommenderType === recommendationRule.recommenderType;
+      return true;
+    })
+    .filter((recommendationRule) => {
+      // 单独的筛选条件：筛选 recommendationRule.name, 隐藏不需要显示的
+      if (recommendationRule.name) {
+        return recommendationRule.name !== "persistentvolumes-rule" && recommendationRule.name !== "services-rule";
+      }
       return true;
     });
 

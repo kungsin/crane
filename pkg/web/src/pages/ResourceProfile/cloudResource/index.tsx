@@ -4,7 +4,7 @@ import React, { memo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useFetchDashboardDetailQuery, useFetchDashboardListQuery } from 'services/grafanaApi';
 import { Row } from 'tdesign-react';
-
+// import { OverviewSearchPanel } from './OverviewSearchPanel';
 export default memo(() => {
   const { t } = useTranslation();
 
@@ -12,7 +12,7 @@ export default memo(() => {
   console.log('craneUrl', craneUrl);
   const dashboardList = useFetchDashboardListQuery({ craneUrl }, { skip: !craneUrl });
   console.log('dashboardList', dashboardList);
-  const selectedDashboard = (dashboardList?.data ?? []).find((dashboard: any) => dashboard.uid === 'CloudResource');
+  const selectedDashboard = (dashboardList?.data ?? []).find((dashboard: any) => dashboard.uid === 'CloudResource2');
   console.log('selectedDashboard', selectedDashboard);
   const dashboardDetail = useFetchDashboardDetailQuery(
     { dashboardUid: selectedDashboard?.uid },
@@ -21,6 +21,7 @@ export default memo(() => {
   console.log('dashboardDetail', dashboardDetail);
   return (
     <>
+      {/* <OverviewSearchPanel /> */}
       <Row style={{ marginTop: 10 }}>
         {!selectedDashboard?.uid || dashboardDetail?.data?.dashboard?.panels?.length === 0 ? (
           <span>{t('暂无数据')}</span>

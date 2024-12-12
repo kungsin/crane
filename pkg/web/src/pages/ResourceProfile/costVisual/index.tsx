@@ -17,7 +17,7 @@ export default memo(() => {
 
   useEffect(() => {
     if (dashboardList.length > 0) {
-      const selected = dashboardList.find((dashboard: any) => dashboard.uid === 'CostVisual');
+      const selected = dashboardList.find((dashboard: any) => dashboard.uid === 'CostVisual2');
       setSelectedDashboard(selected);
     }
   }, [dashboardList]);

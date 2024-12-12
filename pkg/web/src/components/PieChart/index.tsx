@@ -31,7 +31,8 @@ const fetchPieData = (craneUrl: string, title: string, timeDateRangePicker: stri
   if (isError) return {};
   const result: any = {};
   data?.data?.map((namesapce) => {
-    const namespaceName = namesapce.metric.namespace;
+    // const namespaceName = namesapce.metric.namespace;
+    const namespaceName = namesapce.metric.node;
     (namesapce?.values ?? []).map((value) => {
       const timestamp = dayjs(value[0]).format('MM-DD');
       // const timestamp = value[0];

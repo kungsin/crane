@@ -76,11 +76,9 @@ export const OverviewTablePanel = memo(() => {
         <div>
           {t('确认删除集群')}: {deleteDialog.clusterName ?? ''}
           {deleteClusterOptions.isError && (
-            <Alert
-              message={getErrorMsg(deleteClusterOptions.error)}
-              style={{ marginBottom: 0, marginTop: '1rem' }}
-              theme='error'
-            />
+            // message={getErrorMsg(deleteClusterOptions.error)}
+
+            <Alert style={{ marginBottom: 0, marginTop: '1rem' }} theme='error' />
           )}
         </div>
       </Dialog>

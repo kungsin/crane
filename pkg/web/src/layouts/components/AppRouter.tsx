@@ -54,7 +54,6 @@ const renderRoutes: TRenderRoutes = (routes, parentPath = '', breadcrumb = []) =
         />
       );
     }
-
     // 无路由菜单
     return children ? renderRoutes(children, currentPath, currentBreadcrumb) : null;
   });

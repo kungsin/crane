@@ -14,7 +14,7 @@ const DashBoard = () => (
     <CpuChart />
     <MemoryChart />
     <NetworkIoChart />
-    <GpuChart />
+    {/* <GpuChart /> */}
     <DiskIoChart />
   </div>
 );

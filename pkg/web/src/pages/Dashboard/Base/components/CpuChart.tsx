@@ -16,10 +16,12 @@ const CpuChart = () => {
     lines: [
       {
         name: 'capacity',
+        // name: '容量',
         query: `SUM(kube_node_status_capacity{resource="cpu", unit="core"}  * on (node) group_left() max(kube_node_labels{label_beta_kubernetes_io_instance_type!="eklet", label_node_kubernetes_io_instance_type!~"eklet"}) by (node))`,
       },
       {
         name: 'request',
+        // name: '请求',
         query: `SUM(kube_pod_container_resource_requests{resource="cpu", unit="core"}  * on (node) group_left() max(kube_node_labels{label_beta_kubernetes_io_instance_type!="eklet", label_node_kubernetes_io_instance_type!~"eklet"}) by (node))`,
       },
       {
@@ -28,6 +30,7 @@ const CpuChart = () => {
       },
       {
         name: 'usage',
+        // name: '使用',
         query: `sum(label_replace(irate(container_cpu_usage_seconds_total{id="/"}[5m]), "node", "$1", "instance",  "(^[^:]+)") * on (node) group_left() max(kube_node_labels{label_beta_kubernetes_io_instance_type!~"eklet", label_node_kubernetes_io_instance_type!~"eklet"}) by (node))`,
       },
     ],

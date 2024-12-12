@@ -75,6 +75,7 @@ export default memo((props: { showMenu?: boolean }) => {
         console.log('显示显示');
         // eslint-disable-next-line @typescript-eslint/ban-ts-comment
         // @ts-ignore
+
         dispatch(insightAction.selectedClusterId(filteredClusters[0].id));
       }
 
@@ -158,6 +159,27 @@ export default memo((props: { showMenu?: boolean }) => {
       </Row>
     );
   }
+
+  // 自定义修改，获取折扣
+  console.log('dispatch', selectedClusterId);
+  console.log('Clusters', clusterList?.data?.data?.items);
+  useEffect(() => {
+    console.log('dispatch', selectedClusterId);
+    console.log('Clusters', clusterList?.data?.data?.items);
+
+    // 检查 selectedClusterId 是否存在
+    if (selectedClusterId) {
+      // 获取选中的集群数据
+      const selectedCluster = clusterList?.data?.data?.items?.find((item) => item.id === selectedClusterId);
+
+      // 检查 selectedCluster 是否存在
+      if (selectedCluster) {
+        // 将选中的集群数据存储到缓存中
+        console.log('selectedCluster', selectedCluster.discount);
+        dispatch(insightAction.discount(selectedCluster.discount));
+      }
+    }
+  }, [selectedClusterId, clusterList]);
 
   return (
     <Header className={Style.panel}>

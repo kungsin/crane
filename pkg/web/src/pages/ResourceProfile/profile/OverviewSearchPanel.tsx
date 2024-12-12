@@ -64,7 +64,21 @@ export const OverviewSearchPanel = React.memo(() => {
     },
     { skip: !selectedNamespace },
   );
-
+  // const workloadTypeOptions: any[] = React.useMemo(() => {
+  //   // 使用 _.unionBy 去重
+  //   const uniqueOptions = _.unionBy(
+  //     (workloadTypeList.data?.data ?? []).map((data: any) => ({
+  //       label: data.owner_kind,
+  //       value: data.owner_kind,
+  //     })),
+  //     'value',
+  //   );
+  //   // 手动添加 'All' 选项
+  //   return [
+  //     { label: 'All', value: 'All' }, // 确保 'All' 始终在第一个位置
+  //     ...uniqueOptions,
+  //   ];
+  // }, [workloadTypeList.data]);
   const workloadTypeOptions: any[] = React.useMemo(
     () =>
       _.unionBy(
@@ -193,7 +207,7 @@ export const OverviewSearchPanel = React.memo(() => {
             }}
           />
         </div>
-        <div
+        {/* <div
           style={{
             display: 'flex',
             flexDirection: 'row',
@@ -212,7 +226,7 @@ export const OverviewSearchPanel = React.memo(() => {
               dispatch(insightAction.discount(value));
             }}
           />
-        </div>
+        </div> */}
         <div
           style={{
             display: 'flex',
