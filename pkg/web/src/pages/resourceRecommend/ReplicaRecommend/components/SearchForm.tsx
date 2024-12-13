@@ -1,4 +1,4 @@
-import React, { memo } from 'react';
+import React, { memo, useEffect, useState } from 'react';
 import { Button, Col, Form, Input, Row, Select } from 'tdesign-react';
 import _ from 'lodash';
 import { useTranslation } from 'react-i18next';
@@ -12,19 +12,42 @@ export type SearchFormProps = {
 
 const SearchForm: React.FC<SearchFormProps> = ({ recommendation, setFilterParams }) => {
   const { t } = useTranslation();
+
+  // 初始化状态
+  const [filteredNameSpaceOptions, setFilteredNameSpaceOptions] = useState([]);
+
   const onValuesChange = (changeValues: any, allValues: any) => {
     if (!allValues.name) delete allValues.name;
     if (!allValues.namespace) delete allValues.namespace;
     if (!allValues.workloadType) delete allValues.workloadType;
     setFilterParams(allValues);
+
+    // 根据 namespacePriority 更新 nameSpaceOptions
+    if (changeValues.namespacePriority === 0 || changeValues.namespacePriority === 3) {
+      setFilteredNameSpaceOptions(nameSpaceOptions);
+    } else {
+      setFilteredNameSpaceOptions([]);
+    }
   };
 
-  const onReset = () => setFilterParams({});
+  const onReset = () => {
+    setFilterParams({});
+    setFilteredNameSpaceOptions(nameSpaceOptions); // 重置时显示所有选项
+  };
 
   const nameSpaceOptions = _.uniqBy(
     recommendation.map((r: { namespace: any; label: any }) => ({ value: r.namespace, label: r.namespace })),
     'value',
   );
+
+  const nameSpacePriorityOptions = [
+    { label: 'All', value: 0 },
+    { label: '1', value: 1 },
+    { label: '2', value: 2 },
+    { label: '3', value: 3 },
+    { label: '4', value: 4 },
+    { label: '5', value: 5 },
+  ];
 
   const workloadTypeOptions = _.uniqBy(
     recommendation.map((r: { workloadType: any }) => ({ value: r.workloadType, label: r.workloadType })),
@@ -33,7 +56,7 @@ const SearchForm: React.FC<SearchFormProps> = ({ recommendation, setFilterParams
 
   return (
     <div className='list-common-table-query'>
-      <Form onValuesChange={onValuesChange} onReset={onReset} labelWidth={80} layout={'inline'}>
+      <Form onValuesChange={onValuesChange} onReset={onReset} labelWidth={130} layout={'inline'}>
         <Row>
           <Col>
             <Row>
@@ -43,31 +66,46 @@ const SearchForm: React.FC<SearchFormProps> = ({ recommendation, setFilterParams
                 </FormItem>
               </Col>
               <Col>
-                <FormItem label={t('Namespace')} name='namespace' style={{ margin: '0px 10px' }}>
+                <FormItem label={t('Namespace优先级')} name='namespacePriority' style={{ margin: '0px 10px' }}>
                   <Select
-                    options={nameSpaceOptions}
-                    placeholder={t('请选择Namespace')}
+                    defaultValue={'1'}
+                    options={nameSpacePriorityOptions}
+                    placeholder={t('请选择Namespace优先级')}
                     filterable
-                    style={{ margin: '0px 20px' }}
+                    style={{ margin: '0px 0px' }}
                   />
                 </FormItem>
               </Col>
               <Col>
-                <FormItem label={t('工作负载类型')} name='workloadType'>
+                <FormItem label={t('Namespace')} name='namespace' style={{ margin: '0px 10px' }}>
                   <Select
-                    options={workloadTypeOptions}
-                    placeholder={t('请选择工作负载类型')}
+                    options={filteredNameSpaceOptions}
+                    placeholder={t('请选择Namespace')}
                     filterable
-                    style={{ margin: '0px 20px' }}
+                    style={{ margin: '0px 0px' }}
                   />
                 </FormItem>
               </Col>
             </Row>
           </Col>
           <Col>
-            <Button type='reset' variant='base' theme='default'>
-              {t('重置')}
-            </Button>
+            <Row>
+              <Col>
+                <FormItem label={t('工作负载类型')} name='workloadType'>
+                  <Select
+                    options={workloadTypeOptions}
+                    placeholder={t('请选择工作负载类型')}
+                    filterable
+                    style={{ margin: '0px 0px' }}
+                  />
+                </FormItem>
+              </Col>
+              <Col>
+                <Button type='reset' variant='base' theme='default'>
+                  {t('重置')}
+                </Button>
+              </Col>
+            </Row>
           </Col>
         </Row>
       </Form>

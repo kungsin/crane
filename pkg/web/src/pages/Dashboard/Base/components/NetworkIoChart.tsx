@@ -12,6 +12,7 @@ const NetworkIoChart = () => {
   const item: ISeriesLineChart = {
     title: t('网络 IO 使用'),
     subTitle: '(bytes/second)',
+    // subTitle: '(GB)',
     datePicker: true,
     step: '1h',
     xAxis: { type: 'time' },

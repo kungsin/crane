@@ -35,7 +35,7 @@ export const useresourceRecommendRouteConfig = () => {
         },
         {
           path: 'idleNode',
-          Component: lazy(() => import('pages/Recommend/IdleNode')),
+          Component: lazy(() => import('pages/resourceRecommend/IdleNode')),
           meta: {
             title: t('闲置节点'),
           },

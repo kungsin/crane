@@ -48,6 +48,7 @@ export const SelectTable = () => {
   // const recommendation = data?.data?.items || [];
 
   let recommendation: any[];
+  // console.log('recommendation', recommendation)
   if (isSuccess) {
     recommendation = data?.data?.items || [];
   } else {
@@ -97,11 +98,12 @@ export const SelectTable = () => {
     }
     return yaml;
   };
+  console.log('recommendation', recommendation)
 
   return (
     <>
       <Row>
-        <Button onClick={() => navigate('/recommend/recommendationRule')}>{t('查看推荐规则')}</Button>
+        <Button onClick={() => navigate('/resourceRecommend/recommendationRule')}>{t('查看推荐规则')}</Button>
       </Row>
       <Divider></Divider>
       <Row justify='start' style={{ marginBottom: '20px' }}>

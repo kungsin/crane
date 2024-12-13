@@ -100,7 +100,7 @@ export const SelectTable = () => {
   return (
     <>
       <Row>
-        <Button onClick={() => navigate('/recommend/recommendationRule')}>{t('查看推荐规则')}</Button>
+        <Button onClick={() => navigate('/resourceRecommend/recommendationRule')}>{t('查看推荐规则')}</Button>
       </Row>
       <Divider></Divider>
       <Row justify='start' style={{ marginBottom: '20px' }}>
