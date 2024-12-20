@@ -14,10 +14,11 @@ import {
 import { useNavigate } from 'react-router-dom';
 import JsYaml from 'js-yaml';
 import { useTranslation } from 'react-i18next';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { Prism } from '@mantine/prism';
 import { copyToClipboard } from '../../../utils/copyToClipboard';
 import { insightAction } from '../../../modules/insightSlice';
+import { useGetNamespaceListQuery } from '../../../services/mineApi';
 
 const Editor = React.lazy(() => import('components/common/Editor'));
 
@@ -35,14 +36,22 @@ export const SelectTable = () => {
     namespace: undefined,
     workloadType: undefined,
     name: undefined,
+    namespacePriority: undefined,
   });
   const craneUrl: any = useCraneUrl();
   const dashboardControl: any = useDashboardControl();
+  const clusterId = useSelector((state) => state.insight.selectedClusterId);
 
   const { data, isFetching, isError, isSuccess, error } = useFetchRecommendationListQuery({
     craneUrl,
     recommendationType: RecommendationType.Replicas,
   });
+
+  // 获取命名空间列表的 React Query
+  const { data: namespaceList } = useGetNamespaceListQuery({ clusterId, pageSize: 9999 }, { skip: !clusterId });
+
+  console.log('namespaceList', namespaceList?.data);
+
   // const recommendation = data?.data?.items || [];
 
   let recommendation: any[];
@@ -52,6 +61,28 @@ export const SelectTable = () => {
     recommendation = [];
     if (isError) MessagePlugin.error(`${error.status} ${error.error}`);
   }
+
+  console.log('recommendation', recommendation);
+
+  // 将recommendation的写入优先级
+  // 创建一个以 namespace 为键的映射，方便快速查找
+  const namespacePriorityMap = namespaceList?.data.reduce((map, item) => {
+    map[item.Namespace] = item.Priority;
+    return map;
+  }, {});
+
+  // 遍历数组 a，根据 namespace 查找 Priority
+  const result = recommendation.map((item) => {
+    const namespace = item.namespace;
+    const priority = namespacePriorityMap[namespace] || 3; // 如果找不到，默认设置为 3
+    return {
+      ...item,
+      priority: priority,
+    };
+  });
+
+  console.log('result', result);
+  recommendation = result;
 
   const filterResult = recommendation
     .filter((recommendation) => {
@@ -67,8 +98,17 @@ export const SelectTable = () => {
     .filter((recommendation) => {
       if (filterParams?.namespace) return filterParams?.namespace === recommendation?.namespace;
       return true;
+    })
+    .filter((recommendation) => {
+      // 新增优先级筛选条件
+      if (filterParams?.namespacePriority && filterParams?.namespacePriority != 0) {
+        return recommendation?.priority === filterParams.namespacePriority;
+      }
+      return true;
     });
 
+  console.log('filterResult', filterResult);
+  console.log('filterParams', filterParams);
   function onSelectChange(value: (string | number)[]) {
     setSelectedRowKeys(value);
   }

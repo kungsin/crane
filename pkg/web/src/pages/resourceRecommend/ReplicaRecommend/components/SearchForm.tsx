@@ -2,7 +2,8 @@ import React, { memo, useEffect, useState } from 'react';
 import { Button, Col, Form, Input, Row, Select } from 'tdesign-react';
 import _ from 'lodash';
 import { useTranslation } from 'react-i18next';
-
+import { useGetNamespaceListQuery } from '../../../../services/mineApi';
+import { useSelector } from 'react-redux';
 const { FormItem } = Form;
 
 export type SearchFormProps = {
@@ -12,26 +13,54 @@ export type SearchFormProps = {
 
 const SearchForm: React.FC<SearchFormProps> = ({ recommendation, setFilterParams }) => {
   const { t } = useTranslation();
-
+  const clusterId = useSelector((state) => state.insight.selectedClusterId);
   // 初始化状态
   const [filteredNameSpaceOptions, setFilteredNameSpaceOptions] = useState([]);
+  const [namespacePriority, setNamespacePriority] = useState(0);
+
+  // 获取命名空间列表的 React Query
+  const { data: namespaceList } = useGetNamespaceListQuery(
+    { clusterId, pageSize: 9999, priority: namespacePriority == 0 ? '' : namespacePriority },
+    { skip: !clusterId },
+  );
+  // 当 namespacePriority 变化时，更新 filteredNameSpaceOptions
+  useEffect(() => {
+    console.log('namespaceList', namespaceList?.data);
+    if (namespaceList?.data) {
+      const options = namespaceList?.data.map((ns) => ({
+        value: ns.Namespace,
+        label: ns.Namespace,
+      }));
+      setFilteredNameSpaceOptions(options);
+    }
+  }, [namespaceList, namespacePriority]);
+
+  const [renderKey, setRenderKey] = useState(0);
 
   const onValuesChange = (changeValues: any, allValues: any) => {
+    console.log('changeValues', changeValues);
+    console.log('allValues', allValues);
+    // 更新 namespacePriority 状态
+    if (changeValues.namespacePriority !== undefined) {
+      setNamespacePriority(changeValues.namespacePriority);
+
+      // 如果切换了优先级，且 namespace 有选中值，则清空 namespace
+      if (allValues.namespace) {
+        allValues.namespace = undefined; // 清空 namespace 的选中值
+        setRenderKey(renderKey + 1);
+        allValues.namespacePriority = changeValues.namespacePriority;
+      }
+    }
     if (!allValues.name) delete allValues.name;
     if (!allValues.namespace) delete allValues.namespace;
     if (!allValues.workloadType) delete allValues.workloadType;
+    if (!allValues.namespacePriority) delete allValues.namespacePriority;
     setFilterParams(allValues);
-
-    // 根据 namespacePriority 更新 nameSpaceOptions
-    if (changeValues.namespacePriority === 0 || changeValues.namespacePriority === 3) {
-      setFilteredNameSpaceOptions(nameSpaceOptions);
-    } else {
-      setFilteredNameSpaceOptions([]);
-    }
   };
 
   const onReset = () => {
     setFilterParams({});
+    setNamespacePriority(0);
     setFilteredNameSpaceOptions(nameSpaceOptions); // 重置时显示所有选项
   };
 
@@ -55,8 +84,15 @@ const SearchForm: React.FC<SearchFormProps> = ({ recommendation, setFilterParams
   );
 
   return (
+    // <div className='list-common-table-query' key={renderKey}>
     <div className='list-common-table-query'>
-      <Form onValuesChange={onValuesChange} onReset={onReset} labelWidth={130} layout={'inline'}>
+      <Form
+        onValuesChange={onValuesChange}
+        onReset={onReset}
+        labelWidth={130}
+        layout={'inline'}
+        initialValues={{ namespacePriority: 0, namespace: undefined }}
+      >
         <Row>
           <Col>
             <Row>
@@ -66,9 +102,10 @@ const SearchForm: React.FC<SearchFormProps> = ({ recommendation, setFilterParams
                 </FormItem>
               </Col>
               <Col>
+                {/* {namespacePriority} */}
                 <FormItem label={t('Namespace优先级')} name='namespacePriority' style={{ margin: '0px 10px' }}>
                   <Select
-                    defaultValue={'1'}
+                    value={namespacePriority}
                     options={nameSpacePriorityOptions}
                     placeholder={t('请选择Namespace优先级')}
                     filterable

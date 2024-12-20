@@ -98,8 +98,8 @@ export default memo((props: IMenuProps) => {
   const globalState = useAppSelector(selectGlobal);
 
   const { version } = globalState;
-  // const bottomText = globalState.collapsed ? version : `Crane Dashboard ${version}`;
-  const bottomText = globalState.collapsed ? version : `China unicom Dashboard ${version}`;
+  const bottomText = globalState.collapsed ? version : `Crane Dashboard ${version}`;
+  // const bottomText = globalState.collapsed ? version : `China unicom Dashboard ${version}`;
   // 如果当前路径是 '/login'，则不显示 Menu
   // if (location.pathname === '/login') {
   //   return null;

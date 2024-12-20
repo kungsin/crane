@@ -33,31 +33,44 @@ interface UserInfoArgs extends IBoardProps {
   id?: any;
 }
 
-interface UserInfoResult {
-  error: string;
-  data: any; // 根据实际返回的数据结构定义
-}
-
 // userLogin
 interface UserLoginArgs extends IBoardProps {
   username: string;
   password: string;
 }
 
+// namespce
+interface NamespaceInfoArgs extends IBoardProps {
+  pageNum?: any;
+  pageSize?: any;
+  namespace?: any;
+  clusterId?: any;
+  priority?: any;
+}
+interface updateNamespaceInfoArgs extends IBoardProps {
+  clusterId?: any;
+  body?: any;
+}
+// result
+
+interface NamespaceInfoResult {
+  error: string;
+  data: any; // 根据实际返回的数据结构定义
+}
 interface UserLoginResult {
   error?: string;
   token?: string; // 假设返回一个 token
   data?: any; // 根据实际返回的数据结构定义
 }
 
-// const URI = 'http://192.168.3.92:9999/user';
-// const URI = '/req/user';
-const URI = 'http://10.1.60.127:9999/user';
-// const URI = '/req/user';
+interface UserInfoResult {
+  error: string;
+  data: any; // 根据实际返回的数据结构定义
+}
+const URI1 = 'http://10.1.60.127:9999/user';
+const URI2 = 'http://10.1.60.127:9999/namespace';
 
 // 获取token
-// const token = JSON.parse(localStorage.getItem('userInfo'))?.Token;
-// console.log('token', token);
 const getToken = () => {
   return JSON.parse(localStorage.getItem('userInfo'))?.Token || '';
 };
@@ -79,7 +92,7 @@ export const userApi = createApi({
       query: (args) => {
         // const url = `${args.craneUrl}${URI}/list`;
         // const url = `${URI}/list?pageNum=${args.pageNum}&pageSize=${args.pageSize}`;
-        const url = `${URI}/list`;
+        const url = `${URI1}/list`;
         const params = new URLSearchParams({
           pageNum: args.pageNum,
           pageSize: args.pageSize,
@@ -110,7 +123,7 @@ export const userApi = createApi({
         });
 
         return {
-          url: `${URI}/login`,
+          url: `${URI1}/login`,
           method: 'post',
           body: params.toString(),
           headers: {
@@ -129,7 +142,7 @@ export const userApi = createApi({
     registerUser: builder.mutation<UserInfoResult, UserInfoArgs>({
       invalidatesTags: ['user'],
       query: (args) => {
-        const url = `${URI}/register`;
+        const url = `${URI}1/register`;
         return {
           url,
           method: 'post',
@@ -148,7 +161,7 @@ export const userApi = createApi({
     updateUserStatus: builder.mutation<UserInfoResult, UserStatusArgs>({
       invalidatesTags: ['user'],
       query: (args) => {
-        const url = `${URI}/updateStatus`;
+        const url = `${URI1}/updateStatus`;
 
         const params = new URLSearchParams({
           id: args.id,
@@ -177,7 +190,7 @@ export const userApi = createApi({
       query: (args) => {
         // const url = `${args.craneUrl}${URI}/list`;
         // const url = `${URI}/list?pageNum=${args.pageNum}&pageSize=${args.pageSize}`;
-        const url = `${URI}/info`;
+        const url = `${URI1}/info`;
         const params = new URLSearchParams({
           id: args.id,
         });
@@ -207,7 +220,60 @@ export const userApi = createApi({
         });
 
         return {
-          url: `${URI}/updateInfo`,
+          url: `${URI1}/updateInfo`,
+          method: 'put',
+          params: params.toString(),
+          body: args.body,
+          headers: {
+            // 'Content-Type': 'application/x-www-form-urlencoded',
+            'Content-Type': 'application/json',
+            Token: getToken() || '',
+          },
+        };
+      },
+
+      transformResponse: (res: UserInfoResult, _meta, _arg: updateUserInfoArgs) => {
+        // 根据实际需求处理返回的数据
+        return res;
+      },
+    }),
+
+    // 命名空间
+    // 查询命名空间
+    getNamespaceList: builder.query<NamespaceInfoResult, NamespaceInfoArgs>({
+      providesTags: ['user'],
+      query: (args) => {
+        // const url = `${args.craneUrl}${URI}/list`;
+        // const url = `${URI}/list?pageNum=${args.pageNum}&pageSize=${args.pageSize}`;
+        const url = `${URI2}/getNamespace`;
+        const params = new URLSearchParams({
+          ...args,
+        });
+        return {
+          url,
+          method: 'get',
+          params: params.toString(),
+          headers: {
+            'Content-Type': 'application/json',
+            Token: getToken() || '',
+          },
+        };
+      },
+      transformResponse: (res: UserInfoResult, _meta, _arg: UserInfoArgs) => {
+        // 根据实际需求处理返回的数据
+        return res;
+      },
+    }),
+    updateNamespaceInfo: builder.mutation<NamespaceInfoResult, updateNamespaceInfoArgs>({
+      invalidatesTags: ['user'],
+
+      query: (args) => {
+        const params = new URLSearchParams({
+          ...args,
+        });
+
+        return {
+          url: `${URI2}/updateNamespace`,
           method: 'put',
           params: params.toString(),
           body: args.body,
@@ -234,4 +300,6 @@ export const {
   useUpdateUserStatusMutation,
   useGetUserInfoQuery,
   useUpdateUserInfoMutation,
+  useGetNamespaceListQuery,
+  useUpdateNamespaceInfoMutation,
 } = userApi;
