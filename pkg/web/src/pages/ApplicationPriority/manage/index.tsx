@@ -2,12 +2,13 @@ import CommonStyle from '../../../styles/common.module.less';
 import './index.module.less';
 import classnames from 'classnames';
 import React, { memo, useState } from 'react';
-import { Table, Radio, Space, Tag, Button, InputNumber, MessagePlugin } from 'tdesign-react';
+import { Table, Radio, Space, Tag, Button, InputNumber, MessagePlugin, Tooltip } from 'tdesign-react';
 import type { TableProps } from 'tdesign-react';
 
 import { useFetchNamespaceListQuery } from '../../../services/namespaceApi';
 import { useGetNamespaceListQuery, useUpdateNamespaceInfoMutation } from '../../../services/mineApi';
 import { useSelector } from 'react-redux';
+import { HelpCircleIcon, HelpIcon } from 'tdesign-icons-react';
 
 // const total = 28;
 
@@ -85,7 +86,15 @@ export function SelectTable() {
           { colKey: 'Namespace', title: '应用' },
           {
             colKey: 'Priority',
-            title: '优先级',
+            // title: '优先级',
+            title: () => (
+              <span style={{ display: 'flex', alignItems: 'center' }}>
+                优先级
+                <Tooltip content='优先级 1为最高, 5为最低' destroyOnClose showArrow theme='default'>
+                  <HelpCircleIcon style={{ marginRight: 5 }}></HelpCircleIcon>
+                </Tooltip>
+              </span>
+            ),
             // eslint-disable-next-line arrow-body-style
             cell: ({ row }) => {
               return (
@@ -162,7 +171,7 @@ export function SelectTable() {
       <Button theme='primary' variant='base' onClick={() => updateNamespace(clusterId, result)}>
         数据同步
       </Button>
-      <Space direction='vertical'>{table}</Space>;
+      <Space direction='vertical'>{table}</Space>
     </>
   );
 }

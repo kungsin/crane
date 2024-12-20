@@ -15,7 +15,8 @@ const Footer = () => {
 
   return (
     <TFooter>
-      <Row justify='center'>{t('Thanks for all the crane contributors.')}</Row>
+      {/* <Row justify='center'>{t('Thanks for all the crane contributors.')}</Row> */}
+      <Row justify='center'></Row>
     </TFooter>
   );
 };
