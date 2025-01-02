@@ -89,7 +89,7 @@ const SearchForm: React.FC<SearchFormProps> = ({ recommendation, setFilterParams
       <Form
         onValuesChange={onValuesChange}
         onReset={onReset}
-        labelWidth={120}
+        labelWidth={80}
         layout={'inline'}
         initialValues={{ namespacePriority: 0, namespace: undefined }}
       >
@@ -127,7 +127,7 @@ const SearchForm: React.FC<SearchFormProps> = ({ recommendation, setFilterParams
           </Col>
           <Col>
             <Row>
-              <Col>
+              {/* <Col>
                 <FormItem label={t('工作负载类型')} name='workloadType'>
                   <Select
                     options={workloadTypeOptions}
@@ -136,7 +136,7 @@ const SearchForm: React.FC<SearchFormProps> = ({ recommendation, setFilterParams
                     style={{ margin: '0px 0px' }}
                   />
                 </FormItem>
-              </Col>
+              </Col> */}
               <Col>
                 <Button type='reset' variant='base' theme='default'>
                   {t('重置')}

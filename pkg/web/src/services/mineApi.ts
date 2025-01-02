@@ -32,6 +32,13 @@ interface UserInfoArgs extends IBoardProps {
   pageSize?: any;
   id?: any;
 }
+// userRegister
+interface userRegisterArgs extends IBoardProps {
+  username?: any;
+  password?: any;
+  confirmPassword?: any;
+  phoneNumber?: any;
+}
 
 // userLogin
 interface UserLoginArgs extends IBoardProps {
@@ -139,15 +146,23 @@ export const userApi = createApi({
       },
     }),
     // 注册用户
-    registerUser: builder.mutation<UserInfoResult, UserInfoArgs>({
+    registerUser: builder.mutation<UserInfoResult, userRegisterArgs>({
       invalidatesTags: ['user'],
       query: (args) => {
-        const url = `${URI}1/register`;
+        const url = `${URI1}/register`;
+        const params = new URLSearchParams({
+          username: args.username,
+          password: args.password,
+          confirmPassword: args.password,
+          phoneNumber: args.phoneNumber,
+        });
         return {
           url,
           method: 'post',
+          body: params.toString(),
           headers: {
-            'Content-Type': 'application/json',
+            'Content-Type': 'application/x-www-form-urlencoded',
+            // 'Content-Type': 'application/json',
           },
         };
       },

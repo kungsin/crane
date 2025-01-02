@@ -1,5 +1,5 @@
 import CommonStyle from '../../../styles/common.module.less';
-import SearchForm from '../ReplicaRecommend/components/SearchForm';
+import SearchForm from './components/SearchForm';
 import './index.module.less';
 import classnames from 'classnames';
 import { useCraneUrl, useDashboardControl } from 'hooks';
@@ -53,7 +53,7 @@ export const SelectTable = () => {
 
   const { data, isFetching, isSuccess, isError, error } = useFetchRecommendationListQuery({
     craneUrl,
-    recommendationType: RecommendationType.Resource,
+    recommendationType: RecommendationType.Service,
   });
   // const recommendation = data?.data?.items || [];
 
@@ -184,49 +184,49 @@ export const SelectTable = () => {
               );
             },
           },
-          {
-            title: t('当前资源(容器/CPU/Memory)'),
-            colKey: 'status.currentInfo',
-            cell({ row }) {
-              if (typeof row.status.currentInfo === 'string') {
-                const containers = JSON.parse(row?.status?.currentInfo).spec?.template?.spec?.containers || [];
-                if (containers.length > 0) {
-                  return (
-                    <Space direction='vertical'>
-                      {containers.map((o: any, i: number) => (
-                        <Tag key={i} theme='primary' variant='light'>
-                          {o.name} / {o.resources.requests.cpu} /
-                          {transformK8sUnit(o.resources.requests.memory, K8SUNIT.Mi)}Mi
-                        </Tag>
-                      ))}
-                    </Space>
-                  );
-                }
-              }
-              return '';
-            },
-          },
-          {
-            title: t('推荐资源(容器/CPU/Memory)'),
-            colKey: 'status.recommendedInfo',
-            cell({ row }) {
-              if (typeof row.status.recommendedValue !== 'string') {
-                const containers = row?.status?.recommendedValue?.resourceRequest?.containers || [];
-                if (containers.length > 0) {
-                  return (
-                    <Space direction='vertical'>
-                      {containers.map((o: any, i: number) => (
-                        <Tag key={i} theme='primary' variant='light'>
-                          {o.containerName} / {o.target.cpu} / {transformK8sUnit(o.target.memory, K8SUNIT.Mi)}Mi
-                        </Tag>
-                      ))}
-                    </Space>
-                  );
-                }
-              }
-              return 'abc';
-            },
-          },
+          // {
+          //   title: t('当前资源(容器/CPU/Memory)'),
+          //   colKey: 'status.currentInfo',
+          //   cell({ row }) {
+          //     if (typeof row.status.currentInfo === 'string') {
+          //       const containers = JSON.parse(row?.status?.currentInfo).spec?.template?.spec?.containers || [];
+          //       if (containers.length > 0) {
+          //         return (
+          //           <Space direction='vertical'>
+          //             {containers.map((o: any, i: number) => (
+          //               <Tag key={i} theme='primary' variant='light'>
+          //                 {o.name} / {o.resources.requests.cpu} /
+          //                 {transformK8sUnit(o.resources.requests.memory, K8SUNIT.Mi)}Mi
+          //               </Tag>
+          //             ))}
+          //           </Space>
+          //         );
+          //       }
+          //     }
+          //     return '';
+          //   },
+          // },
+          // {
+          //   title: t('推荐资源(容器/CPU/Memory)'),
+          //   colKey: 'status.recommendedInfo',
+          //   cell({ row }) {
+          //     if (typeof row.status.recommendedValue !== 'string') {
+          //       const containers = row?.status?.recommendedValue?.resourceRequest?.containers || [];
+          //       if (containers.length > 0) {
+          //         return (
+          //           <Space direction='vertical'>
+          //             {containers.map((o: any, i: number) => (
+          //               <Tag key={i} theme='primary' variant='light'>
+          //                 {o.containerName} / {o.target.cpu} / {transformK8sUnit(o.target.memory, K8SUNIT.Mi)}Mi
+          //               </Tag>
+          //             ))}
+          //           </Space>
+          //         );
+          //       }
+          //     }
+          //     return 'abc';
+          //   },
+          // },
           {
             title: t('创建时间'),
             ellipsis: true,
@@ -254,7 +254,7 @@ export const SelectTable = () => {
             cell(record) {
               return dashboardControl ? (
                 <>
-                  <Button
+                  {/* <Button
                     theme='primary'
                     variant='text'
                     onClick={() => {
@@ -265,7 +265,7 @@ export const SelectTable = () => {
                     }}
                   >
                     {t('查看监控')}
-                  </Button>
+                  </Button> */}
                   <Button
                     theme='primary'
                     variant='text'
@@ -306,7 +306,7 @@ export const SelectTable = () => {
                 </>
               ) : (
                 <>
-                  <Button
+                  {/* <Button
                     theme='primary'
                     variant='text'
                     onClick={() => {
@@ -317,7 +317,7 @@ export const SelectTable = () => {
                     }}
                   >
                     {t('查看监控')}
-                  </Button>
+                  </Button> */}
                   <Button
                     theme='primary'
                     variant='text'

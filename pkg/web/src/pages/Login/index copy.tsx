@@ -91,7 +91,7 @@ export default function Login() {
         </div>
         <div style={{ marginTop: '20px' }}>
           <div style={{ fontSize: '30px', lineHeight: 1, fontWeight: 'bold' }}>
-            国家工程研究中心算网SLA及工业应用感知服务平台
+            算力资源应用感知平台
           </div>
           <div style={{ marginTop: '16px', fontSize: '17px' }}>
             <span style={{ width: 500, display: 'inline-block' }}>

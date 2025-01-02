@@ -10,7 +10,8 @@ import { useLoginUserMutation } from '../../services/mineApi';
 import { setUserInfo } from '../../utils/user';
 import { useDispatch } from 'react-redux';
 
-import Logo from '../../assets/logo.jpg'
+import Logo from '../../assets/logo.jpg';
+import { Center } from '@mantine/core';
 
 const { FormItem } = Form;
 
@@ -43,9 +44,9 @@ export default function Login() {
           console.log(data.data.Clusters);
           const Clusters = data.data.Clusters || [];
           const IsAdmin = data.data.IsAdmin || false;
-          console.log('============');
-          console.log(IsAdmin);
-          console.log(Clusters);
+          // console.log('============');
+          // console.log(IsAdmin);
+          // console.log(Clusters);
           if (Clusters.length > 0 || IsAdmin) {
             MessagePlugin.success('登录成功');
 
@@ -111,9 +112,7 @@ export default function Login() {
           </Space>
         </div>
         <div style={{ marginTop: '20px' }}>
-          <div style={{ fontSize: '30px', lineHeight: 1, fontWeight: 'bold' }}>
-            国家工程研究中心算网SLA及工业应用感知服务平台
-          </div>
+          <div style={{ fontSize: '30px', lineHeight: 1, fontWeight: 'bold' }}>算力资源应用感知平台</div>
           <div style={{ marginTop: '16px', fontSize: '17px' }}>
             <span style={{ width: 500, display: 'inline-block' }}>
               打造算网SLA及工业应用感知核心能力研究面向工业需求的算网SLA评估、业务流感知实现为不同类型的应用提供灵活的算网资源供给服务的能力综合服务平台
@@ -138,8 +137,18 @@ export default function Login() {
             <Input type='password' prefixIcon={<LockOnIcon />} clearable={true} placeholder='请输入密码' />
           </FormItem>
           <FormItem>
-            <Button theme='primary' type='submit' block loading={loading}>
-              登录
+            <Space>
+              <Button theme='primary' type='submit' block loading={loading}>
+                登录
+              </Button>
+            </Space>
+          </FormItem>
+          <FormItem>
+            <Button theme='primary' variant='text' type='button'>
+              注册账号
+            </Button>
+            <Button theme='primary' variant='text' type='button'>
+              忘记密码
             </Button>
           </FormItem>
         </Form>

@@ -38,6 +38,8 @@ export enum RecommendationType {
   Replicas = 'Replicas',
   Resource = 'Resource',
   IdleNode = 'IdleNode',
+  Service = 'Service',
+  Volume = 'Volume',
 }
 
 enum AdoptionType {

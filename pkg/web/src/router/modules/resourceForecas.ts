@@ -14,7 +14,7 @@ export const useresourceForecasRouteConfig = () => {
       children: [
         {
           path: 'resourceForecas',
-          Component: lazy(() => import('pages/resourceForecas/costVisual')),
+          Component: lazy(() => import('pages/resourceForecas/resourceForecas')),
           meta: {
             title: t('资源预测'),
           },

@@ -18,11 +18,11 @@ type TRenderRoutes = (routes: IRouter[], parentPath?: string, breadcrumbs?: stri
 const renderRoutes: TRenderRoutes = (routes, parentPath = '', breadcrumb = []) =>
   routes.map((route, index: number) => {
     const { Component, children, redirect, meta } = route;
-    console.log('route', route);
-    console.log('routes1', Component);
-    console.log('routes2', children);
-    console.log('routes3', redirect);
-    console.log('routes4', meta);
+    // console.log('route', route);
+    // console.log('routes1', Component);
+    // console.log('routes2', children);
+    // console.log('routes3', redirect);
+    // console.log('routes4', meta);
 
     const currentPath = resolve(parentPath, route.path);
     let currentBreadcrumb = breadcrumb;
@@ -36,10 +36,10 @@ const renderRoutes: TRenderRoutes = (routes, parentPath = '', breadcrumb = []) =
     }
 
     if (Component) {
-      console.log('==============1234');
-      console.log('breadcrumb', currentBreadcrumb);
-      console.log('index', index);
-      console.log('currentPath', currentPath);
+      // console.log('==============1234');
+      // console.log('breadcrumb', currentBreadcrumb);
+      // console.log('index', index);
+      // console.log('currentPath', currentPath);
 
       // 有路由菜单
       return (

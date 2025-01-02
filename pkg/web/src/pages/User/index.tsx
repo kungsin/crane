@@ -5,7 +5,7 @@ import React, { memo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
 import { CheckCircleFilledIcon, CloseCircleFilledIcon, ErrorCircleFilledIcon } from 'tdesign-icons-react';
-import { Dialog, DialogProps, Link, Space, Table, TableProps, Tag } from 'tdesign-react';
+import { Button, Dialog, DialogProps, Link, Space, Table, TableProps, Tag } from 'tdesign-react';
 import { useGetUserListQuery, useUpdateUserStatusMutation } from '../../services/mineApi';
 
 // eslint-disable-next-line prefer-const
@@ -257,6 +257,9 @@ export const SelectTable = () => {
 
   return (
     <>
+      <Button theme='primary' variant='base'  onClick={() => navigate(`/user/add?flag=1`)}>
+        添加用户
+      </Button>
       <Space direction='vertical' style={{ marginTop: '10px' }}>
         {table}
       </Space>

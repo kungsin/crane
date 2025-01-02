@@ -34,6 +34,20 @@ export const useresourceRecommendRouteConfig = () => {
           },
         },
         {
+          path: 'serviceRecommend',
+          Component: lazy(() => import('pages/resourceRecommend/ServiceRecommend')),
+          meta: {
+            title: t('Service推荐'),
+          },
+        },
+        {
+          path: 'volumeRecommend',
+          Component: lazy(() => import('pages/resourceRecommend/VolumeRecommend')),
+          meta: {
+            title: t('PV推荐'),
+          },
+        },
+        {
           path: 'idleNode',
           Component: lazy(() => import('pages/resourceRecommend/IdleNode')),
           meta: {
@@ -45,6 +59,7 @@ export const useresourceRecommendRouteConfig = () => {
           Component: lazy(() => import('pages/resourceRecommend/WorkloadInsight/WorkloadInsightPanel')),
           meta: {
             title: t('监控'),
+            hidden: true,
           },
         },
       ],

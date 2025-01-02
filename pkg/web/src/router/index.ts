@@ -57,7 +57,7 @@ export const useRouteConfig = () => {
   // const userInfo = JSON.parse(getUserInfo());
   const IsAdmin = JSON.parse(getUserInfo())?.IsAdmin;
   // console.log('userInfo', userInfo);
-  console.log('IsAdmin', IsAdmin);
+  // console.log('IsAdmin', IsAdmin);
   const cost = useCostRouteConfig();
   const dashboard = useDashboardRouteConfig();
   const recommend = useRecommendRouteConfig();

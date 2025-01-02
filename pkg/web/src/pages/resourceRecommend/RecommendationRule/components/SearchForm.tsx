@@ -45,6 +45,10 @@ const SearchForm: React.FC<SearchFormProps> = ({ setFilterParams }) => {
                   <Input placeholder={t('请输入推荐名称(支持前缀模糊)')} autoWidth={true} />
                 </FormItem>
               </Col>
+            </Row>
+          </Col>
+          <Col flex='1'>
+            <Row gutter={16}>
               <Col>
                 <FormItem label={t('推荐类型')} name='recommenderType'>
                   <Select options={RECOMMENDATION_RULE_TYPE_OPTIONS} placeholder={t('请选择推荐类型')} />
