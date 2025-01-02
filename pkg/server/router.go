@@ -73,4 +73,14 @@ func (s *apiServer) initRouter() {
 		debug.GET(":namespace/:tsp", debugHandler.Display)
 	}
 
+	debug2 := s.Group("/api/prediction/debug2")
+	{
+		debug2.GET(":namespace/:tsp", debugHandler.Display2)
+	}
+
+	debug3 := s.Group("/api/prediction/debug3")
+	{
+		debug3.GET(":namespace/:tsp", debugHandler.Display3)
+	}
+
 }
