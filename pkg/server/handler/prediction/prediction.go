@@ -179,7 +179,8 @@ func (dh *DebugHandler) Display3(c *gin.Context) {
 
 			internalConf := mc.ConvertApiMetric2InternalConfig(&tsp.Spec.PredictionMetrics[0])
 			namer := mc.GetMetricNamer(&tsp.Spec.PredictionMetrics[0])
-			pred := dh.predictorManager.GetPredictor(v1alpha1.AlgorithmTypeDSP)
+			// pred := dh.predictorManager.GetPredictor(v1alpha1.AlgorithmTypeDSP)
+			pred := dh.predictorManager.GetPredictor(v1alpha1.AlgorithmTypePercentile)
 			history, test, estimate, err := dsp.Debug(pred, namer, internalConf)
 			if err != nil {
 				ginwrapper.WriteResponse(c, err, nil)
@@ -252,7 +253,7 @@ func plots(signals []*dsp.Signal, names []string, o ...charts.GlobalOpts) *chart
 	}
 
 	line := charts.NewLine()
-	line.SetGlobalOptions(
+	line.SetGlobalOptions(          
 		charts.WithInitializationOpts(opts.Initialization{Width: "3000px", Theme: types.ThemeShine}),
 		charts.WithLegendOpts(
 			opts.Legend{
