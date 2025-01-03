@@ -141,12 +141,14 @@ func (tc *Controller) doPredict(tsPrediction *predictionapi.TimeSeriesPrediction
 		var data []*common.TimeSeries
 		// percentile is ok for time series
 		data, err = predictor.QueryPredictedTimeSeries(context.TODO(), namer, start, end)
+		klog.Errorf("predictedData--144: %v", data)
 		if err != nil {
 			errs = append(errs, err)
 			klog.Errorf("[]error3: %v", errs)
 			continue
 		}
 		predictedData := CommonTimeSeries2ApiTimeSeries(data)
+        klog.Errorf("predictedData--150: %v", predictedData)
 
 		if klog.V(6).Enabled() {
 			apiDataBytes, err1 := json.Marshal(predictedData)
@@ -170,6 +172,7 @@ func (tc *Controller) doPredict(tsPrediction *predictionapi.TimeSeriesPrediction
 		if err != nil {
 			errs = append(errs, err)
 		} else {
+			klog.Errorf("[]error4: %v", errs)
 			status.Ready = true
 		}
 
