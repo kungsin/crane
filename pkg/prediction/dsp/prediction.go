@@ -343,8 +343,11 @@ func (p *periodicSignalPrediction) getPredictedTimeSeriesList(ctx context.Contex
 	defer ticker.Stop()
 
 	queryExpr := namer.BuildUniqueKey()
+	klog.Errorf("predictedData.getPredictedTimeSeriesList: %v", queryExpr)
 	for {
 		signals, status := p.a.GetSignals(queryExpr)
+		klog.Errorf("predictedData.getPredictedTimeSeriesList.signals: %v", signals)
+		klog.Errorf("predictedData.getPredictedTimeSeriesList.status: %v", status)
 		if status == prediction.StatusDeleted {
 			klog.V(4).InfoS("Aggregated has been deleted.", "queryExpr", queryExpr)
 			return predictedTimeSeriesList

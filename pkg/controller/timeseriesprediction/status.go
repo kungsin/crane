@@ -133,28 +133,27 @@ func (tc *Controller) doPredict(tsPrediction *predictionapi.TimeSeriesPrediction
 		predictor := tc.getPredictor(metric.Algorithm.AlgorithmType)
 		if predictor == nil {
 			errs = append(errs, fmt.Errorf("do not support algorithm type %v for metric %v", metric.Algorithm.AlgorithmType, metric.ResourceIdentifier))
-			klog.Errorf("[]error1: %v", errs)
 			continue
 		}
-
+		klog.Errorf("[]error1: %v", errs)
 		internalConf := c.ConvertApiMetric2InternalConfig(&metric)
 		namer := c.GetMetricNamer(&metric)
 		err = predictor.WithQuery(namer, c.GetCaller(), *internalConf)
 
 		if err != nil {
 			errs = append(errs, err)
-			klog.Errorf("[]error2: %v", errs)
 			continue
 		}
+		klog.Errorf("[]error2: %v", errs)
 		var data []*common.TimeSeries
 		// percentile is ok for time series
 		data, err = predictor.QueryPredictedTimeSeries(context.TODO(), namer, start, end)
 		klog.Errorf("predictedData--144: %v", data)
 		if err != nil {
 			errs = append(errs, err)
-			klog.Errorf("[]error3: %v", errs)
 			continue
 		}
+		klog.Errorf("[]error3: %v", errs)
 		predictedData := CommonTimeSeries2ApiTimeSeries(data)
 		klog.Errorf("predictedData--150: %v", predictedData)
 
@@ -180,16 +179,16 @@ func (tc *Controller) doPredict(tsPrediction *predictionapi.TimeSeriesPrediction
 		if err != nil {
 			errs = append(errs, err)
 		} else {
-			klog.Errorf("[]error4: %v", errs)
 			status.Ready = true
 		}
-
+		klog.Errorf("[]error4: %v", errs)
 		result = append(result, status)
 	}
 
 	if len(errs) != 0 {
 		err = utilerrors.NewAggregate(errs)
 	}
+	klog.Errorf("[]error5: %v", err)
 	return result, err
 }
 
