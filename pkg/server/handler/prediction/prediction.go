@@ -154,7 +154,7 @@ func (dh *DebugHandler) Display2(c *gin.Context) {
 }
 
 func (dh *DebugHandler) Display3(c *gin.Context) {
-	klog.ErrorS(nil,"进入debug3方法")
+
 
 	namespace := c.Param("namespace")
 	name := c.Param("tsp")

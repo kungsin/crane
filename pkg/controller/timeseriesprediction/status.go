@@ -58,12 +58,12 @@ func (tc *Controller) syncPredictionStatus(ctx context.Context, tsPrediction *pr
 		predictionEnd := predictionStart.Add(time.Duration(tsPrediction.Spec.PredictionWindowSeconds) * time.Second * 2)
 
 		predictedData, err := tc.doPredict(tsPrediction, predictionStart, predictionEnd)
-		
+
 		newStatus.PredictionMetrics = predictedData
 		if len(tsPrediction.Spec.PredictionMetrics) != len(predictedData) || err != nil {
 			klog.V(4).Infof("DoPredict predict data is partial, predictedDataLen: %v, key: %v", len(predictedData), key)
 			klog.Info("调试klog DoPredict predict data is partial, predictedDataLen: %v, key: %v", len(predictedData), key)
-			klog.Info("调试klog err:%v",err)
+			klog.Info("调试klog err:%v", err)
 			setCondition(newStatus, predictionapi.TimeSeriesPredictionConditionReady, metav1.ConditionFalse, known.ReasonTimeSeriesPredictPartial, "not all metric predicted-debug")
 			err = tc.UpdateStatus(ctx, tsPrediction, newStatus)
 			if err != nil {
@@ -125,14 +125,17 @@ func (tc *Controller) doPredict(tsPrediction *predictionapi.TimeSeriesPrediction
 		predictor := tc.getPredictor(metric.Algorithm.AlgorithmType)
 		if predictor == nil {
 			errs = append(errs, fmt.Errorf("do not support algorithm type %v for metric %v", metric.Algorithm.AlgorithmType, metric.ResourceIdentifier))
+			klog.Errorf("[]error1: %v", errs)
 			continue
 		}
 
 		internalConf := c.ConvertApiMetric2InternalConfig(&metric)
 		namer := c.GetMetricNamer(&metric)
 		err = predictor.WithQuery(namer, c.GetCaller(), *internalConf)
+
 		if err != nil {
 			errs = append(errs, err)
+			klog.Errorf("[]error2: %v", errs)
 			continue
 		}
 		var data []*common.TimeSeries
@@ -140,15 +143,18 @@ func (tc *Controller) doPredict(tsPrediction *predictionapi.TimeSeriesPrediction
 		data, err = predictor.QueryPredictedTimeSeries(context.TODO(), namer, start, end)
 		if err != nil {
 			errs = append(errs, err)
+			klog.Errorf("[]error3: %v", errs)
 			continue
 		}
 		predictedData := CommonTimeSeries2ApiTimeSeries(data)
+
 		if klog.V(6).Enabled() {
 			apiDataBytes, err1 := json.Marshal(predictedData)
 			dataBytes, err2 := json.Marshal(data)
 			klog.V(6).Infof("DoPredict predicted data details, key: %v, queryExpr: %v, apiData: %v, predictData: %v, errs: %+v", klog.KObj(tsPrediction), namer.BuildUniqueKey(), string(apiDataBytes), string(dataBytes), []error{err1, err2})
 		}
 		status.Prediction = predictedData
+		klog.Errorf("status.Prediction--157: %v", status.Prediction)
 
 		// prediction data checking
 		if len(status.Prediction) == 0 {

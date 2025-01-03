@@ -38,6 +38,7 @@ func NewProvider(config *providers.PromConfig) (Provider, error) {
 }
 
 func (p *prom) QueryTimeSeries(namer metricnaming.MetricNamer, startTime time.Time, endTime time.Time, step time.Duration) ([]*common.TimeSeries, error) {
+	klog.Errorf("进入prometheus历史数据查询")
 	promBuilder := namer.QueryBuilder().Builder(metricquery.PrometheusMetricSource)
 	promQuery, err := promBuilder.BuildQuery()
 	if err != nil {
