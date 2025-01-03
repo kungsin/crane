@@ -61,7 +61,7 @@ func (tc *Controller) syncPredictionStatus(ctx context.Context, tsPrediction *pr
 		newStatus.PredictionMetrics = predictedData
 		if len(tsPrediction.Spec.PredictionMetrics) != len(predictedData) || err != nil {
 			klog.V(4).Infof("DoPredict predict data is partial, predictedDataLen: %v, key: %v", len(predictedData), key)
-			setCondition(newStatus, predictionapi.TimeSeriesPredictionConditionReady, metav1.ConditionFalse, known.ReasonTimeSeriesPredictPartial, "not all metric predicted")
+			setCondition(newStatus, predictionapi.TimeSeriesPredictionConditionReady, metav1.ConditionFalse, known.ReasonTimeSeriesPredictPartial, "not all metric predicted-debug")
 			err = tc.UpdateStatus(ctx, tsPrediction, newStatus)
 			if err != nil {
 				// todo
