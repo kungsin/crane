@@ -58,7 +58,15 @@ func (tc *Controller) syncPredictionStatus(ctx context.Context, tsPrediction *pr
 		predictionEnd := predictionStart.Add(time.Duration(tsPrediction.Spec.PredictionWindowSeconds) * time.Second * 2)
 
 		predictedData, err := tc.doPredict(tsPrediction, predictionStart, predictionEnd)
+		// 打印 predictedData
+		klog.Errorf("predictedData: %v", predictedData)
 
+		// 打印 err
+		if err != nil {
+			klog.Errorf("Error occurred while predicting data: %v", err)
+		} else {
+			klog.Infof("Prediction completed successfully")
+		}
 		newStatus.PredictionMetrics = predictedData
 		if len(tsPrediction.Spec.PredictionMetrics) != len(predictedData) || err != nil {
 			klog.V(4).Infof("DoPredict predict data is partial, predictedDataLen: %v, key: %v", len(predictedData), key)
@@ -148,7 +156,7 @@ func (tc *Controller) doPredict(tsPrediction *predictionapi.TimeSeriesPrediction
 			continue
 		}
 		predictedData := CommonTimeSeries2ApiTimeSeries(data)
-        klog.Errorf("predictedData--150: %v", predictedData)
+		klog.Errorf("predictedData--150: %v", predictedData)
 
 		if klog.V(6).Enabled() {
 			apiDataBytes, err1 := json.Marshal(predictedData)
