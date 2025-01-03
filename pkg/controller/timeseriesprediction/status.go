@@ -58,9 +58,12 @@ func (tc *Controller) syncPredictionStatus(ctx context.Context, tsPrediction *pr
 		predictionEnd := predictionStart.Add(time.Duration(tsPrediction.Spec.PredictionWindowSeconds) * time.Second * 2)
 
 		predictedData, err := tc.doPredict(tsPrediction, predictionStart, predictionEnd)
+		
 		newStatus.PredictionMetrics = predictedData
 		if len(tsPrediction.Spec.PredictionMetrics) != len(predictedData) || err != nil {
 			klog.V(4).Infof("DoPredict predict data is partial, predictedDataLen: %v, key: %v", len(predictedData), key)
+			klog.Info("调试klog DoPredict predict data is partial, predictedDataLen: %v, key: %v", len(predictedData), key)
+			klog.Info("调试klog err:%v",err)
 			setCondition(newStatus, predictionapi.TimeSeriesPredictionConditionReady, metav1.ConditionFalse, known.ReasonTimeSeriesPredictPartial, "not all metric predicted-debug")
 			err = tc.UpdateStatus(ctx, tsPrediction, newStatus)
 			if err != nil {
