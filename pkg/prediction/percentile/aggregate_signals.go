@@ -199,10 +199,12 @@ func (a *aggregateSignals) GetSignals(queryExpr string) (map[string]*aggregateSi
 		return nil, prediction.StatusUnknown
 	}
 	klog.Errorf("percentile-queryExpr: %s, a.signalMap: %+v,a.signalMap[queryExpr]: %+v\n", queryExpr, a.signalMap, a.signalMap[queryExpr])
+	klog.Errorf("percentile-开始")
 	m := map[string]*aggregateSignal{}
 	for k, v := range a.signalMap[queryExpr] {
 		klog.Errorf("percentile-key: %s, value: %+v", k, *v) // 解引用指针打印内容
 		m[k] = v
 	}
+	klog.Errorf("percentile-结束")
 	return m, a.statusMap[queryExpr]
 }
