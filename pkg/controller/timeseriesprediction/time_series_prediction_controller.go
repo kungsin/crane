@@ -60,18 +60,20 @@ func NewController(
 // Reconcile reconcile the time series prediction
 func (tc *Controller) Reconcile(ctx context.Context, req ctrl.Request) (ctrl.Result, error) {
 	klog.V(4).Infof("Got a time series prediction %v", req.NamespacedName)
-
+    klog.Errorf("Got a time series prediction %v", req.NamespacedName)
 	p := &predictionapi.TimeSeriesPrediction{}
 	err := tc.Client.Get(ctx, req.NamespacedName, p)
 	if err != nil {
 		if !errors.IsNotFound(err) {
 			klog.V(4).Infof("Failed to get TimeSeriesPrediction %v err: %v", klog.KObj(p), err)
+			klog.Errorf("Failed to get TimeSeriesPrediction %v err: %v", klog.KObj(p), err)
 			return ctrl.Result{Requeue: true}, err
 		}
 
 		last, ok := tc.tsPredictionMap.Load(req.NamespacedName.String())
 		if !ok {
 			klog.V(4).Infof("Failed to load exist tsp %v", req.String())
+			klog.Errorf("Failed to load exist tsp %v", req.String())
 			return ctrl.Result{}, nil
 		}
 
@@ -139,6 +141,7 @@ func (tc *Controller) syncTimeSeriesPrediction(ctx context.Context, tsp *predict
 
 func (tc *Controller) removeTimeSeriesPrediction(tsp *predictionapi.TimeSeriesPrediction) error {
 	klog.V(4).Infof("TimeSeriesPrediction %v deleted, delete metric config", klog.KObj(tsp))
+	klog.Errorf("TimeSeriesPrediction %v deleted, delete metric config", klog.KObj(tsp))
 	c, err := NewMetricContext(tc.TargetFetcher, tsp, tc.predictorMgr)
 	if err != nil {
 		klog.Errorf("Failed to delete TimeSeriesPrediction %v: %v", klog.KObj(tsp), err)
