@@ -343,7 +343,7 @@ func (p *periodicSignalPrediction) getPredictedTimeSeriesList(ctx context.Contex
 	defer ticker.Stop()
 
 	queryExpr := namer.BuildUniqueKey()
-	klog.Errorf("predictedData.getPredictedTimeSeriesList: %v", queryExpr)
+	klog.Errorf("predictedData.getPredictedTimeSeriesList.queryExpr: %v", queryExpr)
 	for {
 		signals, status := p.a.GetSignals(queryExpr)
 		klog.Errorf("predictedData.getPredictedTimeSeriesList.signals: %v", signals)
