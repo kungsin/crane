@@ -202,7 +202,7 @@ func (a *aggregateSignals) GetSignals(queryExpr string) (map[string]*aggregateSi
 	m := map[string]*aggregateSignal{}
 	for k, v := range a.signalMap[queryExpr] {
 		klog.Errorf("percentile-key: %s, value: %+v", k, *v) // 解引用指针打印内容
-		m[k] = va
+		m[k] = v
 	}
 	return m, a.statusMap[queryExpr]
 }
