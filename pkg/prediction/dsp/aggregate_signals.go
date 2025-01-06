@@ -1,7 +1,6 @@
 package dsp
 
 import (
-	"fmt"
 	"sync"
 
 	"k8s.io/klog/v2"
@@ -149,7 +148,7 @@ func (a *aggregateSignals) GetSignals(queryExpr string) (map[string]*aggregateSi
 	if _, exists := a.signalMap[queryExpr]; !exists {
 		return nil, prediction.StatusUnknown
 	}
-	klog.Errorf("queryExpr: %s, signalMap: %+v\n", queryExpr, a.signalMap)
+	klog.Errorf("queryExpr: %s, signalMap: %+v,a.signalMap[queryExpr]: %+v\n", queryExpr, a.signalMap,a.signalMap[queryExpr])
 	m := map[string]*aggregateSignal{}
 	for k, v := range a.signalMap[queryExpr] {
 		m[k] = v
