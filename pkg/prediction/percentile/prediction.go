@@ -109,6 +109,8 @@ func (p *percentilePrediction) getPredictedValues(ctx context.Context, namer met
 	queryExpr := namer.BuildUniqueKey()
 	for {
 		signals, status := p.a.GetSignals(queryExpr)
+		klog.Errorf("percentile-predictedData.getPredictedTimeSeriesList.signals: %v", signals)
+		klog.Errorf("percentile-predictedData.getPredictedTimeSeriesList.status: %v", status)
 		if status == prediction.StatusUnknown {
 			klog.V(4).InfoS("Aggregated has been deleted and unknown", "queryExpr", queryExpr)
 			return predictedTimeSeriesList
