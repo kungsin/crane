@@ -198,7 +198,7 @@ func (a *aggregateSignals) GetSignals(queryExpr string) (map[string]*aggregateSi
 	if _, exists := a.signalMap[queryExpr]; !exists {
 		return nil, prediction.StatusUnknown
 	}
-
+	klog.Errorf("percentile-queryExpr: %s, a.signalMap: %+v,a.signalMap[queryExpr]: %+v\n", queryExpr, a.signalMap, a.signalMap[queryExpr])
 	m := map[string]*aggregateSignal{}
 	for k, v := range a.signalMap[queryExpr] {
 		m[k] = v
