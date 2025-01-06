@@ -189,6 +189,7 @@ func (p *periodicSignalPrediction) updateAggregateSignalsWithQuery(namer metricn
 
 func (p *periodicSignalPrediction) queryHistoryTimeSeries(namer metricnaming.MetricNamer) ([]*common.TimeSeries, error) {
 	if p.GetHistoryProvider() == nil {
+		klog.Errorf("history provider not provisioned")
 		return nil, fmt.Errorf("history provider not provisioned")
 	}
 
@@ -205,6 +206,7 @@ func (p *periodicSignalPrediction) queryHistoryTimeSeries(namer metricnaming.Met
 	}
 
 	klog.V(6).InfoS("dsp queryHistoryTimeSeries", "timeSeriesList", tsList, "config", *config)
+	klog.Errorf("prediction.queryHistoryTimeSeries dsp queryHistoryTimeSeries", "timeSeriesList", tsList, "config", *config)
 
 	return preProcessTimeSeriesList(tsList, config)
 }
