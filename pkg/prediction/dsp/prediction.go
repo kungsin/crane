@@ -84,6 +84,7 @@ func SamplesToSignal(samples []common.Sample, sampleInterval time.Duration) *Sig
 func (p *periodicSignalPrediction) Run(stopCh <-chan struct{}) {
 	if p.GetHistoryProvider() == nil {
 		klog.ErrorS(fmt.Errorf("history provider not provisioned"), "Failed to run periodicSignalPrediction.")
+		klog.Errorf("历史数据未提供")
 		return
 	}
 
@@ -102,7 +103,7 @@ func (p *periodicSignalPrediction) Run(stopCh <-chan struct{}) {
 				continue
 			}
 			klog.V(6).InfoS("Register a query expression for prediction.", "queryExpr", QueryExpr, "caller", qc.Caller)
-
+			klog.Errorf("Register a query expression for prediction.", "queryExpr", QueryExpr, "caller", qc.Caller)
 			go func(namer metricnaming.MetricNamer) {
 				queryExpr := namer.BuildUniqueKey()
 				p.queryRoutines.Store(queryExpr, struct{}{})
@@ -121,6 +122,7 @@ func (p *periodicSignalPrediction) Run(stopCh <-chan struct{}) {
 					case <-predStopCh:
 						p.queryRoutines.Delete(queryExpr)
 						klog.V(4).InfoS("Prediction routine stopped.", "queryExpr", queryExpr)
+						klog.Errorf("Prediction routine stopped.", "queryExpr", queryExpr)
 						return
 					case <-ticker.C:
 						continue
@@ -179,7 +181,7 @@ func (p *periodicSignalPrediction) updateAggregateSignalsWithQuery(namer metricn
 	}
 
 	klog.V(6).InfoS("Update aggregate signals.", "queryExpr", queryExpr, "timeSeriesLength", len(tsList))
-
+	klog.Errorf("更新聚合信号 Update aggregate signals.", "queryExpr", queryExpr, "timeSeriesLength", len(tsList))
 	cfg := p.a.GetConfig(queryExpr)
 
 	p.updateAggregateSignals(queryExpr, tsList, cfg)
@@ -189,7 +191,7 @@ func (p *periodicSignalPrediction) updateAggregateSignalsWithQuery(namer metricn
 
 func (p *periodicSignalPrediction) queryHistoryTimeSeries(namer metricnaming.MetricNamer) ([]*common.TimeSeries, error) {
 	if p.GetHistoryProvider() == nil {
-		klog.Errorf("history provider not provisioned")
+		klog.Errorf("没有提供历史记录提供程序 history provider not provisioned")
 		return nil, fmt.Errorf("history provider not provisioned")
 	}
 
@@ -206,7 +208,7 @@ func (p *periodicSignalPrediction) queryHistoryTimeSeries(namer metricnaming.Met
 	}
 
 	klog.V(6).InfoS("dsp queryHistoryTimeSeries", "timeSeriesList", tsList, "config", *config)
-	klog.Errorf("prediction.queryHistoryTimeSeries dsp queryHistoryTimeSeries", "timeSeriesList", tsList, "config", *config)
+	klog.Errorf("dsp查询历史时间序列 prediction.queryHistoryTimeSeries dsp queryHistoryTimeSeries", "timeSeriesList", tsList, "config", *config)
 
 	return preProcessTimeSeriesList(tsList, config)
 }
@@ -219,6 +221,9 @@ func (p *periodicSignalPrediction) updateAggregateSignals(queryExpr string, hist
 			sampleData, err := json.Marshal(ts.Samples)
 			klog.V(6).Infof("Got time series, queryExpr: %s, samples: %v, labels: %v, err: %v", queryExpr, string(sampleData), ts.Labels, err)
 		}
+		sampleData, err := json.Marshal(ts.Samples)
+		klog.Errorf("Got time series, queryExpr: %s, samples: %v, labels: %v, err: %v", queryExpr, string(sampleData), ts.Labels, err)
+
 		var chosenEstimator Estimator
 		var signal *Signal
 		var nPeriods int
@@ -228,8 +233,10 @@ func (p *periodicSignalPrediction) updateAggregateSignals(queryExpr string, hist
 		if p == Day || p == Week {
 			periodLength = p
 			klog.V(4).InfoS("This is a periodic time series.", "queryExpr", queryExpr, "labels", ts.Labels, "periodLength", periodLength)
-		} else {
+			klog.Errorf("这是一个周期时间序列 This is a periodic time series.", "queryExpr", queryExpr, "labels", ts.Labels, "periodLength", periodLength)
+			} else {
 			klog.V(4).InfoS("This is not a periodic time series.", "queryExpr", queryExpr, "labels", ts.Labels)
+			klog.Errorf("这不是一个周期时间序列 This is not a periodic time series.", "queryExpr", queryExpr, "labels", ts.Labels)	
 		}
 
 		if periodLength > 0 {
