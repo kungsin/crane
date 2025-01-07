@@ -203,7 +203,10 @@ func (p *periodicSignalPrediction) queryHistoryTimeSeries(namer metricnaming.Met
 
 	end := time.Now().Truncate(config.historyResolution)
 	start := end.Add(-config.historyDuration - time.Hour)
-
+	//打印namer
+	klog.Errorf("打印namer: name=%s",namer)
+	// 打印 start 和 end 的时间
+	klog.Errorf("查询时间范围: start=%s, end=%s", start.Format(time.RFC3339), end.Format(time.RFC3339))
 	tsList, err := p.GetHistoryProvider().QueryTimeSeries(namer, start, end, config.historyResolution)
 	if err != nil {
 		klog.ErrorS(err, "Failed to query history time series.")
@@ -213,7 +216,8 @@ func (p *periodicSignalPrediction) queryHistoryTimeSeries(namer metricnaming.Met
 	if err != nil {
 		klog.Errorf("Failed to serialize tsList: %v", err)
 	} else {
-		klog.Errorf("历史数据tsList: dsp queryHistoryTimeSeries tsList:\n%s", string(tsListData))
+		klog.Errorf("历史数据tsList: dsp queryHistoryTimeSeries tsList:\n%s", tsListData)
+		klog.Errorf("历史数据string(tsList): dsp queryHistoryTimeSeries tsList:\n%s", string(tsListData))
 	}
 
 	klog.V(6).InfoS("dsp queryHistoryTimeSeries", "timeSeriesList", tsList, "config", *config)

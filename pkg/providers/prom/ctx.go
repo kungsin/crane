@@ -52,18 +52,21 @@ func (c *context) QueryRangeSync(ctx gocontext.Context, query string, start, end
 	shards := c.computeShards(query, &r)
 	if len(shards.windows) <= 1 {
 		klog.V(4).InfoS("Prom query directly", "query", query)
-		klog.ErrorS(nil,"直接查询Prom Prom query directly", "query", query)
+		klog.ErrorS(nil, "直接查询Prom Prom query directly", "query", query)
 		var ts []*common.TimeSeries
+		klog.Errorf("打印查询参数 Prometheus Query Parameters: query=%s, start=%s, end=%s, step=%s", query, r.Start.Format(time.RFC3339), r.End.Format(time.RFC3339), r.Step.String())
 		results, warnings, err := c.api.QueryRange(ctx, query, r)
+		queryURL := fmt.Sprintf("http://<prometheus-server>/api/v1/query_range?query=%s&start=%s&end=%s&step=%s", query, r.Start.Format(time.RFC3339), r.End.Format(time.RFC3339), r.Step.String())
+		klog.Errorf("打印查询Url Prometheus Query URL: %s", queryURL)
 		if len(warnings) != 0 {
 			klog.V(4).InfoS("Prom query range warnings", "warnings", warnings)
-			klog.ErrorS(nil,"Prom查询范围警告", "warnings:", warnings)
+			klog.ErrorS(nil, "Prom查询范围警告", "warnings:", warnings)
 		}
 		// todo: parse err to see its max limit dynamically
 		if err != nil {
 			return ts, err
 		}
-		klog.ErrorS(nil,"Prom查询范围结果", "query：", query, "result：", results.String(), "resultsType:", results.Type())
+		klog.ErrorS(nil, "Prom查询范围结果", "query：", query, "result：", results.String(), "resultsType:", results.Type())
 		if klog.V(7).Enabled() {
 			klog.V(7).InfoS("Prom query range result", "query", query, "result", results.String(), "resultsType", results.Type())
 		}
