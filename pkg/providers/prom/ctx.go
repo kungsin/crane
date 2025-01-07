@@ -60,6 +60,8 @@ func (c *context) QueryRangeSync(ctx gocontext.Context, query string, start, end
 		
 		// 打印 results
 		 resultsJSON, err := json.MarshalIndent(results, "", "  ")
+
+		 klog.ErrorS(nil, "打印 error", "error", err)
 		 if err != nil {
 			 klog.ErrorS(err, "Failed to marshal results")
 		 } else {
