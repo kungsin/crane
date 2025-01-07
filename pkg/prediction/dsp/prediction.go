@@ -103,7 +103,7 @@ func (p *periodicSignalPrediction) Run(stopCh <-chan struct{}) {
 				continue
 			}
 			klog.V(6).InfoS("Register a query expression for prediction.", "queryExpr", QueryExpr, "caller", qc.Caller)
-			klog.Errorf("Register a query expression for prediction.", "queryExpr", QueryExpr, "caller", qc.Caller)
+			klog.Errorf("注册用于预测的表达式 Register a query expression for prediction.", "queryExpr", QueryExpr, "caller", qc.Caller)
 			go func(namer metricnaming.MetricNamer) {
 				queryExpr := namer.BuildUniqueKey()
 				p.queryRoutines.Store(queryExpr, struct{}{})
@@ -122,7 +122,7 @@ func (p *periodicSignalPrediction) Run(stopCh <-chan struct{}) {
 					case <-predStopCh:
 						p.queryRoutines.Delete(queryExpr)
 						klog.V(4).InfoS("Prediction routine stopped.", "queryExpr", queryExpr)
-						klog.Errorf("Prediction routine stopped.", "queryExpr", queryExpr)
+						klog.Errorf("预测程序停止 Prediction routine stopped.", "queryExpr", queryExpr)
 						return
 					case <-ticker.C:
 						continue
@@ -150,14 +150,16 @@ func (p *periodicSignalPrediction) Run(stopCh <-chan struct{}) {
 		}
 	}()
 
-	klog.Infof("predictor %v started", p.Name())
+	klog.Infof("预测器启动 predictor %v started", p.Name())
 
 	<-stopCh
 
-	klog.Infof("predictor %v stopped", p.Name())
+	klog.Infof("预测器停止 predictor %v stopped", p.Name())
 }
 
 func (p *periodicSignalPrediction) updateAggregateSignalsWithQuery(namer metricnaming.MetricNamer) error {
+	klog.Errorf("查询历史数据的条件namer %+v：",namer)
+	
 	// Query history data for prediction
 	maxAttempts := 10
 	attempts := 0
@@ -166,6 +168,7 @@ func (p *periodicSignalPrediction) updateAggregateSignalsWithQuery(namer metricn
 	queryExpr := namer.BuildUniqueKey()
 	for attempts < maxAttempts {
 		tsList, err = p.queryHistoryTimeSeries(namer)
+		klog.Errorf("查询出来的历史数据:%+v",tsList)
 		if err != nil {
 			attempts++
 			t := time.Second * time.Duration(math.Pow(2., float64(attempts)))
@@ -208,7 +211,7 @@ func (p *periodicSignalPrediction) queryHistoryTimeSeries(namer metricnaming.Met
 	}
 
 	klog.V(6).InfoS("dsp queryHistoryTimeSeries", "timeSeriesList", tsList, "config", *config)
-	klog.Errorf("dsp查询历史时间序列 prediction.queryHistoryTimeSeries dsp queryHistoryTimeSeries", "timeSeriesList", tsList, "config", *config)
+	klog.Errorf("dsp查询出来的历史时间序列 prediction.queryHistoryTimeSeries dsp queryHistoryTimeSeries", "timeSeriesList", tsList, "config", *config)
 
 	return preProcessTimeSeriesList(tsList, config)
 }
@@ -222,7 +225,7 @@ func (p *periodicSignalPrediction) updateAggregateSignals(queryExpr string, hist
 			klog.V(6).Infof("Got time series, queryExpr: %s, samples: %v, labels: %v, err: %v", queryExpr, string(sampleData), ts.Labels, err)
 		}
 		sampleData, err := json.Marshal(ts.Samples)
-		klog.Errorf("Got time series, queryExpr: %s, samples: %v, labels: %v, err: %v", queryExpr, string(sampleData), ts.Labels, err)
+		klog.Errorf("历史数据打印  Got time series, queryExpr: %s, samples: %v, labels: %v, err: %v", queryExpr, string(sampleData), ts.Labels, err)
 
 		var chosenEstimator Estimator
 		var signal *Signal
@@ -242,6 +245,7 @@ func (p *periodicSignalPrediction) updateAggregateSignals(queryExpr string, hist
 		if periodLength > 0 {
 			signal = SamplesToSignal(ts.Samples, config.historyResolution)
 			signal, nPeriods = signal.Truncate(periodLength)
+			klog.Errorf("nPeriods的数量",nPeriods)	
 			if nPeriods >= 2 {
 				chosenEstimator = bestEstimator(queryExpr, config.estimators, signal, nPeriods, periodLength)
 			}
@@ -249,6 +253,8 @@ func (p *periodicSignalPrediction) updateAggregateSignals(queryExpr string, hist
 
 		if chosenEstimator != nil {
 			estimatedSignal := chosenEstimator.GetEstimation(signal, periodLength)
+			klog.Errorf("生成的预测信号：%+v", estimatedSignal)
+			klog.Errorf("生成的预测信号样本：%+v", estimatedSignal.Samples)
 			intervalSeconds := int64(config.historyResolution.Seconds())
 			nextTimestamp := ts.Samples[len(ts.Samples)-1].Timestamp + intervalSeconds
 
@@ -256,6 +262,7 @@ func (p *periodicSignalPrediction) updateAggregateSignals(queryExpr string, hist
 			samples := make([]common.Sample, n*nPeriods)
 			for k := 0; k < nPeriods; k++ {
 				for i := range estimatedSignal.Samples {
+					klog.Infof("打印当前处理的样本值 Processing sample: estimatedSignal.Samples[%d] = %+v", i, estimatedSignal.Samples[i])
 					samples[i+k*n] = common.Sample{
 						Value:     estimatedSignal.Samples[i],
 						Timestamp: nextTimestamp,
