@@ -158,8 +158,8 @@ func (p *periodicSignalPrediction) Run(stopCh <-chan struct{}) {
 }
 
 func (p *periodicSignalPrediction) updateAggregateSignalsWithQuery(namer metricnaming.MetricNamer) error {
-	klog.Errorf("查询历史数据的条件namer %+v：",namer)
-	
+	klog.Errorf("查询历史数据的条件namer %+v：", namer)
+
 	// Query history data for prediction
 	maxAttempts := 10
 	attempts := 0
@@ -168,7 +168,7 @@ func (p *periodicSignalPrediction) updateAggregateSignalsWithQuery(namer metricn
 	queryExpr := namer.BuildUniqueKey()
 	for attempts < maxAttempts {
 		tsList, err = p.queryHistoryTimeSeries(namer)
-		klog.Errorf("查询出来的历史数据:%+v",tsList)
+		klog.Errorf("查询出来的历史数据:%+v", tsList)
 		if err != nil {
 			attempts++
 			t := time.Second * time.Duration(math.Pow(2., float64(attempts)))
@@ -209,6 +209,12 @@ func (p *periodicSignalPrediction) queryHistoryTimeSeries(namer metricnaming.Met
 		klog.ErrorS(err, "Failed to query history time series.")
 		return nil, err
 	}
+	tsListData, err := json.MarshalIndent(tsList, "", "  ") // 带缩进，格式化输出
+	if err != nil {
+		klog.Errorf("Failed to serialize tsList: %v", err)
+	} else {
+		klog.Errorf("历史数据tsList: dsp queryHistoryTimeSeries tsList:\n%s", string(tsListData))
+	}
 
 	klog.V(6).InfoS("dsp queryHistoryTimeSeries", "timeSeriesList", tsList, "config", *config)
 	klog.Errorf("dsp查询出来的历史时间序列 prediction.queryHistoryTimeSeries dsp queryHistoryTimeSeries", "timeSeriesList", tsList, "config", *config)
@@ -237,15 +243,15 @@ func (p *periodicSignalPrediction) updateAggregateSignals(queryExpr string, hist
 			periodLength = p
 			klog.V(4).InfoS("This is a periodic time series.", "queryExpr", queryExpr, "labels", ts.Labels, "periodLength", periodLength)
 			klog.Errorf("这是一个周期时间序列 This is a periodic time series.", "queryExpr", queryExpr, "labels", ts.Labels, "periodLength", periodLength)
-			} else {
+		} else {
 			klog.V(4).InfoS("This is not a periodic time series.", "queryExpr", queryExpr, "labels", ts.Labels)
-			klog.Errorf("这不是一个周期时间序列 This is not a periodic time series.", "queryExpr", queryExpr, "labels", ts.Labels)	
+			klog.Errorf("这不是一个周期时间序列 This is not a periodic time series.", "queryExpr", queryExpr, "labels", ts.Labels)
 		}
 
 		if periodLength > 0 {
 			signal = SamplesToSignal(ts.Samples, config.historyResolution)
 			signal, nPeriods = signal.Truncate(periodLength)
-			klog.Errorf("nPeriods的数量",nPeriods)	
+			klog.Errorf("nPeriods的数量", nPeriods)
 			if nPeriods >= 2 {
 				chosenEstimator = bestEstimator(queryExpr, config.estimators, signal, nPeriods, periodLength)
 			}
