@@ -2,6 +2,7 @@ package prom
 
 import (
 	gocontext "context"
+	"encoding/json"
 	"fmt"
 	"sync"
 	"time"
@@ -56,7 +57,24 @@ func (c *context) QueryRangeSync(ctx gocontext.Context, query string, start, end
 		var ts []*common.TimeSeries
 		klog.Errorf("打印查询参数 Prometheus Query Parameters: query=%s, start=%s, end=%s, step=%s", query, r.Start.Format(time.RFC3339), r.End.Format(time.RFC3339), r.Step.String())
 		results, warnings, err := c.api.QueryRange(ctx, query, r)
-		queryURL := fmt.Sprintf("http://<prometheus-server>/api/v1/query_range?query=%s&start=%s&end=%s&step=%s", query, r.Start.Format(time.RFC3339), r.End.Format(time.RFC3339), r.Step.String())
+		
+		// 打印 results
+		 resultsJSON, err := json.MarshalIndent(results, "", "  ")
+		 if err != nil {
+			 klog.ErrorS(err, "Failed to marshal results")
+		 } else {
+			 klog.ErrorS(nil, "打印 results Results from Prometheus", "results", string(resultsJSON))
+		 }
+	 
+		 // 打印 warnings
+		 warningsJSON, err := json.MarshalIndent(warnings, "", "  ")
+		 if err != nil {
+			 klog.ErrorS(err, "Failed to marshal warnings")
+		 } else {
+			 klog.ErrorS(nil, "打印 warnings Warnings from Prometheus", "warnings", string(warningsJSON))
+		 }
+		
+		queryURL := fmt.Sprintf("http://<prometheus-server>/api/v1/query_range?query=%s&start=%s&end=%s&step=%s", query, r.Start, r.End, r.Step.String())
 		klog.Errorf("打印查询Url Prometheus Query URL: %s", queryURL)
 		if len(warnings) != 0 {
 			klog.V(4).InfoS("Prom query range warnings", "warnings", warnings)
