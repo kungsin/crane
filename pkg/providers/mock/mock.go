@@ -78,6 +78,7 @@ func (im inMemory) GetTimeSeries(_ metricnaming.MetricNamer, _ []common.QueryCon
 	var i int
 
 	klog.InfoS("GetTimeSeries from imMemory provider", "range", fmt.Sprintf(" [%d, %d]", start.Unix(), end.Unix()))
+	klog.ErrorS(nil, "从内存提供程序获取TimeSeries GetTimeSeries from inMemory provider", "range", fmt.Sprintf(" [%d, %d]", start.Unix(), end.Unix()))
 
 	for i = range im.samples {
 		t := time.Unix(im.samples[i].Timestamp, 0)

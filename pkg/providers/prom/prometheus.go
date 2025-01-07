@@ -45,6 +45,12 @@ func (p *prom) QueryTimeSeries(namer metricnaming.MetricNamer, startTime time.Ti
 		klog.Errorf("Failed to BuildQuery: %v", err)
 		return nil, err
 	}
+
+	klog.ErrorS(nil, "QueryTimeSeries 调试", 
+    "metricNamer", namer.BuildUniqueKey(), 
+    "timeout", p.config.Timeout, 
+    "query", promQuery.Prometheus.Query)
+
 	klog.V(6).Infof("QueryTimeSeries metricNamer %v, timeout: %v, query: %v", namer.BuildUniqueKey(), p.config.Timeout, promQuery.Prometheus.Query)
 	timeoutCtx, cancelFunc := gocontext.WithTimeout(gocontext.Background(), p.config.Timeout)
 	defer cancelFunc()

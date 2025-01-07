@@ -52,15 +52,18 @@ func (c *context) QueryRangeSync(ctx gocontext.Context, query string, start, end
 	shards := c.computeShards(query, &r)
 	if len(shards.windows) <= 1 {
 		klog.V(4).InfoS("Prom query directly", "query", query)
+		klog.ErrorS(nil,"直接查询Prom Prom query directly", "query", query)
 		var ts []*common.TimeSeries
 		results, warnings, err := c.api.QueryRange(ctx, query, r)
 		if len(warnings) != 0 {
 			klog.V(4).InfoS("Prom query range warnings", "warnings", warnings)
+			klog.ErrorS(nil,"Prom查询范围警告", "warnings:", warnings)
 		}
 		// todo: parse err to see its max limit dynamically
 		if err != nil {
 			return ts, err
 		}
+		klog.ErrorS(nil,"Prom查询范围结果", "query：", query, "result：", results.String(), "resultsType:", results.Type())
 		if klog.V(7).Enabled() {
 			klog.V(7).InfoS("Prom query range result", "query", query, "result", results.String(), "resultsType", results.Type())
 		}
