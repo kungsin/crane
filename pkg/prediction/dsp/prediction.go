@@ -242,6 +242,7 @@ func (p *periodicSignalPrediction) updateAggregateSignals(queryExpr string, hist
 	var predictedTimeSeriesList []*common.TimeSeries
 
 	klog.Errorf("for循环之前的历史数据:%v",historyTimeSeriesList)
+	klog.Errorf("historyTimeSeriesList的长度:%v",len(historyTimeSeriesList))
 	for _, ts := range historyTimeSeriesList {
 		klog.Errorf("for循环之后的历史数据:%v",ts)
 		if klog.V(6).Enabled() {
