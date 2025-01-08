@@ -59,11 +59,14 @@ func (p *periodicSignalPrediction) QueryRealtimePredictedValuesOnce(ctx context.
 
 func findPeriod(ts *common.TimeSeries, sampleInterval time.Duration) time.Duration {
 	signal := SamplesToSignal(ts.Samples, sampleInterval)
+	klog.Errorf("findPeriod的singnal转换结果：%v",signal)
 	si, m := signal.Truncate(Week)
+	klog.Errorf("findPeriod的singnal转换结果1si：%v,1m:",si,m)
 	if m > 1 {
 		return si.FindPeriod()
 	}
 	si, m = signal.Truncate(Day)
+	klog.Errorf("findPeriod的singnal转换结果2si：%v,2m:",si,m)
 	if m > 1 {
 		return si.FindPeriod()
 	}
@@ -241,7 +244,7 @@ func (p *periodicSignalPrediction) updateAggregateSignals(queryExpr string, hist
 		var signal *Signal
 		var nPeriods int
 		var periodLength time.Duration = 0
-
+        klog.Errorf("findPeriod查询条件 ts: %v,config.historyResolutionL:%v", ts,config.historyResolution)
 		p := findPeriod(ts, config.historyResolution)
 		klog.Errorf("p的结果: %v", p)
 		if p == Day || p == Week {
