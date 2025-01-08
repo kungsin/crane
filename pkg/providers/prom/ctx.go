@@ -45,12 +45,14 @@ func NewContext(client prometheus.Client, maxPointsPerTimeSeries int) *context {
 
 // QueryRangeSync range query prometheus in sync way
 func (c *context) QueryRangeSync(ctx gocontext.Context, query string, start, end time.Time, step time.Duration) ([]*common.TimeSeries, error) {
+	
 	r := promapiv1.Range{
 		Start: start,
 		End:   end,
 		Step:  step,
 	}
 	shards := c.computeShards(query, &r)
+	klog.Errorf("shards:",shards)
 	if len(shards.windows) <= 1 {
 		klog.V(4).InfoS("Prom query directly", "query", query)
 		klog.ErrorS(nil, "直接查询Prom Prom query directly", "query", query)
@@ -76,8 +78,8 @@ func (c *context) QueryRangeSync(ctx gocontext.Context, query string, start, end
 			 klog.ErrorS(nil, "打印 warnings Warnings from Prometheus", "warnings", string(warningsJSON))
 		 }
 		
-		queryURL := fmt.Sprintf("http://<prometheus-server>/api/v1/query_range?query=%s&start=%s&end=%s&step=%s", query, r.Start, r.End, r.Step.String())
-		klog.Errorf("打印查询Url Prometheus Query URL: %s", queryURL)
+		 queryURL := fmt.Sprintf("http://10.1.60.129:31783/api/v1/query_range?query=%s&start=%v&end=%v&step=%v", query, r.Start, r.End, r.Step)
+		 klog.Errorf("打印查询Url Prometheus Query URL: %s", queryURL)		 
 		if len(warnings) != 0 {
 			klog.V(4).InfoS("Prom query range warnings", "warnings", warnings)
 			klog.ErrorS(nil, "Prom查询范围警告", "warnings:", warnings)
