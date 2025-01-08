@@ -207,7 +207,7 @@ func (p *periodicSignalPrediction) updateAggregateSignalsWithQuery(namer metricn
 		klog.Errorf("tsList的值: %s", jsonData)
 	}
 
-	klog.Errorf("tsList的长度: %v", len(tsList))
+	klog.Errorf("tsList的长度1: %v", len(tsList))
 	p.updateAggregateSignals(queryExpr, tsList, cfg)
 
 	return nil
@@ -249,8 +249,8 @@ func (p *periodicSignalPrediction) queryHistoryTimeSeries(namer metricnaming.Met
 
 func (p *periodicSignalPrediction) updateAggregateSignals(queryExpr string, historyTimeSeriesList []*common.TimeSeries, config *internalConfig) {
 	var predictedTimeSeriesList []*common.TimeSeries
-
-	klog.Errorf("historyTimeSeriesList 历史数据:%v", historyTimeSeriesList)
+	klog.Errorf("tsList的长度2: %v", len(historyTimeSeriesList))
+	
 	for i, ts := range historyTimeSeriesList {
 		jsonData, err := json.Marshal(ts)
 		if err != nil {
