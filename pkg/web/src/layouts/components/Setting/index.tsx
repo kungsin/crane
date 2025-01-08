@@ -91,7 +91,7 @@ export default memo(() => {
         options={layoutList}
       />
 
-      <div className={Style.settingTitle}>{t('元素开关')}</div>
+      {/* <div className={Style.settingTitle}>{t('元素开关')}</div>
       <Row justify='space-between'>
         <Col>
           <div className={Style.settingSubTitle}>{t('显示 Header')}</div>
@@ -117,7 +117,7 @@ export default memo(() => {
         <Col>
           <Switch size='large' value={globalState.showFooter} onChange={() => dispatch(toggleShowFooter())} />
         </Col>
-      </Row>
+      </Row> */}
     </div>
   );
 });

@@ -25,17 +25,11 @@ export default memo((props: { showMenu?: boolean }) => {
 
   const IsAdmin = JSON.parse(localStorage.getItem('userInfo'))?.IsAdmin || false;
   const Clusters = JSON.parse(localStorage.getItem('userInfo'))?.Clusters || [];
-  // console.log('=-===Clusters', Clusters);
-  // console.log('IsAdmin', IsAdmin);
 
   useEffect(() => {
     let items = clusterList?.data?.data?.items;
     // 如果是管理员,显示全部的集群
     if (IsAdmin) {
-      // console.log('===============来这里====================');
-
-      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-      // @ts-ignore
       if (selectedClusterId === '' && items?.length > 0) {
         // console.log('显示显示');
         // eslint-disable-next-line @typescript-eslint/ban-ts-comment
@@ -44,18 +38,15 @@ export default memo((props: { showMenu?: boolean }) => {
       }
 
       if (items?.length === 0) {
-        // console.log('返回返回');
         dispatch(insightAction.selectedClusterId(''));
         if (location.pathname !== '/login') {
           MessagePlugin.error(
             {
-              // content: t('添加一个集群以启用Dashboard'),
               content: t('需要添加一个集群以启用Dashboard,请联系管理员添加集群'),
               closeBtn: true,
             },
             10000,
           );
-          // navigate('/settings/cluster');
           removeUserInfo();
           navigate('/login');
           window.location.reload();
@@ -66,33 +57,26 @@ export default memo((props: { showMenu?: boolean }) => {
     else {
       console.log('===============来我这====================');
       // 筛选集群列表
-      // console.log('Clusters', Clusters);
-      // console.log('clusterList', items);
+
       const filteredClusters = items?.filter((item) => Clusters.includes(item.id));
       // console.log('filteredClusters', filteredClusters);
-
       if (selectedClusterId === '' && filteredClusters?.length > 0) {
-        // console.log('显示显示');
         // eslint-disable-next-line @typescript-eslint/ban-ts-comment
         // @ts-ignore
-
         dispatch(insightAction.selectedClusterId(filteredClusters[0].id));
       }
 
       if (filteredClusters?.length === 0) {
-        // console.log('返回返回');
         dispatch(insightAction.selectedClusterId(''));
         if (location.pathname !== '/login') {
           MessagePlugin.error(
             {
-              // content: t('添加一个集群以启用Dashboard'),
               content: t('需要添加一个集群以启用Dashboard,请联系管理员添加集群'),
               closeBtn: true,
             },
             10000,
           );
           removeUserInfo();
-          // navigate('/settings/cluster');
           navigate('/login');
           window.location.reload();
         }
@@ -100,14 +84,6 @@ export default memo((props: { showMenu?: boolean }) => {
     }
   });
 
-  // const options = React.useMemo(
-  //   () =>
-  //     (clusterList.data?.data?.items ?? []).map((item) => ({
-  //       text: `${item.name} (${item.id})`,
-  //       value: item.id,
-  //     })),
-  //   [clusterList.data?.data?.items],
-  // );
   const options = React.useMemo(() => {
     const items = clusterList.data?.data?.items ?? [];
 
@@ -161,12 +137,8 @@ export default memo((props: { showMenu?: boolean }) => {
   }
 
   // 自定义修改，获取折扣
-  // console.log('dispatch', selectedClusterId);
-  // console.log('Clusters', clusterList?.data?.data?.items);
-  useEffect(() => {
-    // console.log('dispatch', selectedClusterId);
-    // console.log('Clusters', clusterList?.data?.data?.items);
 
+  useEffect(() => {
     // 检查 selectedClusterId 是否存在
     if (selectedClusterId) {
       // 获取选中的集群数据
@@ -175,7 +147,6 @@ export default memo((props: { showMenu?: boolean }) => {
       // 检查 selectedCluster 是否存在
       if (selectedCluster) {
         // 将选中的集群数据存储到缓存中
-        // console.log('selectedCluster', selectedCluster.discount);
         dispatch(insightAction.discount(selectedCluster.discount));
       }
     }
