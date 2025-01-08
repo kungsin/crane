@@ -28,7 +28,9 @@ func Debug(predictor prediction.Interface, namer metricnaming.MetricNamer, confi
 	var signal, history, test, estimate *Signal
 	var nPeriods int
 	var chosenEstimator Estimator
+	klog.Errorf("for historyTimeSeriesList %v:",historyTimeSeriesList)
 	for _, ts := range historyTimeSeriesList {
+		klog.Errorf("for historyTimeSeriesList 循环中的 ts%v:",ts)
 		periodLength := findPeriod(ts, internalConfig.historyResolution)
 		if periodLength == Day || periodLength == Week {
 			signal = SamplesToSignal(ts.Samples, internalConfig.historyResolution)

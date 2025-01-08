@@ -241,7 +241,9 @@ func (p *periodicSignalPrediction) queryHistoryTimeSeries(namer metricnaming.Met
 func (p *periodicSignalPrediction) updateAggregateSignals(queryExpr string, historyTimeSeriesList []*common.TimeSeries, config *internalConfig) {
 	var predictedTimeSeriesList []*common.TimeSeries
 
+	klog.Errorf("for循环之前的历史数据:%v",historyTimeSeriesList)
 	for _, ts := range historyTimeSeriesList {
+		klog.Errorf("for循环之后的历史数据:%v",ts)
 		if klog.V(6).Enabled() {
 			sampleData, err := json.Marshal(ts.Samples)
 			klog.V(6).Infof("Got time series, queryExpr: %s, samples: %v, labels: %v, err: %v", queryExpr, string(sampleData), ts.Labels, err)
