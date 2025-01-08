@@ -59,14 +59,14 @@ func (p *periodicSignalPrediction) QueryRealtimePredictedValuesOnce(ctx context.
 
 func findPeriod(ts *common.TimeSeries, sampleInterval time.Duration) time.Duration {
 	signal := SamplesToSignal(ts.Samples, sampleInterval)
-	klog.Errorf("findPeriod的singnal转换结果：%v",signal)
+	klog.Errorf("findPeriod的singnal转换结果：%v", signal)
 	si, m := signal.Truncate(Week)
-	klog.Errorf("findPeriod的singnal转换结果1si：%v,1m:",si,m)
+	klog.Errorf("findPeriod的singnal转换结果1si：%v,1m:", si, m)
 	if m > 1 {
 		return si.FindPeriod()
 	}
 	si, m = signal.Truncate(Day)
-	klog.Errorf("findPeriod的singnal转换结果2si：%v,2m:",si,m)
+	klog.Errorf("findPeriod的singnal转换结果2si：%v,2m:", si, m)
 	if m > 1 {
 		return si.FindPeriod()
 	}
@@ -74,6 +74,15 @@ func findPeriod(ts *common.TimeSeries, sampleInterval time.Duration) time.Durati
 }
 
 func SamplesToSignal(samples []common.Sample, sampleInterval time.Duration) *Signal {
+
+	// 打印 samples 参数
+	for i, sample := range samples {
+		klog.Errorf("打印 samples 参数 Sample[%d]: Value=%f, Timestamp=%d\n", i, sample.Value, sample.Timestamp)
+	}
+
+	// 打印 sampleInterval 参数
+	klog.Errorf("打印 sampleInterval 参数 SampleInterval: %v\n", sampleInterval)
+
 	values := make([]float64, len(samples))
 	for i := range samples {
 		values[i] = samples[i].Value
@@ -207,7 +216,7 @@ func (p *periodicSignalPrediction) queryHistoryTimeSeries(namer metricnaming.Met
 	end := time.Now().Truncate(config.historyResolution)
 	start := end.Add(-config.historyDuration - time.Hour)
 	//打印namer
-	klog.Errorf("打印namer: name=%s",namer)
+	klog.Errorf("打印namer: name=%s", namer)
 	// 打印 start 和 end 的时间
 	klog.Errorf("查询时间范围: start=%s, end=%s", start.Format(time.RFC3339), end.Format(time.RFC3339))
 	tsList, err := p.GetHistoryProvider().QueryTimeSeries(namer, start, end, config.historyResolution)
@@ -244,7 +253,7 @@ func (p *periodicSignalPrediction) updateAggregateSignals(queryExpr string, hist
 		var signal *Signal
 		var nPeriods int
 		var periodLength time.Duration = 0
-        klog.Errorf("findPeriod查询条件 ts: %v,config.historyResolutionL:%v", ts,config.historyResolution)
+		klog.Errorf("findPeriod查询条件 ts: %v,config.historyResolutionL:%v", ts, config.historyResolution)
 		p := findPeriod(ts, config.historyResolution)
 		klog.Errorf("p的结果: %v", p)
 		if p == Day || p == Week {
@@ -255,7 +264,7 @@ func (p *periodicSignalPrediction) updateAggregateSignals(queryExpr string, hist
 			klog.V(4).InfoS("This is not a periodic time series.", "queryExpr", queryExpr, "labels", ts.Labels)
 			klog.Errorf("这不是一个周期时间序列 This is not a periodic time series.", "queryExpr", queryExpr, "labels", ts.Labels)
 		}
-		klog.Errorf("periodLength的结果:%v",periodLength)
+		klog.Errorf("periodLength的结果:%v", periodLength)
 		if periodLength > 0 {
 			signal = SamplesToSignal(ts.Samples, config.historyResolution)
 			signal, nPeriods = signal.Truncate(periodLength)
@@ -264,7 +273,7 @@ func (p *periodicSignalPrediction) updateAggregateSignals(queryExpr string, hist
 				chosenEstimator = bestEstimator(queryExpr, config.estimators, signal, nPeriods, periodLength)
 			}
 		}
-		klog.Errorf("chosenEstimator的结果:%v",chosenEstimator)
+		klog.Errorf("chosenEstimator的结果:%v", chosenEstimator)
 		if chosenEstimator != nil {
 			estimatedSignal := chosenEstimator.GetEstimation(signal, periodLength)
 			klog.Errorf("生成的预测信号：%+v", estimatedSignal)
