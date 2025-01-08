@@ -180,7 +180,7 @@ func (p *periodicSignalPrediction) updateAggregateSignalsWithQuery(namer metricn
 	queryExpr := namer.BuildUniqueKey()
 	for attempts < maxAttempts {
 		tsList, err = p.queryHistoryTimeSeries(namer)
-		klog.Errorf("查询出来的历史数据:%+v", tsList)
+		klog.Errorf("查询出来的历史数据:%s", tsList)
 		if err != nil {
 			attempts++
 			t := time.Second * time.Duration(math.Pow(2., float64(attempts)))
@@ -196,9 +196,18 @@ func (p *periodicSignalPrediction) updateAggregateSignalsWithQuery(namer metricn
 	}
 
 	klog.V(6).InfoS("Update aggregate signals.", "queryExpr", queryExpr, "timeSeriesLength", len(tsList))
-	klog.Errorf("更新聚合信号 Update aggregate signals.", "queryExpr", queryExpr, "timeSeriesLength", len(tsList))
+	klog.Errorf("更新聚合信号 Update aggregate signals.", "queryExpr:%v:", queryExpr, "timeSeriesLength%v:", len(tsList))
 	cfg := p.a.GetConfig(queryExpr)
 
+	// 打印 tsList 的具体内容
+	jsonData, err := json.Marshal(tsList)
+	if err != nil {
+		klog.Errorf("Error marshaling tsList: %v", err)
+	} else {
+		klog.Errorf("tsList的值: %s", jsonData)
+	}
+
+	klog.Errorf("tsList的长度: %v", len(tsList))
 	p.updateAggregateSignals(queryExpr, tsList, cfg)
 
 	return nil
@@ -241,10 +250,18 @@ func (p *periodicSignalPrediction) queryHistoryTimeSeries(namer metricnaming.Met
 func (p *periodicSignalPrediction) updateAggregateSignals(queryExpr string, historyTimeSeriesList []*common.TimeSeries, config *internalConfig) {
 	var predictedTimeSeriesList []*common.TimeSeries
 
-	klog.Errorf("for循环之前的历史数据:%v",historyTimeSeriesList)
-	klog.Errorf("historyTimeSeriesList的长度:%v",len(historyTimeSeriesList))
+	klog.Errorf("historyTimeSeriesList 历史数据:%v", historyTimeSeriesList)
+	for i, ts := range historyTimeSeriesList {
+		jsonData, err := json.Marshal(ts)
+		if err != nil {
+			klog.Errorf("Error marshaling TimeSeries at index %d: %v", i, err)
+		} else {
+			klog.Errorf("historyTimeSeriesList[%d]的值: %s", i, jsonData)
+		}
+	}
+	klog.Errorf("historyTimeSeriesList的长度:%v", len(historyTimeSeriesList))
 	for _, ts := range historyTimeSeriesList {
-		klog.Errorf("for循环之后的历史数据:%v",ts)
+		klog.Errorf("for循环之后的历史数据:%v", ts)
 		if klog.V(6).Enabled() {
 			sampleData, err := json.Marshal(ts.Samples)
 			klog.V(6).Infof("Got time series, queryExpr: %s, samples: %v, labels: %v, err: %v", queryExpr, string(sampleData), ts.Labels, err)
