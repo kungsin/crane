@@ -243,6 +243,7 @@ func (p *periodicSignalPrediction) updateAggregateSignals(queryExpr string, hist
 		var periodLength time.Duration = 0
 
 		p := findPeriod(ts, config.historyResolution)
+		klog.Errorf("p的结果",p)
 		if p == Day || p == Week {
 			periodLength = p
 			klog.V(4).InfoS("This is a periodic time series.", "queryExpr", queryExpr, "labels", ts.Labels, "periodLength", periodLength)
@@ -251,7 +252,7 @@ func (p *periodicSignalPrediction) updateAggregateSignals(queryExpr string, hist
 			klog.V(4).InfoS("This is not a periodic time series.", "queryExpr", queryExpr, "labels", ts.Labels)
 			klog.Errorf("这不是一个周期时间序列 This is not a periodic time series.", "queryExpr", queryExpr, "labels", ts.Labels)
 		}
-
+		klog.Errorf("periodLength的结果",periodLength)
 		if periodLength > 0 {
 			signal = SamplesToSignal(ts.Samples, config.historyResolution)
 			signal, nPeriods = signal.Truncate(periodLength)
@@ -260,7 +261,7 @@ func (p *periodicSignalPrediction) updateAggregateSignals(queryExpr string, hist
 				chosenEstimator = bestEstimator(queryExpr, config.estimators, signal, nPeriods, periodLength)
 			}
 		}
-
+		klog.Errorf("chosenEstimator的结果",chosenEstimator)
 		if chosenEstimator != nil {
 			estimatedSignal := chosenEstimator.GetEstimation(signal, periodLength)
 			klog.Errorf("生成的预测信号：%+v", estimatedSignal)
