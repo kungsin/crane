@@ -109,6 +109,9 @@ func preProcessTimeSeries(ts *common.TimeSeries, config *internalConfig, unit ti
 
 func preProcessTimeSeriesList(tsList []*common.TimeSeries, config *internalConfig) ([]*common.TimeSeries, error) {
 	klog.Infof("开始处理时间序列列表, 初始长度: %d", len(tsList)) // 打印输入列表的长度
+	for i, ts := range tsList {
+		klog.Infof("处理前的时间序列[%d]: %+v", i, ts) // 打印每个处理后的时间序列内容
+	}
 
 	var wg sync.WaitGroup
 
