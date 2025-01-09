@@ -1,7 +1,6 @@
 package dsp
 
 import (
-	"encoding/json"
 	"fmt"
 	"sync"
 	"time"
@@ -135,9 +134,9 @@ func preProcessTimeSeriesList(tsList []*common.TimeSeries, config *internalConfi
 	}
 
 	klog.Infof("处理完成后的时间序列列表长度: %d", len(tsList)) // 打印最终列表的长度
-    for i, ts := range tsList {
-        klog.Infof("处理后的时间序列[%d]: %+v", i, ts) // 打印每个处理后的时间序列内容
-    }
+	for i, ts := range tsList {
+		klog.Infof("处理后的时间序列[%d]: %+v", i, ts) // 打印每个处理后的时间序列内容
+	}
 
 	return tsList, nil
 }
