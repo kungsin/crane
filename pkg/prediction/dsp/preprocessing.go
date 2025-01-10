@@ -2,6 +2,7 @@ package dsp
 
 import (
 	"fmt"
+	"strings"
 	"sync"
 	"time"
 
@@ -108,10 +109,19 @@ func preProcessTimeSeries(ts *common.TimeSeries, config *internalConfig, unit ti
 }
 
 func preProcessTimeSeriesList(tsList []*common.TimeSeries, config *internalConfig) ([]*common.TimeSeries, error) {
-	klog.Infof("开始处理时间序列列表, 初始长度: %d", len(tsList)) // 打印输入列表的长度
-	for i, ts := range tsList {
-		klog.Infof("处理前的时间序列[%d]: %+v", i, ts) // 打印每个处理后的时间序列内容
-	}
+	klog.Infof("开始预处理时间序列列表, 初始长度: %d", len(tsList)) // 打印输入列表的长度
+    for i, ts := range tsList {
+        // 打印 TimeSeries 的 Labels
+        labels := []string{}
+        for _, label := range ts.Labels {
+            labels = append(labels, fmt.Sprintf("%s=%s", label.Name, label.Value))
+        }
+        klog.Infof("打印预处理前的时间序列[%d]: Labels={%s}", i, strings.Join(labels, ", "))
+        // 打印 TimeSeries 的 Samples
+        for j, sample := range ts.Samples {
+            klog.Infof("打印预处理前时间序列[%d]的样本[%d]: Value=%.2f, Timestamp=%d", i, j, sample.Value, sample.Timestamp)
+        }
+    }
 
 	var wg sync.WaitGroup
 
@@ -136,10 +146,19 @@ func preProcessTimeSeriesList(tsList []*common.TimeSeries, config *internalConfi
 		tsList = append(tsList, ts)
 	}
 
-	klog.Infof("处理完成后的时间序列列表长度: %d", len(tsList)) // 打印最终列表的长度
+	klog.Infof("预处理完成后的时间序列列表长度: %d", len(tsList)) // 打印最终列表的长度
 	for i, ts := range tsList {
-		klog.Infof("处理后的时间序列[%d]: %+v", i, ts) // 打印每个处理后的时间序列内容
-	}
+        // 打印 TimeSeries 的 Labels
+        labels := []string{}
+        for _, label := range ts.Labels {
+            labels = append(labels, fmt.Sprintf("%s=%s", label.Name, label.Value))
+        }
+        klog.Infof("打印预处理后的时间序列[%d]: Labels={%s}", i, strings.Join(labels, ", "))
+        // 打印 TimeSeries 的 Samples
+        for j, sample := range ts.Samples {
+            klog.Infof("打印预处理后的时间序列[%d]的样本[%d]: Value=%.2f, Timestamp=%d", i, j, sample.Value, sample.Timestamp)
+        }
+    }
 
 	return tsList, nil
 }

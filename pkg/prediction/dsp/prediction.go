@@ -5,6 +5,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"math"
+	"strings"
 	"sync"
 	"time"
 
@@ -59,14 +60,14 @@ func (p *periodicSignalPrediction) QueryRealtimePredictedValuesOnce(ctx context.
 
 func findPeriod(ts *common.TimeSeries, sampleInterval time.Duration) time.Duration {
 	signal := SamplesToSignal(ts.Samples, sampleInterval)
-	klog.Errorf("findPeriod的singnal转换结果：%v", signal)
+	klog.Infof("findPeriod的SamplesToSignal转换结果：%v", signal)
 	si, m := signal.Truncate(Week)
-	klog.Errorf("findPeriod的singnal转换结果1si：%v,1m:", si, m)
+	klog.Infof("singnal的Truncate Week结果si：%v,m%v:", si, m)
 	if m > 1 {
 		return si.FindPeriod()
 	}
 	si, m = signal.Truncate(Day)
-	klog.Errorf("findPeriod的singnal转换结果2si：%v,2m:", si, m)
+	klog.Infof("singnal的Truncate Day结果si：%v,m%v:", si, m)
 	if m > 1 {
 		return si.FindPeriod()
 	}
@@ -180,7 +181,6 @@ func (p *periodicSignalPrediction) updateAggregateSignalsWithQuery(namer metricn
 	queryExpr := namer.BuildUniqueKey()
 	for attempts < maxAttempts {
 		tsList, err = p.queryHistoryTimeSeries(namer)
-		klog.Errorf("查询出来的历史数据:%s", tsList)
 		if err != nil {
 			attempts++
 			t := time.Second * time.Duration(math.Pow(2., float64(attempts)))
@@ -196,18 +196,17 @@ func (p *periodicSignalPrediction) updateAggregateSignalsWithQuery(namer metricn
 	}
 
 	klog.V(6).InfoS("Update aggregate signals.", "queryExpr", queryExpr, "timeSeriesLength", len(tsList))
-	klog.Errorf("更新聚合信号 Update aggregate signals.", "queryExpr:%v:", queryExpr, "timeSeriesLength%v:", len(tsList))
+	klog.Infof("更新聚合信号 Update aggregate signals.", "queryExpr:%v:", queryExpr, "timeSeriesLength%v:", len(tsList))
 	cfg := p.a.GetConfig(queryExpr)
 
 	// 打印 tsList 的具体内容
 	jsonData, err := json.Marshal(tsList)
 	if err != nil {
-		klog.Errorf("Error marshaling tsList: %v", err)
+		klog.Infof("Error marshaling tsList: %v", err)
 	} else {
-		klog.Errorf("tsList的值: %s", jsonData)
+		klog.Infof("进入updateAggregateSignals之前tsList的值为: %s", jsonData)
 	}
 
-	klog.Errorf("tsList的长度1: %v", len(tsList))
 	p.updateAggregateSignals(queryExpr, tsList, cfg)
 
 	return nil
@@ -224,33 +223,47 @@ func (p *periodicSignalPrediction) queryHistoryTimeSeries(namer metricnaming.Met
 
 	end := time.Now().Truncate(config.historyResolution)
 	start := end.Add(-config.historyDuration - time.Hour)
-	//打印namer
-	klog.Errorf("打印namer: name=%s", namer)
-	// 打印 start 和 end 的时间
-	klog.Errorf("查询时间范围: start=%s, end=%s", start.Format(time.RFC3339), end.Format(time.RFC3339))
+	//打印查询prometheus历史数据的查询参数
+	klog.Infof("调用 QueryTimeSeries 方法查询prometheus历史数据, 查询参数: metricNamer=%+v, startTime=%s, endTime=%s, step=%v", 
+    namer, 
+    start.Format(time.RFC3339), 
+    end.Format(time.RFC3339), 
+    config.historyResolution,
+)
 	tsList, err := p.GetHistoryProvider().QueryTimeSeries(namer, start, end, config.historyResolution)
 	if err != nil {
 		klog.ErrorS(err, "Failed to query history time series.")
 		return nil, err
 	}
-	tsListData, err := json.MarshalIndent(tsList, "", "  ") // 带缩进，格式化输出
-	if err != nil {
-		klog.Errorf("Failed to serialize tsList: %v", err)
-	} else {
-		klog.Errorf("历史数据tsList: dsp queryHistoryTimeSeries tsList:\n%s", tsListData)
-		klog.Errorf("历史数据string(tsList): dsp queryHistoryTimeSeries tsList:\n%s", string(tsListData))
-	}
 
-	klog.V(6).InfoS("dsp queryHistoryTimeSeries", "timeSeriesList", tsList, "config", *config)
-	klog.Errorf("dsp查询出来的历史时间序列 prediction.queryHistoryTimeSeries dsp queryHistoryTimeSeries", "timeSeriesList", tsList, "config", *config)
 
+	klog.InfoS("dsp queryHistoryTimeSeries", "timeSeriesList", tsList, "config", *config)
+     
+	klog.Infof("p.GetHistoryProvider().QueryTimeSeries 方法查询prometheus历史数据返回的时间序列数量: %d", len(tsList))
+    for i, ts := range tsList {
+        if ts == nil {
+            klog.Warningf("时间序列[%d] 为 nil，跳过打印", i)
+            continue
+        }
+
+        // 打印 TimeSeries 的 Labels
+        labels := []string{}
+        for _, label := range ts.Labels {
+            labels = append(labels, fmt.Sprintf("%s=%s", label.Name, label.Value))
+        }
+        klog.Infof("时间序列[%d]: Labels={%s}", i, strings.Join(labels, ", "))
+
+        // 打印 TimeSeries 的 Samples
+        for j, sample := range ts.Samples {
+            klog.Infof("时间序列[%d]的样本[%d]: Value=%.2f, Timestamp=%d", i, j, sample.Value, sample.Timestamp)
+        }
+    }
 	return preProcessTimeSeriesList(tsList, config)
 }
 
 func (p *periodicSignalPrediction) updateAggregateSignals(queryExpr string, historyTimeSeriesList []*common.TimeSeries, config *internalConfig) {
 	var predictedTimeSeriesList []*common.TimeSeries
-	klog.Errorf("tsList的长度2: %v", len(historyTimeSeriesList))
-	
+	klog.Errorf("进入更新聚合信号后,predictedTimeSeriesList的长度: %v", len(historyTimeSeriesList))
 	for i, ts := range historyTimeSeriesList {
 		jsonData, err := json.Marshal(ts)
 		if err != nil {
@@ -259,23 +272,24 @@ func (p *periodicSignalPrediction) updateAggregateSignals(queryExpr string, hist
 			klog.Errorf("historyTimeSeriesList[%d]的值: %s", i, jsonData)
 		}
 	}
-	klog.Errorf("historyTimeSeriesList的长度:%v", len(historyTimeSeriesList))
-	for _, ts := range historyTimeSeriesList {
-		klog.Errorf("for循环之后的历史数据:%v", ts)
+	
+	for i, ts := range historyTimeSeriesList {
 		if klog.V(6).Enabled() {
 			sampleData, err := json.Marshal(ts.Samples)
 			klog.V(6).Infof("Got time series, queryExpr: %s, samples: %v, labels: %v, err: %v", queryExpr, string(sampleData), ts.Labels, err)
 		}
+		jsonData, err := json.Marshal(ts)
+		klog.Infof("进入historyTimeSeriesList[%d] for循环之后ts的值: %s",  i,jsonData)
 		sampleData, err := json.Marshal(ts.Samples)
-		klog.Errorf("历史数据打印  Got time series, queryExpr: %s, samples: %v, labels: %v, err: %v", queryExpr, string(sampleData), ts.Labels, err)
+		klog.Infof("Got time series, queryExpr: %s, samples: %v, labels: %v, err: %v", queryExpr, string(sampleData), ts.Labels, err)
 
 		var chosenEstimator Estimator
 		var signal *Signal
 		var nPeriods int
 		var periodLength time.Duration = 0
-		klog.Errorf("findPeriod查询条件 ts: %v,config.historyResolutionL:%v", ts, config.historyResolution)
+		klog.Infof("findPeriod查询条件 ts: %v,config.historyResolutionL:%v", ts, config.historyResolution)
 		p := findPeriod(ts, config.historyResolution)
-		klog.Errorf("p的结果: %v", p)
+		klog.Infof("findPeriod查询的结果: %v", p)
 		if p == Day || p == Week {
 			periodLength = p
 			klog.V(4).InfoS("This is a periodic time series.", "queryExpr", queryExpr, "labels", ts.Labels, "periodLength", periodLength)

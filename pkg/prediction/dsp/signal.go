@@ -11,6 +11,7 @@ import (
 	"github.com/go-echarts/go-echarts/v2/opts"
 	"github.com/go-echarts/go-echarts/v2/types"
 	"github.com/mjibson/go-dsp/fft"
+	"k8s.io/klog/v2"
 )
 
 var (
@@ -29,6 +30,9 @@ type Signal struct {
 
 // Truncate truncates the signal to a length of multiple of d.
 func (s *Signal) Truncate(d time.Duration) (*Signal, int /*multiple*/) {
+	klog.Infof("s.Duration:%s",s.Duration())
+	klog.Infof("d.Seconds:%s",d.Seconds())
+	
 	if s.Duration() < d.Seconds() {
 		return nil, 0
 	}

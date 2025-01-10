@@ -2,6 +2,8 @@ package prom
 
 import (
 	gocontext "context"
+	"fmt"
+	"strings"
 	"time"
 
 	promapiv1 "github.com/prometheus/client_golang/api/prometheus/v1"
@@ -38,7 +40,7 @@ func NewProvider(config *providers.PromConfig) (Provider, error) {
 }
 
 func (p *prom) QueryTimeSeries(namer metricnaming.MetricNamer, startTime time.Time, endTime time.Time, step time.Duration) ([]*common.TimeSeries, error) {
-	klog.Errorf("进入prometheus历史数据查询")
+	klog.Infof("进入QueryTimeSeries方法")
 	promBuilder := namer.QueryBuilder().Builder(metricquery.PrometheusMetricSource)
 	promQuery, err := promBuilder.BuildQuery()
 	if err != nil {
@@ -46,15 +48,29 @@ func (p *prom) QueryTimeSeries(namer metricnaming.MetricNamer, startTime time.Ti
 		return nil, err
 	}
 
-	klog.ErrorS(nil, "QueryTimeSeries 调试", 
-    "metricNamer", namer.BuildUniqueKey(), 
-    "timeout", p.config.Timeout, 
-    "query", promQuery.Prometheus.Query)
-
 	klog.V(6).Infof("QueryTimeSeries metricNamer %v, timeout: %v, query: %v", namer.BuildUniqueKey(), p.config.Timeout, promQuery.Prometheus.Query)
 	timeoutCtx, cancelFunc := gocontext.WithTimeout(gocontext.Background(), p.config.Timeout)
 	defer cancelFunc()
+
 	timeSeries, err := p.ctx.QueryRangeSync(timeoutCtx, promQuery.Prometheus.Query, startTime, endTime, step)
+	klog.Infof("打印QueryRangeSync的查询结果")
+	// 遍历 timeSeries 并打印每个数据点
+	for i, ts := range timeSeries {
+		// 拼接 Labels 信息
+		labelStr := []string{}
+		for _, label := range ts.Labels {
+			labelStr = append(labelStr, fmt.Sprintf("%s=%s", label.Name, label.Value))
+		}
+
+		// 拼接 Samples 信息
+		sampleStr := []string{}
+		for _, sample := range ts.Samples {
+			sampleStr = append(sampleStr, fmt.Sprintf("[Timestamp: %d, Value: %f]", sample.Timestamp, sample.Value))
+		}
+
+		// 使用 klog 打印一行日志
+		klog.Infof("TimeSeries #%d: Labels: {%s} Samples: {%s}", i+1, strings.Join(labelStr, " "), strings.Join(sampleStr, " "))
+	}
 	if err != nil {
 		klog.Errorf("Failed to QueryTimeSeries: %v, metricNamer: %v, query: %v", err, namer.BuildUniqueKey(), promQuery.Prometheus.Query)
 		return nil, err

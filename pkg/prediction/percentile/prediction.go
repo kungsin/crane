@@ -311,7 +311,7 @@ func (p *percentilePrediction) Run(stopCh <-chan struct{}) {
 
 func (p *percentilePrediction) queryHistoryTimeSeries(namer metricnaming.MetricNamer, c *internalConfig) ([]*common.TimeSeries, error) {
 	if p.GetHistoryProvider() == nil {
-		klog.Fatalln("History provider not found")
+		klog.Fatalln("History provider not ofund")
 	}
 	end := time.Now().Truncate(time.Minute)
 	start := end.Add(-c.historyLength)

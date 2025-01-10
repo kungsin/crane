@@ -2,7 +2,6 @@ package prom
 
 import (
 	gocontext "context"
-	"encoding/json"
 	"fmt"
 	"sync"
 	"time"
@@ -45,41 +44,23 @@ func NewContext(client prometheus.Client, maxPointsPerTimeSeries int) *context {
 
 // QueryRangeSync range query prometheus in sync way
 func (c *context) QueryRangeSync(ctx gocontext.Context, query string, start, end time.Time, step time.Duration) ([]*common.TimeSeries, error) {
-	
+	klog.Infof("进入QueryRangeSync方法")
 	r := promapiv1.Range{
 		Start: start,
 		End:   end,
 		Step:  step,
 	}
+	//判断是否需要分片
 	shards := c.computeShards(query, &r)
-	klog.Errorf("shards:",shards)
+	klog.Errorf("shards:", shards)
 	if len(shards.windows) <= 1 {
+		 // 如果只有一个时间范围，直接进行单次查询
 		klog.V(4).InfoS("Prom query directly", "query", query)
-		klog.ErrorS(nil, "直接查询Prom Prom query directly", "query", query)
+		klog.InfoS("如果只有一个时间范围，直接进行单次查询 Prom query directly", "query", query)
 		var ts []*common.TimeSeries
-		klog.Errorf("打印查询参数 Prometheus Query Parameters: query=%s, start=%s, end=%s, step=%s", query, r.Start.Format(time.RFC3339), r.End.Format(time.RFC3339), r.Step.String())
+		klog.InfoS("进入prometheus历史数据查询,查询参数为: query=%s, start=%s, end=%s, step=%s", query, r.Start, r.End, r.Step)
 		results, warnings, err := c.api.QueryRange(ctx, query, r)
-		
-		// 打印 results
-		 resultsJSON, err := json.MarshalIndent(results, "", "  ")
 
-		 klog.ErrorS(nil, "打印 error", "error", err)
-		 if err != nil {
-			 klog.ErrorS(err, "Failed to marshal results")
-		 } else {
-			 klog.ErrorS(nil, "打印 results Results from Prometheus", "results", string(resultsJSON))
-		 }
-	 
-		 // 打印 warnings
-		 warningsJSON, err := json.MarshalIndent(warnings, "", "  ")
-		 if err != nil {
-			 klog.ErrorS(err, "Failed to marshal warnings")
-		 } else {
-			 klog.ErrorS(nil, "打印 warnings Warnings from Prometheus", "warnings", string(warningsJSON))
-		 }
-		
-		 queryURL := fmt.Sprintf("http://10.1.60.129:31783/api/v1/query_range?query=%s&start=%v&end=%v&step=%v", query, r.Start, r.End, r.Step)
-		 klog.Errorf("打印查询Url Prometheus Query URL: %s", queryURL)		 
 		if len(warnings) != 0 {
 			klog.V(4).InfoS("Prom query range warnings", "warnings", warnings)
 			klog.ErrorS(nil, "Prom查询范围警告", "warnings:", warnings)
@@ -88,13 +69,21 @@ func (c *context) QueryRangeSync(ctx gocontext.Context, query string, start, end
 		if err != nil {
 			return ts, err
 		}
-		klog.ErrorS(nil, "Prom查询范围结果", "query：", query, "result：", results.String(), "resultsType:", results.Type())
+
 		if klog.V(7).Enabled() {
 			klog.V(7).InfoS("Prom query range result", "query", query, "result", results.String(), "resultsType", results.Type())
 		}
 
+		// 打印查询的结果
+		if results != nil {
+			klog.Infof("原始prometheus历史数据查询结果: %s", results.String())
+		} else {
+			klog.Warning("查询结果为空")
+		}
 		return c.convertPromResultsToTimeSeries(results)
 	}
+	  // 如果有多个时间范围，调用 `c.queryByShards` 
+	  // 按分片进行查询提高查询效率，避免 Prometheus 查询范围限制带来的问题。
 	return c.queryByShards(ctx, shards)
 }
 
@@ -114,6 +103,7 @@ func (c *context) QuerySync(ctx gocontext.Context, query string) ([]*common.Time
 }
 
 func (c *context) queryByShards(ctx gocontext.Context, queryShards *QueryShards) ([]*common.TimeSeries, error) {
+	klog.InfoS("有多个时间范围，调用 `c.queryByShards`  Prom query directly", "query", queryShards.query)
 	klog.V(4).InfoS("Prom query range by shards", "query", queryShards.query)
 	resultsCh := make(chan *QueryShardResult, len(queryShards.windows))
 	var wg sync.WaitGroup
@@ -255,6 +245,7 @@ type QueryShardResult struct {
 }
 
 func (c *context) convertPromResultsToTimeSeries(value prommodel.Value) ([]*common.TimeSeries, error) {
+	klog.InfoS("进入convertPromResultsToTimeSeries,初始数据为：",value.String())
 	var results []*common.TimeSeries
 	typeValue := value.Type()
 	switch typeValue {
@@ -303,6 +294,7 @@ func (c *context) convertPromResultsToTimeSeries(value prommodel.Value) ([]*comm
 	case prommodel.ValNone:
 		return results, fmt.Errorf("prometheus return value type is none")
 	}
+	klog.InfoS("转换convertPromResultsToTimeSeries完成,准换后的数据为：",results)
 	return results, fmt.Errorf("prometheus return unknown model value type %v", typeValue)
 }
 
