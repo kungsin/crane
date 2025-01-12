@@ -16,9 +16,9 @@ func fillMissingData(ts *common.TimeSeries, config *internalConfig, unit time.Du
 	if ts == nil || len(ts.Samples) == 0 {
 		return fmt.Errorf("empty time series")
 	}
-    klog.Infof("进入fillMissingData处理,参数为 ts:%v,config:%v,unit:%v",ts,config,unit)
+    // klog.Infof("进入fillMissingData处理,参数为 ts:%v,config:%v,unit:%v",ts,config,unit)
 	intervalSeconds := int64(config.historyResolution.Seconds())
-	klog.Infof("config.historyResolution.Seconds():",config.historyResolution.Seconds())
+	// klog.Infof("config.historyResolution.Seconds():",config.historyResolution.Seconds())
 	for i := 1; i < len(ts.Samples); i++ {
 		diff := ts.Samples[i].Timestamp - ts.Samples[i-1].Timestamp
 		// If a gap in time series is larger than one hour,
@@ -60,7 +60,7 @@ func fillMissingData(ts *common.TimeSeries, config *internalConfig, unit time.Du
 	}
 
 	ts.Samples = newSamples[beginIndex:]
-	klog.Infof("fillMissingData处理完成,ts:%v,ts.Samples:%v",ts,ts.Samples)
+	// klog.Infof("fillMissingData处理完成,ts:%v,ts.Samples:%v",ts,ts.Samples)
 	return nil
 }
 
