@@ -69,5 +69,5 @@ func TestFftEstimator_GetEstimation(t *testing.T) {
 		}
 	})
 	fmt.Println("Open your browser and access 'http://localhost:7001'")
-	//http.ListenAndServe(":7001", nil)
+	http.ListenAndServe(":7001", nil)
 }

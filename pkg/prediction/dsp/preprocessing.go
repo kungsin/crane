@@ -1,7 +1,11 @@
 package dsp
 
 import (
+	"bytes"
+	"encoding/csv"
 	"fmt"
+	"io/ioutil"
+	"strconv"
 	"strings"
 	"sync"
 	"time"
@@ -93,7 +97,35 @@ func removeExtremeOutliers(ts *common.TimeSeries) error {
 	return nil
 }
 
-func preProcessTimeSeries(ts *common.TimeSeries, config *internalConfig, unit time.Duration) error {
+func readCsvFile(filename string) (*Signal, error) {
+	buf, err := ioutil.ReadFile(filename)
+	if err != nil {
+		return nil, err
+	}
+	reader := csv.NewReader(bytes.NewBuffer(buf))
+	records, _ := reader.ReadAll()
+	var values []float64
+	for i := 1; i < len(records); i++ {
+		val, _ := strconv.ParseFloat(records[i][1], 64)
+		values = append(values, val)
+
+	}
+	return &Signal{
+		SampleRate: 1.0 / 60.0,
+		Samples:    values,
+	}, nil
+}
+
+func preProcessTimeSeries(ts1 *common.TimeSeries, config *internalConfig, unit time.Duration) error {
+	
+	var s, _ = readCsvFile("test_data/input14.csv")
+	ts := &common.TimeSeries{
+		Samples: make([]common.Sample, len(s.Samples)),
+	}
+	for i := 0; i < len(s.Samples); i++ {
+		ts.Samples[i].Value = s.Samples[i]
+	}
+	
 	klog.Infof("开始处理时间序列: 初始样本数量=%d", len(ts.Samples))
 	var err error
 

@@ -75,6 +75,8 @@ func findPeriod(ts *common.TimeSeries, sampleInterval time.Duration) time.Durati
 }
 
 func SamplesToSignal(samples []common.Sample, sampleInterval time.Duration) *Signal {
+   
+
 
 	// 打印 samples 参数
 	for i, sample := range samples {

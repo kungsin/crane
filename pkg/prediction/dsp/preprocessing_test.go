@@ -1,11 +1,14 @@
 package dsp
 
 import (
+	"fmt"
 	"math/rand"
+	"net/http"
 	"testing"
 	"time"
 
 	"github.com/go-echarts/go-echarts/v2/charts"
+	"github.com/go-echarts/go-echarts/v2/components"
 	"github.com/go-echarts/go-echarts/v2/opts"
 	"github.com/gocrane/crane/pkg/common"
 	"github.com/stretchr/testify/assert"
@@ -61,11 +64,11 @@ func TestRemoveExtremeOutliers2(t *testing.T) {
 			Uncomment code below to see what the original signal and the one after
 		    getting removed outliers look like
 	*/
-	//http.HandleFunc("/", func(w http.ResponseWriter, _ *http.Request) {
-	//	page := components.NewPage()
-	//	page.AddCharts(origLine)
-	//	page.Render(w)
-	//})
-	//fmt.Println("Open your browser and access 'http://localhost:7001'")
-	//http.ListenAndServe(":7001", nil)
+	http.HandleFunc("/", func(w http.ResponseWriter, _ *http.Request) {
+		page := components.NewPage()
+		page.AddCharts(origLine)
+		page.Render(w)
+	})
+	fmt.Println("Open your browser and access 'http://localhost:7001'")
+	http.ListenAndServe(":7001", nil)
 }
