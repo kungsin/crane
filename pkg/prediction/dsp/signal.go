@@ -38,8 +38,10 @@ func (s *Signal) Truncate(d time.Duration) (*Signal, int /*multiple*/) {
 	}
 
 	n := int(d.Seconds() * s.SampleRate)
+	klog.Infof("截断n:%v",n)
 	m := 0
 	i := len(s.Samples)
+	klog.Infof("截断i:%v",i)
 	for i-n >= 0 {
 		i -= n
 		m++
