@@ -97,7 +97,7 @@ func removeExtremeOutliers(ts *common.TimeSeries) error {
 	return nil
 }
 
-func readCsvFile(filename string) (*Signal, error) {
+func readaCsvFile(filename string) (*Signal, error) {
 	buf, err := ioutil.ReadFile(filename)
 	if err != nil {
 		return nil, err
@@ -118,14 +118,18 @@ func readCsvFile(filename string) (*Signal, error) {
 
 func preProcessTimeSeries(ts1 *common.TimeSeries, config *internalConfig, unit time.Duration) error {
 	
-	var s, _ = readCsvFile("test_data/input14.csv")
+	var s, _ = readaCsvFile("test_data/input14.csv")
+	if s == nil || len(s.Samples) == 0 {
+		klog.Infof("读取测试数据失败 s.Samples is empty or invalid")
+	}
+	klog.Infof("测试数据的长度为 s.Samples length: %d", len(s.Samples))
 	ts := &common.TimeSeries{
 		Samples: make([]common.Sample, len(s.Samples)),
 	}
 	for i := 0; i < len(s.Samples); i++ {
 		ts.Samples[i].Value = s.Samples[i]
 	}
-	
+    klog.Infof("使用测试数据赋值后的长度为 ts.Samples length: %d", len(ts.Samples))
 	klog.Infof("开始处理时间序列: 初始样本数量=%d", len(ts.Samples))
 	var err error
 
