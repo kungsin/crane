@@ -62,12 +62,12 @@ func findPeriod(ts *common.TimeSeries, sampleInterval time.Duration) time.Durati
 	signal := SamplesToSignal(ts.Samples, sampleInterval)
 	klog.Infof("findPeriod的SamplesToSignal转换结果：%v", signal)
 	si, m := signal.Truncate(Week)
-	klog.Infof("singnal的Truncate Week结果si：%v,m%v:", si, m)
+	klog.Infof("singnal的Truncate Week结果si：%v,m:%v:", si, m)
 	if m > 1 {
 		return si.FindPeriod()
 	}
 	si, m = signal.Truncate(Day)
-	klog.Infof("singnal的Truncate Day结果si：%v,m%v:", si, m)
+	klog.Infof("singnal的Truncate Day结果si：%v,m:%v", si, m)
 	if m > 1 {
 		return si.FindPeriod()
 	}

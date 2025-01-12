@@ -52,7 +52,7 @@ func (c *context) QueryRangeSync(ctx gocontext.Context, query string, start, end
 	}
 	//判断是否需要分片
 	shards := c.computeShards(query, &r)
-	klog.Errorf("shards:", shards)
+	klog.Infof("shards:%v", shards)
 	if len(shards.windows) <= 1 {
 		 // 如果只有一个时间范围，直接进行单次查询
 		klog.V(4).InfoS("Prom query directly", "query", query)
@@ -148,6 +148,7 @@ func (c *context) queryByShards(ctx gocontext.Context, queryShards *QueryShards)
 	close(resultsCh)
 
 	klog.V(4).InfoS("Prom query range by shards, all shards query done", "query", queryShards.query)
+	klog.InfoS("Prom query range by shards, all shards query done", "query", queryShards.query)
 	var errs []error
 	resultsMap := make(map[string]*common.TimeSeries)
 	var results []*common.TimeSeries
@@ -175,7 +176,7 @@ func (c *context) queryByShards(ctx gocontext.Context, queryShards *QueryShards)
 	if len(errs) > 0 {
 		return results, fmt.Errorf("%v", errs)
 	}
-
+    klog.InfoS("分片查询结束，查询结果为:%v",results)
 	return results, nil
 }
 
@@ -294,7 +295,6 @@ func (c *context) convertPromResultsToTimeSeries(value prommodel.Value) ([]*comm
 	case prommodel.ValNone:
 		return results, fmt.Errorf("prometheus return value type is none")
 	}
-	klog.InfoS("转换convertPromResultsToTimeSeries完成,准换后的数据为：",results)
 	return results, fmt.Errorf("prometheus return unknown model value type %v", typeValue)
 }
 

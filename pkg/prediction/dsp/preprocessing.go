@@ -94,17 +94,20 @@ func removeExtremeOutliers(ts *common.TimeSeries) error {
 }
 
 func preProcessTimeSeries(ts *common.TimeSeries, config *internalConfig, unit time.Duration) error {
+	klog.Infof("开始处理时间序列: 初始样本数量=%d", len(ts.Samples))
 	var err error
 
 	err = fillMissingData(ts, config, unit)
 	if err != nil {
+		klog.Errorf("fillMissingData 错误: %v", err)
 		return err
 	}
-
+	klog.Infof("调用 fillMissingData 后样本数量=%d", len(ts.Samples))
 	_ = deTrend()
-
+    
+	klog.Infof("调用 removeExtremeOutliers 前样本数量=%d", len(ts.Samples))
 	_ = removeExtremeOutliers(ts)
-
+	klog.Infof("调用 removeExtremeOutliers 后样本数量=%d", len(ts.Samples))
 	return nil
 }
 

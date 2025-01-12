@@ -33,6 +33,7 @@ const callerFormat = "TimeSeriesPredictionCaller-%s-%s"
 // NOTE: update period is better higher resolution than the algorithm sample interval, reduce the possibility of the data is out date.
 // but it is a final consistent system, so the data will be in date when next update reconcile in controller runtime.
 func (tc *Controller) syncPredictionStatus(ctx context.Context, tsPrediction *predictionapi.TimeSeriesPrediction) (ctrl.Result, error) {
+    klog.Infof("同步预测状态-syncPredictionStatus")
 	newStatus := tsPrediction.Status.DeepCopy()
 	key := klog.KObj(tsPrediction)
 	if err := tc.Client.Get(ctx, client.ObjectKey{Name: tsPrediction.Name, Namespace: tsPrediction.Namespace}, tsPrediction); err != nil {
