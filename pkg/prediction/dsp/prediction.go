@@ -258,8 +258,8 @@ func (p *periodicSignalPrediction) queryHistoryTimeSeries(namer metricnaming.Met
             klog.Infof("时间序列[%d]的样本[%d]: Value=%.2f, Timestamp=%d", i, j, sample.Value, sample.Timestamp)
         }
     }
-	// return preProcessTimeSeriesList(tsList, config)
-	return tsList,nil
+	return preProcessTimeSeriesList(tsList, config)
+	// return tsList,nil
 }
 
 func (p *periodicSignalPrediction) updateAggregateSignals(queryExpr string, historyTimeSeriesList []*common.TimeSeries, config *internalConfig) {
