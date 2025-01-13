@@ -76,7 +76,7 @@ func (c *context) QueryRangeSync(ctx gocontext.Context, query string, start, end
 
 		// 打印查询的结果
 		if results != nil {
-			klog.Infof("原始prometheus历史数据查询结果: %s", results.String())
+			klog.Infof("原始prometheus历史数据查询结果: %s,查询类型：%s", results.String(),results.Type())
 		} else {
 			klog.Warning("查询结果为空")
 		}

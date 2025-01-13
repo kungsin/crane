@@ -14,6 +14,27 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
+// func TestRemoveExtremeOutliers2p1(t *testing.T) {
+// 	var s, _ = readaCsvFile("test_data/input14.csv")
+// 	if s == nil || len(s.Samples) == 0 {
+// 		fmt.Printf("读取测试数据失败 s.Samples is empty or invalid")
+// 	}
+// 	fmt.Printf("测试数据的长度为 s.Samples length: %d", len(s.Samples))
+// 	ts := &common.TimeSeries{
+// 		Samples: make([]common.Sample, len(s.Samples)),
+// 	}
+// 	for i := 0; i < len(s.Samples); i++ {
+// 		ts.Samples[i] = common.Sample{
+// 			Value:     s.Samples[i],             
+// 			Timestamp: s.T
+// 		}
+// 	}
+// 	fmt.Printf("使用测试数据赋值后的长度为 ts.Samples length: %d", len(ts.Samples))
+// 	fmt.Printf("开始处理时间序列: 初始样本数量=%d", len(ts.Samples))
+// 	// 打印 ts 的内容
+// 	fmt.Printf("ts 内容: %+v\n", ts)
+// }
+
 func TestRemoveExtremeOutliers(t *testing.T) {
 	n := 10080
 
@@ -41,6 +62,9 @@ func TestRemoveExtremeOutliers(t *testing.T) {
 
 func TestRemoveExtremeOutliers2(t *testing.T) {
 	var s, _ = readCsvFile("test_data/input14.csv")
+	fmt.Println("xxxx")
+	// 打印 s 的值
+	fmt.Printf("s: %+v\n", s) // 使用 %+v 格式化输出结构体内容
 	origLine := s.Plot("green")
 
 	ts := &common.TimeSeries{

@@ -6,10 +6,15 @@ import (
 	"fmt"
 	"io/ioutil"
 	"math"
+	"net/http"
 	"strconv"
 	"testing"
 	"time"
 
+	"github.com/go-echarts/go-echarts/v2/charts"
+	"github.com/go-echarts/go-echarts/v2/components"
+	"github.com/go-echarts/go-echarts/v2/opts"
+	"github.com/go-echarts/go-echarts/v2/types"
 	"github.com/stretchr/testify/assert"
 )
 
@@ -120,30 +125,30 @@ func TestSignal_FindPeriod(t *testing.T) {
 
 // Uncomment test below to see what time series in test_data look like.
 // "Green" charts are  periodic time series, and "red" charts represent the non-periodic.
-//func TestSignal_Plot(t *testing.T) {
-//	signals := make([]*Signal, nInputs)
-//	for i := 0; i < nInputs; i++ {
-//		s, err := readCsvFile(fmt.Sprintf("test_data/input%d.csv", i))
-//		assert.NoError(t, err)
-//		signals[i] = s
-//	}
-//
-//	http.HandleFunc("/", func(w http.ResponseWriter, _ *http.Request) {
-//		p := components.NewPage()
-//		for i := 0; i < nInputs; i++ {
-//			var o charts.GlobalOpts
-//			if periodic[i] {
-//				o = charts.WithInitializationOpts(opts.Initialization{Width: "2000px", Theme: types.ThemeWonderland})
-//			} else {
-//				o = charts.WithInitializationOpts(opts.Initialization{Width: "2000px", Theme: types.ThemeRoma})
-//			}
-//			p = p.AddCharts(signals[i].Plot("", o))
-//		}
-//		_ = p.Render(w)
-//	})
-//	fmt.Println("Open your browser and access 'http://localhost:7001'")
-//	_ = http.ListenAndServe(":7001", nil)
-//}
+func TestSignal_Plot(t *testing.T) {
+	signals := make([]*Signal, nInputs)
+	for i := 0; i < nInputs; i++ {
+		s, err := readCsvFile(fmt.Sprintf("test_data/input%d.csv", i))
+		assert.NoError(t, err)
+		signals[i] = s
+	}
+
+	http.HandleFunc("/", func(w http.ResponseWriter, _ *http.Request) {
+		p := components.NewPage()
+		for i := 0; i < nInputs; i++ {
+			var o charts.GlobalOpts
+			if periodic[i] {
+				o = charts.WithInitializationOpts(opts.Initialization{Width: "2000px", Theme: types.ThemeWonderland})
+			} else {
+				o = charts.WithInitializationOpts(opts.Initialization{Width: "2000px", Theme: types.ThemeRoma})
+			}
+			p = p.AddCharts(signals[i].Plot("", o))
+		}
+		_ = p.Render(w)
+	})
+	fmt.Println("Open your browser and access 'http://localhost:7001'")
+	_ = http.ListenAndServe(":7001", nil)
+}
 
 var periodic = []bool{
 	true,

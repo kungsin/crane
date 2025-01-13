@@ -8,6 +8,7 @@ import (
 	"strconv"
 	"strings"
 	"sync"
+	"testing"
 	"time"
 
 	"github.com/montanaflynn/stats"
@@ -20,7 +21,7 @@ func fillMissingData(ts *common.TimeSeries, config *internalConfig, unit time.Du
 	if ts == nil || len(ts.Samples) == 0 {
 		return fmt.Errorf("empty time series")
 	}
-    // klog.Infof("进入fillMissingData处理,参数为 ts:%v,config:%v,unit:%v",ts,config,unit)
+	// klog.Infof("进入fillMissingData处理,参数为 ts:%v,config:%v,unit:%v",ts,config,unit)
 	intervalSeconds := int64(config.historyResolution.Seconds())
 	// klog.Infof("config.historyResolution.Seconds():",config.historyResolution.Seconds())
 	for i := 1; i < len(ts.Samples); i++ {
@@ -115,9 +116,7 @@ func readaCsvFile(filename string) (*Signal, error) {
 		Samples:    values,
 	}, nil
 }
-
-func preProcessTimeSeries(ts1 *common.TimeSeries, config *internalConfig, unit time.Duration) error {
-	
+func TestRemoveExtremeOutliers2p(t *testing.T) {
 	var s, _ = readaCsvFile("test_data/input14.csv")
 	if s == nil || len(s.Samples) == 0 {
 		klog.Infof("读取测试数据失败 s.Samples is empty or invalid")
@@ -129,7 +128,24 @@ func preProcessTimeSeries(ts1 *common.TimeSeries, config *internalConfig, unit t
 	for i := 0; i < len(s.Samples); i++ {
 		ts.Samples[i].Value = s.Samples[i]
 	}
-    klog.Infof("使用测试数据赋值后的长度为 ts.Samples length: %d", len(ts.Samples))
+	klog.Infof("使用测试数据赋值后的长度为 ts.Samples length: %d", len(ts.Samples))
+	klog.Infof("开始处理时间序列: 初始样本数量=%d", len(ts.Samples))
+}
+
+func preProcessTimeSeries(ts1 *common.TimeSeries, config *internalConfig, unit time.Duration) error {
+
+	var s, _ = readaCsvFile("test_data/input14.csv")
+	if s == nil || len(s.Samples) == 0 {
+		klog.Infof("读取测试数据失败 s.Samples is empty or invalid")
+	}
+	klog.Infof("测试数据的长度为 s.Samples length: %d", len(s.Samples))
+	ts := &common.TimeSeries{
+		Samples: make([]common.Sample, len(s.Samples)),
+	}
+	for i := 0; i < len(s.Samples); i++ {
+		ts.Samples[i].Value = s.Samples[i]
+	}
+	klog.Infof("使用测试数据赋值后的长度为 ts.Samples length: %d", len(ts.Samples))
 	klog.Infof("开始处理时间序列: 初始样本数量=%d", len(ts.Samples))
 	var err error
 
@@ -140,7 +156,7 @@ func preProcessTimeSeries(ts1 *common.TimeSeries, config *internalConfig, unit t
 	}
 	klog.Infof("调用 fillMissingData 后样本数量=%d", len(ts.Samples))
 	_ = deTrend()
-    
+
 	klog.Infof("调用 removeExtremeOutliers 前样本数量=%d", len(ts.Samples))
 	_ = removeExtremeOutliers(ts)
 	klog.Infof("调用 removeExtremeOutliers 后样本数量=%d", len(ts.Samples))
@@ -149,18 +165,18 @@ func preProcessTimeSeries(ts1 *common.TimeSeries, config *internalConfig, unit t
 
 func preProcessTimeSeriesList(tsList []*common.TimeSeries, config *internalConfig) ([]*common.TimeSeries, error) {
 	klog.Infof("开始预处理时间序列列表, 初始长度: %d", len(tsList)) // 打印输入列表的长度
-    for i, ts := range tsList {
-        // 打印 TimeSeries 的 Labels
-        labels := []string{}
-        for _, label := range ts.Labels {
-            labels = append(labels, fmt.Sprintf("%s=%s", label.Name, label.Value))
-        }
-        klog.Infof("打印预处理前的时间序列[%d]: Labels={%s}", i, strings.Join(labels, ", "))
-        // 打印 TimeSeries 的 Samples
-        for j, sample := range ts.Samples {
-            klog.Infof("打印预处理前时间序列[%d]的样本[%d]: Value=%.2f, Timestamp=%d", i, j, sample.Value, sample.Timestamp)
-        }
-    }
+	for i, ts := range tsList {
+		// 打印 TimeSeries 的 Labels
+		labels := []string{}
+		for _, label := range ts.Labels {
+			labels = append(labels, fmt.Sprintf("%s=%s", label.Name, label.Value))
+		}
+		klog.Infof("打印预处理前的时间序列[%d]: Labels={%s}", i, strings.Join(labels, ", "))
+		// 打印 TimeSeries 的 Samples
+		for j, sample := range ts.Samples {
+			klog.Infof("打印预处理前时间序列[%d]的样本[%d]: Value=%.2f, Timestamp=%d", i, j, sample.Value, sample.Timestamp)
+		}
+	}
 
 	var wg sync.WaitGroup
 
@@ -187,17 +203,17 @@ func preProcessTimeSeriesList(tsList []*common.TimeSeries, config *internalConfi
 
 	klog.Infof("预处理完成后的时间序列列表长度: %d", len(tsList)) // 打印最终列表的长度
 	for i, ts := range tsList {
-        // 打印 TimeSeries 的 Labels
-        labels := []string{}
-        for _, label := range ts.Labels {
-            labels = append(labels, fmt.Sprintf("%s=%s", label.Name, label.Value))
-        }
-        klog.Infof("打印预处理后的时间序列[%d]: Labels={%s}", i, strings.Join(labels, ", "))
-        // 打印 TimeSeries 的 Samples
-        for j, sample := range ts.Samples {
-            klog.Infof("打印预处理后的时间序列[%d]的样本[%d]: Value=%.2f, Timestamp=%d", i, j, sample.Value, sample.Timestamp)
-        }
-    }
+		// 打印 TimeSeries 的 Labels
+		labels := []string{}
+		for _, label := range ts.Labels {
+			labels = append(labels, fmt.Sprintf("%s=%s", label.Name, label.Value))
+		}
+		klog.Infof("打印预处理后的时间序列[%d]: Labels={%s}", i, strings.Join(labels, ", "))
+		// 打印 TimeSeries 的 Samples
+		for j, sample := range ts.Samples {
+			klog.Infof("打印预处理后的时间序列[%d]的样本[%d]: Value=%.2f, Timestamp=%d", i, j, sample.Value, sample.Timestamp)
+		}
+	}
 
 	return tsList, nil
 }
