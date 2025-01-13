@@ -90,6 +90,10 @@ func (c *context) QueryRangeSync(ctx gocontext.Context, query string, start, end
 	return c.queryByShards(ctx, shards)
 }
 
+func (c *context) QueryRangeSyncTestData(ctx gocontext.Context, query string, start, end time.Time, step time.Duration) ([]*common.TimeSeries, error) {
+		return c.convertPromResultsToTimeSeriesTestData()
+}
+
 // QuerySync query prometheus in sync way
 func (c *context) QuerySync(ctx gocontext.Context, query string) ([]*common.TimeSeries, error) {
 	var ts []*common.TimeSeries
@@ -300,13 +304,14 @@ func convertCSVToTimeSeries()([]*common.TimeSeries, error) {
 
 	// 打印 TimeSeries 数据
 	for _, ts := range results {
-		fmt.Printf("打印读取test_data的数据 TimeSeries 数据: %+v\n", ts)
+		// fmt.Printf("打印读取test_data的数据 TimeSeries 数据: %+v\n", ts)
+		klog.Infof("打印读取test_data的数据 TimeSeries 数据的长度: %d\n", len(ts.Samples))
 	}
 	return results, nil
 }
 
-func (c *context) convertPromResultsToTimeSeriesTestData(value prommodel.Value) ([]*common.TimeSeries, error) {
-	klog.InfoS("进入convertPromResultsToTimeSeriesTestData,初始数据为：",value.String())
+func (c *context) convertPromResultsToTimeSeriesTestData() ([]*common.TimeSeries, error) {
+	klog.InfoS("进入convertPromResultsToTimeSeriesTestData")
 	return convertCSVToTimeSeries()
 }
 

@@ -79,9 +79,9 @@ func SamplesToSignal(samples []common.Sample, sampleInterval time.Duration) *Sig
 
 
 	// 打印 samples 参数
-	for i, sample := range samples {
-		klog.Errorf("打印 samples 参数 Sample[%d]: Value=%f, Timestamp=%d\n", i, sample.Value, sample.Timestamp)
-	}
+	// for i, sample := range samples {
+	// 	klog.InfoS("打印 samples 参数 Sample[%d]: Value=%f, Timestamp=%d\n", i, sample.Value, sample.Timestamp)
+	// }
 
 	// 打印 sampleInterval 参数
 	klog.Errorf("打印 sampleInterval 参数 SampleInterval: %v\n", sampleInterval)
@@ -242,24 +242,24 @@ func (p *periodicSignalPrediction) queryHistoryTimeSeries(namer metricnaming.Met
 	klog.InfoS("dsp queryHistoryTimeSeries", "timeSeriesList", tsList, "config", *config)
      
 	klog.Infof("p.GetHistoryProvider().QueryTimeSeries 方法查询prometheus历史数据返回的时间序列数量: %d", len(tsList))
-    for i, ts := range tsList {
-        if ts == nil {
-            klog.Warningf("时间序列[%d] 为 nil，跳过打印", i)
-            continue
-        }
+    // for i, ts := range tsList {
+    //     if ts == nil {
+    //         klog.Warningf("时间序列[%d] 为 nil，跳过打印", i)
+    //         continue
+    //     }
 
-        // 打印 TimeSeries 的 Labels
-        labels := []string{}
-        for _, label := range ts.Labels {
-            labels = append(labels, fmt.Sprintf("%s=%s", label.Name, label.Value))
-        }
-        klog.Infof("时间序列[%d]: Labels={%s}", i, strings.Join(labels, ", "))
+    //     // 打印 TimeSeries 的 Labels
+    //     labels := []string{}
+    //     for _, label := range ts.Labels {
+    //         labels = append(labels, fmt.Sprintf("%s=%s", label.Name, label.Value))
+    //     }
+    //     klog.Infof("时间序列[%d]: Labels={%s}", i, strings.Join(labels, ", "))
 
-        // 打印 TimeSeries 的 Samples
-        for j, sample := range ts.Samples {
-            klog.Infof("时间序列[%d]的样本[%d]: Value=%.2f, Timestamp=%d", i, j, sample.Value, sample.Timestamp)
-        }
-    }
+    //     // 打印 TimeSeries 的 Samples
+    //     for j, sample := range ts.Samples {
+    //         klog.Infof("时间序列[%d]的样本[%d]: Value=%.2f, Timestamp=%d", i, j, sample.Value, sample.Timestamp)
+    //     }
+    // }
 	return preProcessTimeSeriesList(tsList, config)
 	// return tsList,nil
 }
