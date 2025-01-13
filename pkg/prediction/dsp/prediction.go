@@ -5,7 +5,6 @@ import (
 	"encoding/json"
 	"fmt"
 	"math"
-	"strings"
 	"sync"
 	"time"
 
@@ -75,8 +74,6 @@ func findPeriod(ts *common.TimeSeries, sampleInterval time.Duration) time.Durati
 }
 
 func SamplesToSignal(samples []common.Sample, sampleInterval time.Duration) *Signal {
-   
-
 
 	// 打印 samples 参数
 	// for i, sample := range samples {
@@ -226,40 +223,39 @@ func (p *periodicSignalPrediction) queryHistoryTimeSeries(namer metricnaming.Met
 	end := time.Now().Truncate(config.historyResolution)
 	start := end.Add(-config.historyDuration - time.Hour)
 	//打印查询prometheus历史数据的查询参数
-	klog.Infof("调用 QueryTimeSeries 方法查询prometheus历史数据, 查询参数: metricNamer=%+v, startTime=%s, endTime=%s, step=%v", 
-    namer, 
-    start.Format(time.RFC3339), 
-    end.Format(time.RFC3339), 
-    config.historyResolution,
-)
+	klog.Infof("调用 QueryTimeSeries 方法查询prometheus历史数据, 查询参数: metricNamer=%+v, startTime=%s, endTime=%s, step=%v",
+		namer,
+		start.Format(time.RFC3339),
+		end.Format(time.RFC3339),
+		config.historyResolution,
+	)
 	tsList, err := p.GetHistoryProvider().QueryTimeSeries(namer, start, end, config.historyResolution)
 	if err != nil {
 		klog.ErrorS(err, "Failed to query history time series.")
 		return nil, err
 	}
 
-
 	klog.InfoS("dsp queryHistoryTimeSeries", "timeSeriesList", tsList, "config", *config)
-     
+
 	klog.Infof("p.GetHistoryProvider().QueryTimeSeries 方法查询prometheus历史数据返回的时间序列数量: %d", len(tsList))
-    // for i, ts := range tsList {
-    //     if ts == nil {
-    //         klog.Warningf("时间序列[%d] 为 nil，跳过打印", i)
-    //         continue
-    //     }
+	// for i, ts := range tsList {
+	//     if ts == nil {
+	//         klog.Warningf("时间序列[%d] 为 nil，跳过打印", i)
+	//         continue
+	//     }
 
-    //     // 打印 TimeSeries 的 Labels
-    //     labels := []string{}
-    //     for _, label := range ts.Labels {
-    //         labels = append(labels, fmt.Sprintf("%s=%s", label.Name, label.Value))
-    //     }
-    //     klog.Infof("时间序列[%d]: Labels={%s}", i, strings.Join(labels, ", "))
+	//     // 打印 TimeSeries 的 Labels
+	//     labels := []string{}
+	//     for _, label := range ts.Labels {
+	//         labels = append(labels, fmt.Sprintf("%s=%s", label.Name, label.Value))
+	//     }
+	//     klog.Infof("时间序列[%d]: Labels={%s}", i, strings.Join(labels, ", "))
 
-    //     // 打印 TimeSeries 的 Samples
-    //     for j, sample := range ts.Samples {
-    //         klog.Infof("时间序列[%d]的样本[%d]: Value=%.2f, Timestamp=%d", i, j, sample.Value, sample.Timestamp)
-    //     }
-    // }
+	//     // 打印 TimeSeries 的 Samples
+	//     for j, sample := range ts.Samples {
+	//         klog.Infof("时间序列[%d]的样本[%d]: Value=%.2f, Timestamp=%d", i, j, sample.Value, sample.Timestamp)
+	//     }
+	// }
 	return preProcessTimeSeriesList(tsList, config)
 	// return tsList,nil
 }
@@ -275,14 +271,14 @@ func (p *periodicSignalPrediction) updateAggregateSignals(queryExpr string, hist
 			klog.Errorf("historyTimeSeriesList[%d]的值: %s", i, jsonData)
 		}
 	}
-	
+
 	for i, ts := range historyTimeSeriesList {
 		if klog.V(6).Enabled() {
 			sampleData, err := json.Marshal(ts.Samples)
 			klog.V(6).Infof("Got time series, queryExpr: %s, samples: %v, labels: %v, err: %v", queryExpr, string(sampleData), ts.Labels, err)
 		}
 		jsonData, err := json.Marshal(ts)
-		klog.Infof("进入historyTimeSeriesList[%d] for循环之后ts的值: %s",  i,jsonData)
+		klog.Infof("进入historyTimeSeriesList[%d] for循环之后ts的值: %s", i, jsonData)
 		sampleData, err := json.Marshal(ts.Samples)
 		klog.Infof("Got time series, queryExpr: %s, samples: %v, labels: %v, err: %v", queryExpr, string(sampleData), ts.Labels, err)
 

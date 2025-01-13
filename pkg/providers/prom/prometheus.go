@@ -2,8 +2,6 @@ package prom
 
 import (
 	gocontext "context"
-	"fmt"
-	"strings"
 	"time"
 
 	promapiv1 "github.com/prometheus/client_golang/api/prometheus/v1"
