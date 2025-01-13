@@ -2,7 +2,10 @@ package prom
 
 import (
 	gocontext "context"
+	"encoding/csv"
 	"fmt"
+	"os"
+	"strconv"
 	"sync"
 	"time"
 
@@ -244,6 +247,69 @@ type QueryShardResult struct {
 	err       error
 	window    *promapiv1.Range
 }
+
+func convertCSVToTimeSeries()([]*common.TimeSeries, error) {
+	// 指定 CSV 文件路径
+	filename := "./test_data/input0.csv"
+
+	var results []*common.TimeSeries
+
+	// 打开 CSV 文件
+	file, err := os.Open(filename)
+	if err != nil {
+		fmt.Errorf("failed to open file: %v", err)
+	}
+	defer file.Close()
+
+	// 创建 CSV reader
+	reader := csv.NewReader(file)
+	// 读取 CSV 内容
+	records, err := reader.ReadAll()
+	if err != nil {
+		fmt.Errorf("failed to read CSV: %v", err)
+	}
+
+	// 解析数据并填充 TimeSeries
+	for _, record := range records[1:] { // 跳过头行
+		tsStr := record[0]
+		valueStr := record[1]
+
+		// 解析时间戳和数值
+		ts, err := strconv.ParseInt(tsStr, 10, 64)
+		if err != nil {
+			fmt.Errorf("failed to parse timestamp %v: %v", tsStr, err)
+		}
+
+		value, err := strconv.ParseFloat(valueStr, 64)
+		if err != nil {
+			fmt.Errorf("failed to parse value %v: %v", valueStr, err)
+		}
+
+		// 创建新的 TimeSeries 对象
+		tsObj := common.NewTimeSeries()
+
+		// 假设这里使用一个固定的标签（你可以根据需要修改）
+		tsObj.AppendLabel("", "")
+
+		// 将样本添加到 TimeSeries
+		tsObj.AppendSample(ts, value)
+
+		// 将 TimeSeries 添加到结果
+		results = append(results, tsObj)
+	}
+
+	// 打印 TimeSeries 数据
+	for _, ts := range results {
+		fmt.Printf("打印读取test_data的数据 TimeSeries 数据: %+v\n", ts)
+	}
+	return results, nil
+}
+
+func (c *context) convertPromResultsToTimeSeriesTestData(value prommodel.Value) ([]*common.TimeSeries, error) {
+	klog.InfoS("进入convertPromResultsToTimeSeriesTestData,初始数据为：",value.String())
+	return convertCSVToTimeSeries()
+}
+
 
 func (c *context) convertPromResultsToTimeSeries(value prommodel.Value) ([]*common.TimeSeries, error) {
 	klog.InfoS("进入convertPromResultsToTimeSeries,初始数据为：",value.String())
