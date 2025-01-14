@@ -5,7 +5,6 @@ import (
 	"fmt"
 	"net/http"
 	"strconv"
-	"time"
 
 	"k8s.io/klog/v2"
 
@@ -22,7 +21,7 @@ func Debug(predictor prediction.Interface, namer metricnaming.MetricNamer, confi
 	}
 
 	historyTimeSeriesList, err := queryHistoryTimeSeries(predictor.(*periodicSignalPrediction), namer, internalConfig)
-	
+
 	if err != nil {
 		return nil, nil, nil, err
 	}
@@ -32,7 +31,7 @@ func Debug(predictor prediction.Interface, namer metricnaming.MetricNamer, confi
 	var signal, history, test, estimate *Signal
 	var nPeriods int
 	var chosenEstimator Estimator
-	klog.Errorf("for historyTimeSeriesList %v:",historyTimeSeriesList)
+	klog.Errorf("for historyTimeSeriesList %v:", historyTimeSeriesList)
 	for _, ts := range historyTimeSeriesList {
 		// klog.Errorf("for historyTimeSeriesList 循环中的 ts%v:",ts)
 		periodLength := findPeriod(ts, internalConfig.historyResolution)
@@ -76,7 +75,7 @@ func queryHistoryTimeSeries(predictor *periodicSignalPrediction, namer metricnam
 	// 	return nil, err
 	// }
 
-	tsList,_:=convertCSVToTimeSeries()
+	tsList, _ := convertCSVToTimeSeries()
 
 	klog.V(4).InfoS("DSP debug | queryHistoryTimeSeries", "timeSeriesList", tsList, "config", *config)
 
