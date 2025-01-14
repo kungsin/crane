@@ -306,11 +306,11 @@ func (p *periodicSignalPrediction) updateAggregateSignals(queryExpr string, hist
 				chosenEstimator = bestEstimator(queryExpr, config.estimators, signal, nPeriods, periodLength)
 			}
 		}
-		klog.Errorf("chosenEstimator的结果:%v", chosenEstimator)
+		klog.Infof("chosenEstimator的结果:%v", chosenEstimator)
 		if chosenEstimator != nil {
 			estimatedSignal := chosenEstimator.GetEstimation(signal, periodLength)
 			klog.Errorf("生成的预测信号：%+v", estimatedSignal)
-			klog.Errorf("生成的预测信号样本：%+v", estimatedSignal.Samples)
+			klog.Errorf("生成的预测信号样本数量：%d", len(estimatedSignal.Samples))
 			intervalSeconds := int64(config.historyResolution.Seconds())
 			nextTimestamp := ts.Samples[len(ts.Samples)-1].Timestamp + intervalSeconds
 
@@ -318,7 +318,7 @@ func (p *periodicSignalPrediction) updateAggregateSignals(queryExpr string, hist
 			samples := make([]common.Sample, n*nPeriods)
 			for k := 0; k < nPeriods; k++ {
 				for i := range estimatedSignal.Samples {
-					klog.Infof("打印当前处理的样本值 Processing sample: estimatedSignal.Samples[%d] = %+v", i, estimatedSignal.Samples[i])
+					// klog.Infof("打印当前处理的样本值 Processing sample: estimatedSignal.Samples[%d] = %+v", i, estimatedSignal.Samples[i])
 					samples[i+k*n] = common.Sample{
 						Value:     estimatedSignal.Samples[i],
 						Timestamp: nextTimestamp,
@@ -333,7 +333,7 @@ func (p *periodicSignalPrediction) updateAggregateSignals(queryExpr string, hist
 			})
 		}
 	}
-
+	klog.Infof("预测之后的predictedTimeSeriesList:%v",predictedTimeSeriesList)
 	signals := map[string]*aggregateSignal{}
 	for i := range predictedTimeSeriesList {
 		key := prediction.AggregateSignalKey(predictedTimeSeriesList[i].Labels)
@@ -341,6 +341,7 @@ func (p *periodicSignalPrediction) updateAggregateSignals(queryExpr string, hist
 		signal.setPredictedTimeSeries(predictedTimeSeriesList[i])
 		signals[key] = signal
 	}
+	klog.Infof("预测之后的signals:%v",signals)
 	p.a.SetSignals(queryExpr, signals)
 }
 
@@ -418,8 +419,8 @@ func (p *periodicSignalPrediction) getPredictedTimeSeriesList(ctx context.Contex
 	klog.Errorf("predictedData.getPredictedTimeSeriesList.queryExpr: %v", queryExpr)
 	for {
 		signals, status := p.a.GetSignals(queryExpr)
-		klog.Errorf("predictedData.getPredictedTimeSeriesList.signals: %v", signals)
-		klog.Errorf("predictedData.getPredictedTimeSeriesList.status: %v", status)
+		klog.Errorf("GetSignals获取数据signals: %v", signals)
+		klog.Errorf("GetSignals获取状态.status: %v", status)
 		if status == prediction.StatusDeleted {
 			klog.V(4).InfoS("Aggregated has been deleted.", "queryExpr", queryExpr)
 			return predictedTimeSeriesList
