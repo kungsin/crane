@@ -37,6 +37,7 @@ func fillMissingData(ts *common.TimeSeries, config *internalConfig, unit time.Du
 		// If the difference between two consecutive sample timestamps is not integral multiple of interval,
 		// the time series is not valid.
 		if diff%intervalSeconds != 0 || diff <= 0 {
+			klog.Info("diff%intervalSeconds != 0 || diff <= 0")
 			return fmt.Errorf("invalid time series")
 		}
 	}
