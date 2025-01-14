@@ -314,7 +314,7 @@ func convertCSVToTimeSeries() ([]*common.TimeSeries, error) {
 
 	// 打印 TimeSeries 数据
 	for _, ts := range results {
-		fmt.Printf("TimeSeries: %d\n", len(ts.Samples))
+		fmt.Printf("读取csv文件成功,ts.Samples的长度为: %d\n", len(ts.Samples))
 	}
 	return results, err
 }

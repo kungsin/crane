@@ -17,7 +17,7 @@ import (
 )
 
 func fillMissingData(ts *common.TimeSeries, config *internalConfig, unit time.Duration) error {
-	klog.Infof("进入fillMissingData处理,参数为 ts:%v,config:%v,unit:%v",ts,config,unit)
+	klog.Infof("进入fillMissingData处理,参数为 ts(len):%d,config:%v,unit:%v",len(ts.Samples),config,unit)
 	if ts == nil || len(ts.Samples) == 0 {
 		return fmt.Errorf("empty time series")
 	}
@@ -65,7 +65,7 @@ func fillMissingData(ts *common.TimeSeries, config *internalConfig, unit time.Du
 	}
 
 	ts.Samples = newSamples[beginIndex:]
-	// klog.Infof("fillMissingData处理完成,ts:%v,ts.Samples:%v",ts,ts.Samples)
+	klog.Infof("fillMissingData处理完成,参数为 ts(len):%d,config:%v,unit:%v",len(ts.Samples),config,unit)
 	return nil
 }
 
