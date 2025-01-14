@@ -42,17 +42,17 @@ func makeInternalConfig(d *v1alpha1.DSP) (*internalConfig, error) {
 	if err != nil {
 		return nil, err
 	}
-	if historyResolution > time.Hour {
-		return nil, fmt.Errorf("historyResolution is too long")
-	}
+	// if historyResolution > time.Hour {
+	// 	return nil, fmt.Errorf("historyResolution is too long")
+	// }
 
-	historyDuration, err := utils.ParseDuration(d.HistoryLength)
-	if err != nil {
-		return nil, err
-	}
-	if historyDuration < time.Hour*48 {
-		return nil, fmt.Errorf("historyDuration is too short")
-	}
+	// historyDuration, err := utils.ParseDuration(d.HistoryLength)
+	// if err != nil {
+	// 	return nil, err
+	// }
+	// if historyDuration < time.Hour*48 {
+	// 	return nil, fmt.Errorf("historyDuration is too short")
+	// }
 
 	// parse estimators
 	var estimators []Estimator
