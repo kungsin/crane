@@ -35,17 +35,4 @@ export const PanelWrapper = React.memo(({ panel, selectedDashboard }: PanelWrapp
       </Card>
     </Col>
   );
-
-  // return (
-  //   <Col key={panel.id} span={span}>
-  //     <Card style={{ marginBottom: '0.5rem', marginTop: '0.5rem', height: minHeight }}>
-  //       <iframe
-  //         frameBorder='0'
-  //         height='100%'
-  //         src={`${craneUrl}/grafana/d-solo/${selectedDashboard?.uid}/costs-by-dimension?${queryStr}`}
-  //         width='100%'
-  //       />
-  //     </Card>
-  //   </Col>
-  // );
 });

@@ -27,11 +27,18 @@ export const initialInsightState: InsightState = {
 
   aggregation: Aggregation.CLUSTER,
 
-  window: QueryWindow.LAST_1_DAY,
+  window: QueryWindow.LAST_12_HOURS,
 
   customRange: {
-    start: rangeMap[QueryWindow.LAST_1_DAY][0].format('YYYY-MM-DD HH:mm:ss'),
-    end: rangeMap[QueryWindow.LAST_1_DAY][1].format('YYYY-MM-DD HH:mm:ss'),
+    start: rangeMap[QueryWindow.LAST_12_HOURS][0].format('YYYY-MM-DD HH:mm:ss'),
+    end: rangeMap[QueryWindow.LAST_12_HOURS][1].format('YYYY-MM-DD HH:mm:ss'),
+  },
+
+  windowPre: QueryWindow.PRE_7_DAY,
+
+  customRangePre: {
+    start: rangeMap[QueryWindow.PRE_7_DAY][0].format('YYYY-MM-DD HH:mm:ss'),
+    end: rangeMap[QueryWindow.PRE_7_DAY][1].format('YYYY-MM-DD HH:mm:ss'),
   },
 
   selectedDashboard: null,

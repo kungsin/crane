@@ -17,7 +17,7 @@ export default memo(() => {
 
   useEffect(() => {
     if (dashboardList.length > 0) {
-      const selected = dashboardList.find((dashboard: any) => dashboard.uid === 'resourceForecas');
+      const selected = dashboardList.find((dashboard: any) => dashboard.uid === 'resourceForecasNew');
       setSelectedDashboard(selected);
     }
   }, [dashboardList]);

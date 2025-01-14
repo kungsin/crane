@@ -1,16 +1,15 @@
-import { QueryWindow, useQueryWindowOptions } from '../../../models';
+import { QueryWindow, usePredictQueryWindowOptions } from '../../../models';
 import CommonStyle from '../../../styles/common.module.less';
 import classnames from 'classnames';
 import { Card } from 'components/common/Card';
-import { useCraneUrl, useSelector } from 'hooks';
+import { useSelector } from 'hooks';
 import { insightAction } from 'modules/insightSlice';
 import React from 'react';
 import { useTranslation } from 'react-i18next';
 import { useDispatch } from 'react-redux';
-import { DatePicker, DateValue, InputNumber, Radio, RadioValue, Select } from 'tdesign-react';
+import { DatePicker, DateValue, Radio, RadioValue } from 'tdesign-react';
 import { rangeMap } from 'utils/rangeMap';
 import { useFetchNamespaceListQuery } from '../../../services/namespaceApi';
-import _ from 'lodash';
 
 const ALL_NAMESPACE_VALUE = 'All';
 
@@ -20,14 +19,12 @@ export const OverviewSearchPanel = React.memo(() => {
 
   const customRange = useSelector((state) => state.insight.customRange);
   const window = useSelector((state) => state.insight.window);
-  const selectedNamespace = useSelector((state) => state.insight.selectedNamespace);
   const clusterId = useSelector((state) => state.insight.selectedClusterId);
-  const discount = useSelector((state) => state.insight.discount);
   const isNeedSelectNamespace = true;
 
   const namespaceList = useFetchNamespaceListQuery({ clusterId }, { skip: !clusterId || !isNeedSelectNamespace });
 
-  const queryWindowOptions = useQueryWindowOptions();
+  const queryWindowOptions = usePredictQueryWindowOptions();
 
   const namespaceOptions = React.useMemo(
     () => [
@@ -107,49 +104,6 @@ export const OverviewSearchPanel = React.memo(() => {
                   end,
                 }),
               );
-            }}
-          />
-        </div>
-        <div
-          style={{
-            display: 'flex',
-            flexDirection: 'row',
-            alignItems: 'center',
-            marginRight: '1rem',
-            marginTop: 5,
-            marginBottom: 5,
-          }}
-        >
-          <div style={{ marginRight: '1rem', width: '80px' }}>{t('命名空间')}</div>
-          <Select
-            options={namespaceOptions}
-            placeholder={t('命名空间')}
-            filterable
-            value={selectedNamespace ?? undefined}
-            onChange={(value: any) => {
-              dispatch(insightAction.selectedNamespace(value));
-              dispatch(insightAction.selectedWorkloadType(undefined));
-              dispatch(insightAction.selectedWorkload(undefined));
-            }}
-          />
-        </div>
-        <div
-          style={{
-            display: 'flex',
-            flexDirection: 'row',
-            alignItems: 'center',
-            marginRight: '1rem',
-            marginTop: 5,
-            marginBottom: 5,
-          }}
-        >
-          <div style={{ marginRight: '1rem', width: '70px' }}>{t('Discount')}</div>
-          <InputNumber
-            min={0}
-            theme='column'
-            value={discount}
-            onChange={(value) => {
-              dispatch(insightAction.discount(value));
             }}
           />
         </div>
