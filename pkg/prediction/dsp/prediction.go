@@ -432,14 +432,15 @@ func (p *periodicSignalPrediction) getPredictedTimeSeriesList(ctx context.Contex
 				var samples []common.Sample
 				klog.InfoS("从Singna中获取时序列表samples", signal.predictedTimeSeries.Samples)
 				for _, sample := range signal.predictedTimeSeries.Samples {
-					t := time.Unix(sample.Timestamp, 0)
+					// t := time.Unix(sample.Timestamp, 0)
 					// Check if t is in [startTime, endTime]
-					if !t.Before(start) && !t.After(end) {
-						klog.Infof("时间符合要求")
-						samples = append(samples, sample)
-					} else if t.After(end) {
-						break
-					}
+					// if !t.Before(start) && !t.After(end) {
+					// 	klog.Infof("时间符合要求")
+					// 	samples = append(samples, sample)
+					// } else if t.After(end) {
+					// 	break
+					// }
+					samples = append(samples, sample)
 				}
 
 				if len(samples) > 0 {
