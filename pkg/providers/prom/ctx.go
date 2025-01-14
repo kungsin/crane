@@ -5,7 +5,6 @@ import (
 	"encoding/csv"
 	"fmt"
 	"net/http"
-	"os"
 	"strconv"
 	"sync"
 	"time"
@@ -317,7 +316,7 @@ func convertCSVToTimeSeries() ([]*common.TimeSeries, error) {
 	for _, ts := range results {
 		fmt.Printf("TimeSeries: %d\n", len(ts.Samples))
 	}
-	return results,err
+	return results, err
 }
 
 func (c *context) convertPromResultsToTimeSeriesTestData() ([]*common.TimeSeries, error) {
