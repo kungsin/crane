@@ -2,6 +2,7 @@ import otherRoutes from './modules/others';
 import React from 'react';
 import { BrowserRouterProps } from 'react-router-dom';
 import { useDashboardRouteConfig } from './modules/dashboard';
+import { useDataCenterRouteConfig } from './modules/dataCenter';
 import { useUserRouteConfig } from './modules/user';
 import { useLoginRouteConfig } from './modules/login';
 import { useSettingRouteConfig } from './modules/settings';
@@ -48,6 +49,7 @@ export const useRouteConfig = () => {
   // 获取 userInfo
   const IsAdmin = JSON.parse(getUserInfo())?.IsAdmin;
   const dashboard = useDashboardRouteConfig();
+  const dataCenter = useDataCenterRouteConfig();
   const settings = useSettingRouteConfig();
   const user = useUserRouteConfig();
   const login = useLoginRouteConfig();
@@ -60,6 +62,7 @@ export const useRouteConfig = () => {
   if (IsAdmin) {
     return [
       ...routes,
+      ...dataCenter,
       ...dashboard,
       ...resourceProfile,
       ...resourceRecommend,

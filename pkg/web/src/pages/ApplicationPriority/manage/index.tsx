@@ -1,7 +1,7 @@
 import CommonStyle from '../../../styles/common.module.less';
 import './index.module.less';
 import classnames from 'classnames';
-import React, { memo, useState } from 'react';
+import React, { memo, useEffect, useState } from 'react';
 import { Table, Radio, Space, Tag, Button, InputNumber, MessagePlugin, Tooltip } from 'tdesign-react';
 import type { TableProps } from 'tdesign-react';
 
@@ -52,17 +52,6 @@ export function SelectTable() {
   });
   console.log('result', result);
 
-  // for (let i = 0; i < result.length; i++) {
-  //   data.push({
-  //     Index: i + 1,
-  //     Namespace: result[i]?.Namespace || '',
-  //     Priority: result[i]?.Priority || 3,
-  //     ClusterId: result[i]?.ClusterId || '',
-  //     CreatTime: result[i]?.CreatTime || '',
-  //     UpdateTime: result[i]?.UpdateTime || '',
-  //   });
-  // }
-
   // 使用 useUpdateNamespaceInfoMutation 获取 mutation 函数
   const [updateNamespaceInfo] = useUpdateNamespaceInfoMutation();
   const updateNamespace = async (clusterId, data) => {
@@ -74,6 +63,12 @@ export function SelectTable() {
       MessagePlugin.error('同步失败');
     }
   };
+
+  useEffect(() => {
+    if (clusterId && result.length > 0) {
+      updateNamespace(clusterId, result);
+    }
+  }, []);
 
   const total = namespaceList?.data?.data?.totalCount || 0;
   // <!-- 当数据为空需要占位时，会显示 cellEmptyContent -->
