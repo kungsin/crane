@@ -4,6 +4,7 @@ import (
 	gocontext "context"
 	"encoding/csv"
 	"fmt"
+	"net/http"
 	"os"
 	"strconv"
 	"sync"
@@ -57,7 +58,7 @@ func (c *context) QueryRangeSync(ctx gocontext.Context, query string, start, end
 	shards := c.computeShards(query, &r)
 	klog.Infof("shards:%v", shards)
 	if len(shards.windows) <= 1 {
-		 // 如果只有一个时间范围，直接进行单次查询
+		// 如果只有一个时间范围，直接进行单次查询
 		klog.V(4).InfoS("Prom query directly", "query", query)
 		klog.InfoS("如果只有一个时间范围，直接进行单次查询 Prom query directly", "query", query)
 		var ts []*common.TimeSeries
@@ -79,19 +80,19 @@ func (c *context) QueryRangeSync(ctx gocontext.Context, query string, start, end
 
 		// 打印查询的结果
 		if results != nil {
-			klog.Infof("原始prometheus历史数据查询结果: %s,查询类型：%s", results.String(),results.Type())
+			klog.Infof("原始prometheus历史数据查询结果: %s,查询类型：%s", results.String(), results.Type())
 		} else {
 			klog.Warning("查询结果为空")
 		}
 		return c.convertPromResultsToTimeSeries(results)
 	}
-	  // 如果有多个时间范围，调用 `c.queryByShards` 
-	  // 按分片进行查询提高查询效率，避免 Prometheus 查询范围限制带来的问题。
+	// 如果有多个时间范围，调用 `c.queryByShards`
+	// 按分片进行查询提高查询效率，避免 Prometheus 查询范围限制带来的问题。
 	return c.queryByShards(ctx, shards)
 }
 
 func (c *context) QueryRangeSyncTestData(ctx gocontext.Context, query string, start, end time.Time, step time.Duration) ([]*common.TimeSeries, error) {
-		return c.convertPromResultsToTimeSeriesTestData()
+	return c.convertPromResultsToTimeSeriesTestData()
 }
 
 // QuerySync query prometheus in sync way
@@ -183,7 +184,7 @@ func (c *context) queryByShards(ctx gocontext.Context, queryShards *QueryShards)
 	if len(errs) > 0 {
 		return results, fmt.Errorf("%v", errs)
 	}
-    klog.InfoS("分片查询结束，查询结果为:%v",results)
+	klog.InfoS("分片查询结束，查询结果为:%v", results)
 	return results, nil
 }
 
@@ -252,28 +253,44 @@ type QueryShardResult struct {
 	window    *promapiv1.Range
 }
 
-func convertCSVToTimeSeries()([]*common.TimeSeries, error) {
-	// 指定 CSV 文件路径
-	filename := "./test_data/input0.csv"
+func convertCSVToTimeSeries() ([]*common.TimeSeries, error) {
+	// 指定 CSV 文件网络地址
+	url := "http://119.167.151.67/crane/input0.csv"
 
 	var results []*common.TimeSeries
 
-	// 打开 CSV 文件
-	file, err := os.Open(filename)
+	// 从网络下载 CSV 文件
+	resp, err := http.Get(url)
 	if err != nil {
-		fmt.Errorf("failed to open file: %v", err)
+		klog.Fatalf("failed to fetch file from URL: %v", err)
 	}
-	defer file.Close()
+	defer resp.Body.Close()
+
+	// 检查 HTTP 响应状态
+	if resp.StatusCode != http.StatusOK {
+		klog.Fatalf("failed to fetch file, HTTP status: %s", resp.Status)
+	}
 
 	// 创建 CSV reader
-	reader := csv.NewReader(file)
+	reader := csv.NewReader(resp.Body)
 	// 读取 CSV 内容
 	records, err := reader.ReadAll()
 	if err != nil {
-		fmt.Errorf("failed to read CSV: %v", err)
+		klog.Fatalf("failed to read CSV: %v", err)
 	}
 
-	// 解析数据并填充 TimeSeries
+	// 检查记录是否足够
+	if len(records) < 2 {
+		klog.Fatalf("CSV file does not have enough rows (need at least a header and one data row)")
+	}
+
+	// 创建单一的 TimeSeries 对象
+	tsObj := common.NewTimeSeries()
+
+	// 假设使用一个固定的标签
+	tsObj.AppendLabel("", "")
+
+	// 解析数据并添加到 TimeSeries
 	for _, record := range records[1:] { // 跳过头行
 		tsStr := record[0]
 		valueStr := record[1]
@@ -281,33 +298,26 @@ func convertCSVToTimeSeries()([]*common.TimeSeries, error) {
 		// 解析时间戳和数值
 		ts, err := strconv.ParseInt(tsStr, 10, 64)
 		if err != nil {
-			fmt.Errorf("failed to parse timestamp %v: %v", tsStr, err)
+			klog.Fatalf("failed to parse timestamp %v: %v", tsStr, err)
 		}
 
 		value, err := strconv.ParseFloat(valueStr, 64)
 		if err != nil {
-			fmt.Errorf("failed to parse value %v: %v", valueStr, err)
+			klog.Fatalf("failed to parse value %v: %v", valueStr, err)
 		}
 
-		// 创建新的 TimeSeries 对象
-		tsObj := common.NewTimeSeries()
-
-		// 假设这里使用一个固定的标签（你可以根据需要修改）
-		tsObj.AppendLabel("", "")
-
-		// 将样本添加到 TimeSeries
+		// 将样本添加到 TimeSeries 的 Samples
 		tsObj.AppendSample(ts, value)
-
-		// 将 TimeSeries 添加到结果
-		results = append(results, tsObj)
 	}
+
+	// 添加到结果集合
+	results = append(results, tsObj)
 
 	// 打印 TimeSeries 数据
 	for _, ts := range results {
-		// fmt.Printf("打印读取test_data的数据 TimeSeries 数据: %+v\n", ts)
-		klog.Infof("打印读取test_data的数据 TimeSeries 数据的长度: %d\n", len(ts.Samples))
+		fmt.Printf("TimeSeries: %d\n", len(ts.Samples))
 	}
-	return results, nil
+	return results,err
 }
 
 func (c *context) convertPromResultsToTimeSeriesTestData() ([]*common.TimeSeries, error) {
@@ -315,9 +325,8 @@ func (c *context) convertPromResultsToTimeSeriesTestData() ([]*common.TimeSeries
 	return convertCSVToTimeSeries()
 }
 
-
 func (c *context) convertPromResultsToTimeSeries(value prommodel.Value) ([]*common.TimeSeries, error) {
-	klog.InfoS("进入convertPromResultsToTimeSeries,初始数据为：",value.String())
+	klog.InfoS("进入convertPromResultsToTimeSeries,初始数据为：", value.String())
 	var results []*common.TimeSeries
 	typeValue := value.Type()
 	switch typeValue {
