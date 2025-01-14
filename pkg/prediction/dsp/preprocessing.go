@@ -17,6 +17,7 @@ import (
 )
 
 func fillMissingData(ts *common.TimeSeries, config *internalConfig, unit time.Duration) error {
+	klog.Infof("进入fillMissingData处理,参数为 ts:%v,config:%v,unit:%v",ts,config,unit)
 	if ts == nil || len(ts.Samples) == 0 {
 		return fmt.Errorf("empty time series")
 	}
@@ -185,8 +186,10 @@ func preProcessTimeSeriesList(tsList []*common.TimeSeries, config *internalConfi
 	wg.Add(n)
 	tsCh := make(chan *common.TimeSeries, n)
 	for i := range tsList {
+		klog.Infof("预处理时间序列列表闭包函数前 tsList:",tsList[i]) // 打印输入列表的长度
 		go func(ts *common.TimeSeries) {
 			defer wg.Done()
+			klog.Infof("预处理时间序列列表闭包函数内 ts:",ts) // 打印输入列表的长度
 			if err := preProcessTimeSeries(ts, config, Hour); err != nil {
 				klog.ErrorS(err, "Dsp failed to pre process time series.")
 			} else {
