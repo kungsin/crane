@@ -76,7 +76,7 @@ export default function Login() {
 
               setUserInfo(JSON.stringify(data.data));
               setTimeout(() => {
-                navigate('/dashboard');
+                navigate(IsAdmin ? '/data-center' : '/dashboard');
               }, 1000);
             } else {
               MessagePlugin.error('需要添加一个集群以启用Dashboard,请联系管理员添加集群');

@@ -17,8 +17,8 @@ export const OverviewSearchPanel = React.memo(() => {
   const dispatch = useDispatch();
   const { t } = useTranslation();
 
-  const customRange = useSelector((state) => state.insight.customRange);
-  const window = useSelector((state) => state.insight.window);
+  const customRangePre = useSelector((state) => state.insight.customRangePre);
+  const windowPre = useSelector((state) => state.insight.windowPre);
   const clusterId = useSelector((state) => state.insight.selectedClusterId);
   const isNeedSelectNamespace = true;
 
@@ -62,12 +62,12 @@ export const OverviewSearchPanel = React.memo(() => {
           <div style={{ marginRight: '0.5rem', width: '70px' }}>{t('时间范围')}</div>
           <div style={{ marginRight: '0.5rem' }}>
             <Radio.Group
-              value={window}
+              value={windowPre}
               onChange={(value: RadioValue) => {
-                dispatch(insightAction.window(value as QueryWindow));
+                dispatch(insightAction.windowPre(value as QueryWindow));
                 const [start, end] = rangeMap[value as QueryWindow];
                 dispatch(
-                  insightAction.customRange({ start: start.toDate().toISOString(), end: end.toDate().toISOString() }),
+                  insightAction.customRangePre({ start: start.toDate().toISOString(), end: end.toDate().toISOString() }),
                 );
               }}
             >
@@ -81,12 +81,12 @@ export const OverviewSearchPanel = React.memo(() => {
           <DatePicker
             mode='date'
             style={{ marginRight: '0.5rem' }}
-            value={customRange?.start}
+            value={customRangePre?.start}
             onChange={(start: DateValue) => {
-              dispatch(insightAction.window(null as any));
+              dispatch(insightAction.windowPre(null as any));
               dispatch(
-                insightAction.customRange({
-                  ...customRange,
+                insightAction.customRangePre({
+                  ...customRangePre,
                   start: start as string,
                 }),
               );
@@ -95,12 +95,12 @@ export const OverviewSearchPanel = React.memo(() => {
           <DatePicker
             mode='date'
             style={{ marginRight: '0.5rem' }}
-            value={customRange?.end ?? null}
+            value={customRangePre?.end ?? null}
             onChange={(end: any) => {
-              dispatch(insightAction.window(null as any));
+              dispatch(insightAction.windowPre(null as any));
               dispatch(
-                insightAction.customRange({
-                  ...customRange,
+                insightAction.customRangePre({
+                  ...customRangePre,
                   end,
                 }),
               );

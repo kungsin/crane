@@ -9,6 +9,10 @@ export interface InsightState {
 
   customRange: { start: string; end: string };
 
+  windowPre: QueryWindow;
+
+  customRangePre: { start: string; end: string };
+
   selectedDashboard?: any;
 
   selectedClusterId?: string;
@@ -75,6 +79,12 @@ const slice = createSlice({
       state.window = action.payload;
     },
     customRange: (state, action: PayloadAction<InsightState['customRange']>) => {
+      state.customRange = action.payload;
+    },
+    windowPre: (state, action: PayloadAction<QueryWindow>) => {
+      state.window = action.payload;
+    },
+    customRangePre: (state, action: PayloadAction<InsightState['customRange']>) => {
       state.customRange = action.payload;
     },
     selectedWorkloadType: (state, action: PayloadAction<any>) => {
