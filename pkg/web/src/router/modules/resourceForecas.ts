@@ -1,5 +1,5 @@
 import { lazy } from 'react';
-import { ScanIcon } from 'tdesign-icons-react';
+import { ChartBarIcon } from 'tdesign-icons-react';
 import { useTranslation } from 'react-i18next';
 
 export const useresourceForecasRouteConfig = () => {
@@ -9,7 +9,8 @@ export const useresourceForecasRouteConfig = () => {
       path: '/resourceForecas',
       meta: {
         title: t('资源预测'),
-        Icon: ScanIcon,
+        // Icon: ScanIcon,
+        Icon: ChartBarIcon,
       },
       children: [
         {
