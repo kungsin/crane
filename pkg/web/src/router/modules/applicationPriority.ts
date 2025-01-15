@@ -1,5 +1,5 @@
 import { lazy } from 'react';
-import { ScanIcon } from 'tdesign-icons-react';
+import { AppIcon, ScanIcon } from 'tdesign-icons-react';
 import { useTranslation } from 'react-i18next';
 
 export const useApplicationPriorityRouteConfig = () => {
@@ -9,7 +9,8 @@ export const useApplicationPriorityRouteConfig = () => {
       path: '/applicationPriority',
       meta: {
         title: t('应用优先级'),
-        Icon: ScanIcon,
+        // Icon: ScanIcon,
+        Icon: AppIcon,
       },
       children: [
         {
