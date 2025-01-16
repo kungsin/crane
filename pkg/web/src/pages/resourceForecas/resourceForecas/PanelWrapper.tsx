@@ -25,7 +25,6 @@ export const PanelWrapper = React.memo(({ panel, selectedDashboard }: PanelWrapp
   
   return (isNeedSelectNamespace && !selectedNamespace) || !isValidPanel ? null : (
     <Col key={panel.id} span={span}>
-      <>`${craneUrl}/grafana/d-solo/${selectedDashboard?.uid}/costs-by-dimension?${queryStr}`</>
       <Card style={{ marginBottom: '0.5rem', marginTop: '0.5rem', height: minHeight }}>
         <iframe
           frameBorder='0'
