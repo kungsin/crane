@@ -19,19 +19,23 @@ const SearchForm: React.FC<SearchFormProps> = ({ recommendation, setFilterParams
   const [namespacePriority, setNamespacePriority] = useState(0);
 
   // 获取命名空间列表的 React Query
-  const { data: namespaceList } = useGetNamespaceListQuery(
+  const { data: namespaceList = { data: [] } } = useGetNamespaceListQuery(
     { clusterId, pageSize: 9999, priority: namespacePriority == 0 ? '' : namespacePriority },
     { skip: !clusterId },
   );
   // 当 namespacePriority 变化时，更新 filteredNameSpaceOptions
   useEffect(() => {
-    console.log('namespaceList', namespaceList?.data);
-    if (namespaceList?.data) {
-      const options = namespaceList?.data.map((ns) => ({
-        value: ns.Namespace,
-        label: ns.Namespace,
-      }));
+    console.log('namespaceList', namespaceList);
+    if (namespaceList?.data && Array.isArray(namespaceList.data)) {
+      const options = namespaceList.data
+        .filter((ns) => ns && ns.Namespace) // 过滤掉无效项
+        .map((ns) => ({
+          value: ns.Namespace,
+          label: ns.Namespace,
+        }));
       setFilteredNameSpaceOptions(options);
+    } else {
+      setFilteredNameSpaceOptions([]); // 如果数据无效，设置为空数组
     }
   }, [namespaceList, namespacePriority]);
 
