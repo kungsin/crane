@@ -22,10 +22,8 @@ export const PanelWrapper = React.memo(({ panel, selectedDashboard }: PanelWrapp
   const span = panel?.gridPos?.w > 0 && panel?.gridPos?.w <= 24 ? Math.floor(panel.gridPos.w / 2) : 6;
   const minHeight = panel?.gridPos?.h ? Math.max(panel.gridPos.h * baselineHeight, defaultHeight) : defaultHeight;
 
-  
   return (isNeedSelectNamespace && !selectedNamespace) || !isValidPanel ? null : (
     <Col key={panel.id} span={span}>
-      <>`${craneUrl}/grafana/d-solo/${selectedDashboard?.uid}/costs-by-dimension?${queryStr}`</>
       <Card style={{ marginBottom: '0.5rem', marginTop: '0.5rem', height: minHeight }}>
         <iframe
           frameBorder='0'
