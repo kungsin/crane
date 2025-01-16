@@ -26,12 +26,14 @@ const SearchForm: React.FC<SearchFormProps> = ({ recommendation, setFilterParams
   // 当 namespacePriority 变化时，更新 filteredNameSpaceOptions
   useEffect(() => {
     console.log('namespaceList', namespaceList?.data);
-    if (namespaceList?.data) {
+    if (namespaceList?.data && Array.isArray(namespaceList.data)) {
       const options = namespaceList?.data.map((ns) => ({
         value: ns.Namespace,
         label: ns.Namespace,
       }));
       setFilteredNameSpaceOptions(options);
+    } else {
+      setFilteredNameSpaceOptions([]);
     }
   }, [namespaceList, namespacePriority]);
 
