@@ -74,7 +74,8 @@ export const SelectTable = () => {
   // 遍历数组 a，根据 namespace 查找 Priority
   const result = recommendation.map((item) => {
     const namespace = item.namespace;
-    const priority = namespacePriorityMap[namespace] || 3; // 如果找不到，默认设置为 3
+    // const priority = namespacePriorityMap[namespace] || 3; // 如果找不到，默认设置为 3
+    const priority = namespacePriorityMap?.[namespace] ?? 3;
     return {
       ...item,
       priority: priority,

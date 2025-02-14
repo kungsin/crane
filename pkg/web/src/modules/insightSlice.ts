@@ -82,10 +82,10 @@ const slice = createSlice({
       state.customRange = action.payload;
     },
     windowPre: (state, action: PayloadAction<QueryWindow>) => {
-      state.window = action.payload;
+      state.windowPre = action.payload;
     },
-    customRangePre: (state, action: PayloadAction<InsightState['customRange']>) => {
-      state.customRange = action.payload;
+    customRangePre: (state, action: PayloadAction<InsightState['customRangePre']>) => {
+      state.customRangePre = action.payload;
     },
     selectedWorkloadType: (state, action: PayloadAction<any>) => {
       state.selectedWorkloadType = action.payload;
