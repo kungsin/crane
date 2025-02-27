@@ -164,7 +164,7 @@ export const SelectTable = () => {
                 } else if (row.status === 0) {
                   return (
                     <>
-                      <Link hover='color' theme='primary'>
+                      <Link hover='color' theme='primary' onClick={() => navigate(`/user/add?flag=2&id=${row.id}`)}>
                         修改
                       </Link>
                       <Link hover='color' theme='success' onClick={() => changeState(row.id, 0)}>
@@ -174,7 +174,7 @@ export const SelectTable = () => {
                   );
                 } else if (row.status === 2) {
                   return (
-                    <Link hover='color' theme='primary' onClick={() => navigate('/user/add?flag=3')}>
+                    <Link hover='color' theme='primary' onClick={() => navigate(`/user/add?flag=3&id=${row.id}`)}>
                       审核
                     </Link>
                   );

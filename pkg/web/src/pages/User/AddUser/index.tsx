@@ -1,4 +1,4 @@
-import { Button, Form, FormProps, Input, MessagePlugin, Select } from 'tdesign-react';
+import { Button, CustomValidator, Form, FormProps, FormRules, Input, MessagePlugin, Select } from 'tdesign-react';
 import CommonStyle from '../../../styles/common.module.less';
 import '../index.module.less';
 import classnames from 'classnames';
@@ -53,75 +53,111 @@ export const SelectTable = () => {
     console.log(e.fields);
     console.log(id);
     console.log(adminName);
-
-    // 注册用户
-    if (flag == 1) {
-      const body = {
-        username: e.fields.username,
-        password: e.fields.password,
-        confirmPassword: e.fields.confirmPassword,
-        phoneNumber: e.fields.phone,
-      };
-      if (body.password !== body.confirmPassword) {
-        MessagePlugin.error('两次密码不一致');
-        return;
-      }
-      // eslint-disable-next-line no-else-return
-      else if (body.password.length < 6) {
-        MessagePlugin.error('密码长度不能小于6位');
-        return;
-      }
-
-      console.log('body', body);
-      try {
-        setLoading(true);
-        const { data } = await registerUser({ ...body });
-        console.log('data', data);
-        if (data.code === 200) {
-          MessagePlugin.success('添加成功');
-          setTimeout(() => {
-            navigate(-1);
-          }, 1000);
-        } else {
-          MessagePlugin.error('添加失败,请联系开发人员');
+    if (e.validateResult === true) {
+      // 注册用户
+      if (flag == 1) {
+        const body = {
+          username: e.fields.username,
+          password: e.fields.password,
+          confirmPassword: e.fields.confirmPassword,
+          phoneNumber: e.fields.phone,
+        };
+        if (body.password !== body.confirmPassword) {
+          MessagePlugin.error('两次密码不一致');
+          return;
         }
-      } catch (error) {
-        MessagePlugin.error('接口调用失败');
-      } finally {
-        setLoading(false);
-      }
-    }
-    // 修改用户;
-    if (flag == 2) {
-      const params = {
-        id,
-        adminName,
-      };
-      const body = {
-        ...e.fields,
-        // eslint-disable-next-line no-unneeded-ternary
-        isAdmin: e.fields.isAdmin === 1 ? true : false,
-        clusters: Array.isArray(e.fields.clusters) ? e.fields.clusters : [e.fields.clusters],
-      };
-      console.log('params', params);
-      console.log('body', body);
-
-      try {
-        setLoading(true);
-        const { data } = await updateUser({ ...params, body });
-        console.log('data', data);
-        if (data.code === 200) {
-          MessagePlugin.success('修改成功');
-          setTimeout(() => {
-            navigate(-1);
-          }, 1000);
-        } else {
-          MessagePlugin.error('修改失败,请联系开发人员');
+        // eslint-disable-next-line no-else-return
+        else if (body.password.length < 6) {
+          MessagePlugin.error('密码长度不能小于6位');
+          return;
         }
-      } catch (error) {
-        MessagePlugin.error('接口调用失败');
-      } finally {
-        setLoading(false);
+
+        console.log('body', body);
+        try {
+          setLoading(true);
+          const { data } = await registerUser({ ...body });
+          console.log('data', data);
+          if (data.code === 200) {
+            MessagePlugin.success('添加成功');
+            setTimeout(() => {
+              navigate(-1);
+            }, 1000);
+          } else if (data.code === 500) {
+            MessagePlugin.warning(`${data.msg}`);
+          } else {
+            MessagePlugin.error('添加失败,请联系开发人员');
+          }
+        } catch (error) {
+          MessagePlugin.error('接口调用失败');
+        } finally {
+          setLoading(false);
+        }
+      }
+      // 修改用户 ;
+      if (flag == 2) {
+        const params = {
+          id,
+          adminName,
+        };
+        const body = {
+          ...e.fields,
+          // eslint-disable-next-line no-unneeded-ternary
+          isAdmin: e.fields.isAdmin === 1 ? true : false,
+          clusters: Array.isArray(e.fields.clusters) ? e.fields.clusters : [e.fields.clusters],
+        };
+        console.log('params', params);
+        console.log('body', body);
+
+        try {
+          setLoading(true);
+          const { data } = await updateUser({ ...params, body });
+          console.log('data', data);
+          if (data.code === 200) {
+            MessagePlugin.success('修改成功');
+            setTimeout(() => {
+              navigate(-1);
+            }, 1000);
+          } else {
+            MessagePlugin.error('修改失败,请联系开发人员');
+          }
+        } catch (error) {
+          MessagePlugin.error('接口调用失败');
+        } finally {
+          setLoading(false);
+        }
+      }
+      if (flag == 3) {
+        const params = {
+          id,
+          adminName,
+        };
+        const body = {
+          ...e.fields,
+          status: 1,
+          // eslint-disable-next-line no-unneeded-ternary
+          isAdmin: e.fields.isAdmin === 1 ? true : false,
+          clusters: Array.isArray(e.fields.clusters) ? e.fields.clusters : [e.fields.clusters],
+        };
+        console.log('params', params);
+        console.log('body', body);
+
+        try {
+          setLoading(true);
+          const { data } = await updateUser({ ...params, body });
+          console.log('data', data);
+          if (data.code === 200) {
+            MessagePlugin.success('审核成功');
+            setTimeout(() => {
+              navigate(-1);
+            }, 1000);
+          } else {
+            MessagePlugin.error('审核失败,请联系开发人员');
+          }
+        } catch (error) {
+          MessagePlugin.error('接口调用失败');
+        } finally {
+          setLoading(false);
+        }
       }
     }
   };
@@ -167,7 +203,7 @@ export const SelectTable = () => {
         </FormItem>
       </>,
     );
-  } else if (flag == 2) {
+  } else if (flag == 2 || flag == 3) {
     formItems.push(
       <>
         <FormItem label='用户名' name='username'>
@@ -194,14 +230,69 @@ export const SelectTable = () => {
       </>,
     );
   }
-
+  // 自定义异步校验器
+  const confirmPassword: CustomValidator = (val) =>
+    new Promise((resolve) => {
+      const timer = setTimeout(() => {
+        resolve(form?.current.getFieldValue('password') === val);
+        clearTimeout(timer);
+      });
+    });
+  // 自定义校验规则：校验密码是否包含数字、大写字母和小写字母
+  const validatePasswordComplexity = (val) =>
+    new Promise((resolve) => {
+      const regex = /^(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{6,}$/; // 正则表达式
+      const timer = setTimeout(() => {
+        if (val && !regex.test(val)) {
+          resolve(false);
+          clearTimeout(timer);
+        } else {
+          resolve(true);
+          clearTimeout(timer);
+        }
+      });
+    });
+  // 自定义校验规则：校验手机号格式
+  const validatePhone = (val) =>
+    new Promise((resolve) => {
+      const regex = /^1[3-9]\d{9}$/; // 正则表达式
+      const timer = setTimeout(() => {
+        if (val && !regex.test(val)) {
+          resolve(false);
+          clearTimeout(timer);
+        } else {
+          resolve(true);
+          clearTimeout(timer);
+        }
+      });
+    });
+  const rules: FormRules<Data> = {
+    username: [
+      { required: true, message: '姓名必填', type: 'error' },
+      { min: 2, message: '至少需要两个字', type: 'error' },
+    ],
+    phone: [
+      { required: true, message: '手机号必填', type: 'error' },
+      { validator: validatePhone, type: 'error' }, // 自定义校验规则
+    ],
+    password: [
+      { required: true, message: '密码必填', type: 'error' },
+      { validator: validatePasswordComplexity, message: '密码至少六位，且包含数字、大写字母和小写字母' },
+    ],
+    confirmPassword: [
+      // 自定义校验规则
+      { required: true, message: '密码必填', type: 'error' },
+      { validator: confirmPassword, message: '两次密码不一致' },
+    ],
+  };
   return (
     <>
-      <Form form={form} onSubmit={onSubmit} onReset={onReset} colon labelWidth={100}>
+      <Form ref={form} form={form} onSubmit={onSubmit} onReset={onReset} colon labelWidth={100} rules={rules}>
         {formItems}
         <FormItem style={{ marginLeft: 100 }}>
           <Button theme='primary' type='submit' loading={loading}>
-            {flag == 1 ? '添加' : '修改'}
+            {/* {flag == 1 ? '添加' : '修改'} */}
+            {flag == 1 ? '添加' : flag == 2 ? '修改' : flag == 3 ? '审核' : '未知状态'}
           </Button>
           {/* <Button onClick={setMessage}>设置信息</Button> */}
         </FormItem>
