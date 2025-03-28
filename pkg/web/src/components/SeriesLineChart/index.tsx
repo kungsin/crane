@@ -25,6 +25,7 @@ export enum LineStyle {
 export interface ISeriesLineChart {
   title?: string;
   subTitle?: string;
+  unit?: string;
   // DatePicker option
   datePicker?: boolean;
   // Prometheus Query Time Range unit: second e.g. 1h => 3600
@@ -57,7 +58,7 @@ const fetchLinesData = (craneUrl: string, timeDateRangePicker: string[], step: s
   });
 };
 
-const buildLineChartOption = (lineStyle: LineStyle | undefined, linesData: ISeriesLine[]) => {
+const buildLineChartOption = (lineStyle: LineStyle | undefined, linesData: ISeriesLine[], unit?: string) => {
   if (!linesData) return {};
   const legend = Array.from(linesData, (line) => line.name);
   const series =
@@ -111,12 +112,15 @@ const buildLineChartOption = (lineStyle: LineStyle | undefined, linesData: ISeri
     },
     yAxis: {
       type: 'value',
+      axisLabel: {
+        formatter: `{value}${unit || ''}`,
+      },
     },
     series,
   };
 };
 
-const SeriesLineChart = ({ title, subTitle, datePicker, timeRange, step, lines, lineStyle }: ISeriesLineChart) => {
+const SeriesLineChart = ({ title, subTitle, datePicker, timeRange, step, lines, lineStyle, unit }: ISeriesLineChart) => {
   const { t } = useTranslation();
   const craneUrl: any = useCraneUrl();
 
@@ -150,7 +154,7 @@ const SeriesLineChart = ({ title, subTitle, datePicker, timeRange, step, lines, 
   const linesData = fetchLinesData(craneUrl, timeDateRangePicker, step ?? '', lines);
 
   // Build ECharts Option
-  const dynamicLineChartOption = buildLineChartOption(lineStyle, linesData);
+  const dynamicLineChartOption = buildLineChartOption(lineStyle, linesData, unit);
 
   return (
     <Card

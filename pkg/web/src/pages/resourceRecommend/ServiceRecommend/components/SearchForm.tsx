@@ -109,21 +109,21 @@ const SearchForm: React.FC<SearchFormProps> = ({ recommendation, setFilterParams
               </Col>
               <Col>
                 {/* {namespacePriority} */}
-                <FormItem label={t('Namespace优先级')} name='namespacePriority' style={{ margin: '0px 10px' }}>
+                <FormItem label={t('命名空间优先级')} name='namespacePriority' style={{ margin: '0px 10px' }}>
                   <Select
                     value={namespacePriority}
                     options={nameSpacePriorityOptions}
-                    placeholder={t('请选择Namespace优先级')}
+                    placeholder={t('请选择命名空间优先级')}
                     filterable
                     style={{ margin: '0px 0px' }}
                   />
                 </FormItem>
               </Col>
               <Col>
-                <FormItem label={t('Namespace')} name='namespace' style={{ margin: '0px 10px' }}>
+                <FormItem label={t('命名空间')} name='namespace' style={{ margin: '0px 10px' }}>
                   <Select
                     options={filteredNameSpaceOptions}
-                    placeholder={t('请选择Namespace')}
+                    placeholder={t('请选择命名空间')}
                     filterable
                     style={{ margin: '0px 0px' }}
                   />

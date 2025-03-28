@@ -11,7 +11,7 @@ const NetworkIoChart = () => {
   // const networkIOMetrics: ISeriesLineChart = {
   const item: ISeriesLineChart = {
     title: t('网络 IO 使用'),
-    subTitle: '(bytes/second)',
+    subTitle: '(MB/s)',
     // subTitle: '(GB)',
     datePicker: true,
     step: '1h',
@@ -20,23 +20,23 @@ const NetworkIoChart = () => {
       {
         name: 'receive_bytes',
         // query: `sum(rate(node_network_receive_bytes_total{device!~"veth.*|docker.*|cni.*|flannel.*|cali.*|cbr.*"}[5m]) * on (instance) group_left() max(kube_node_labels{label_beta_kubernetes_io_instance_type!="eklet", label_node_kubernetes_io_instance_type!~"eklet"}) by (instance))`,
-        query: `sum(rate(node_network_receive_bytes_total{device!~"veth.*|docker.*|cni.*|flannel.*|cali.*|cbr.*"}[5m]) )`,
+        query: `sum(rate(node_network_receive_bytes_total{device!~"veth.*|docker.*|cni.*|flannel.*|cali.*|cbr.*"}[5m]) )/1024/1024`,
       },
       {
         name: 'transmit_bytes',
         // query: `sum(rate(node_network_transmit_bytes_total{device!~"veth.*|docker.*|cni.*|flannel.*|cali.*|cbr.*"}[5m]) * on (instance) group_left() max(kube_node_labels{label_beta_kubernetes_io_instance_type!="eklet", label_node_kubernetes_io_instance_type!~"eklet"}) by (instance))`,
-        query: `sum(rate(node_network_transmit_bytes_total{device!~"veth.*|docker.*|cni.*|flannel.*|cali.*|cbr.*"}[5m]))`,
+        query: `-sum(rate(node_network_transmit_bytes_total{device!~"veth.*|docker.*|cni.*|flannel.*|cali.*|cbr.*"}[5m]))/1024/1024`,
       },
-      {
-        name: 'receive_packets',
-        // query: `sum(rate(node_network_receive_packets_total{device!~"veth.*|docker.*|cni.*|flannel.*|cali.*|cbr.*"}[5m]) * on (instance) group_left() max(kube_node_labels{label_beta_kubernetes_io_instance_type!="eklet", label_node_kubernetes_io_instance_type!~"eklet"}) by (instance))`,
-        query: `sum(rate(node_network_receive_packets_total{device!~"veth.*|docker.*|cni.*|flannel.*|cali.*|cbr.*"}[5m]) )`,
-      },
-      {
-        name: 'transmit_packets',
-        // query: `sum(rate(node_network_transmit_packets_total{device!~"veth.*|docker.*|cni.*|flannel.*|cali.*|cbr.*"}[5m]) * on (instance) group_left() max(kube_node_labels{label_beta_kubernetes_io_instance_type!="eklet", label_node_kubernetes_io_instance_type!~"eklet"}) by (instance))`,
-        query: `sum(rate(node_network_transmit_packets_total{device!~"veth.*|docker.*|cni.*|flannel.*|cali.*|cbr.*"}[5m]) )`,
-      },
+      // {
+      //   name: 'receive_packets',
+      //   // query: `sum(rate(node_network_receive_packets_total{device!~"veth.*|docker.*|cni.*|flannel.*|cali.*|cbr.*"}[5m]) * on (instance) group_left() max(kube_node_labels{label_beta_kubernetes_io_instance_type!="eklet", label_node_kubernetes_io_instance_type!~"eklet"}) by (instance))`,
+      //   query: `sum(rate(node_network_receive_packets_total{device!~"veth.*|docker.*|cni.*|flannel.*|cali.*|cbr.*"}[5m]) )`,
+      // },
+      // {
+      //   name: 'transmit_packets',
+      //   // query: `sum(rate(node_network_transmit_packets_total{device!~"veth.*|docker.*|cni.*|flannel.*|cali.*|cbr.*"}[5m]) * on (instance) group_left() max(kube_node_labels{label_beta_kubernetes_io_instance_type!="eklet", label_node_kubernetes_io_instance_type!~"eklet"}) by (instance))`,
+      //   query: `sum(rate(node_network_transmit_packets_total{device!~"veth.*|docker.*|cni.*|flannel.*|cali.*|cbr.*"}[5m]) )`,
+      // },
     ],
   };
 
@@ -45,6 +45,7 @@ const NetworkIoChart = () => {
       <Col span={12}>
         <SeriesLineChart
           title={item.title}
+          unit={' MB/s'}
           subTitle={item.subTitle}
           datePicker={item.datePicker}
           lines={item.lines}

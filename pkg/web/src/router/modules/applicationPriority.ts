@@ -14,14 +14,14 @@ export const useApplicationPriorityRouteConfig = () => {
       },
       children: [
         {
-          path: 'resourceForecas',
+          path: 'applicationPriority',
           Component: lazy(() => import('pages/ApplicationPriority/applicationPriority')),
           meta: {
             title: t('应用优先级'),
           },
         },
         {
-          path: 'resourceManage',
+          path: 'applicationManage',
           Component: lazy(() => import('pages/ApplicationPriority/manage')),
           meta: {
             title: t('应用管理'),

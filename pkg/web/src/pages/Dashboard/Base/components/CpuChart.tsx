@@ -40,6 +40,7 @@ const CpuChart = () => {
       <Col span={12}>
         <SeriesLineChart
           title={item.title}
+          unit={' Cores'}
           subTitle={item.subTitle}
           datePicker={item.datePicker}
           lines={item.lines}

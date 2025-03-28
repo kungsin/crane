@@ -174,10 +174,10 @@ export const OverviewSearchPanel = React.memo(() => {
             marginBottom: 5,
           }}
         >
-          <div style={{ marginRight: '1rem', width: '140px' }}>{t('Workload类型')}</div>
+          <div style={{ marginRight: '1rem', width: '140px' }}>{t('工作负载类型')}</div>
           <Select
             options={workloadTypeOptions}
-            placeholder={t('Workload类型')}
+            placeholder={t('工作负载类型')}
             filterable
             value={selectedWorkloadType ?? undefined}
             onChange={(value: any) => {
@@ -196,10 +196,10 @@ export const OverviewSearchPanel = React.memo(() => {
             marginBottom: 5,
           }}
         >
-          <div style={{ marginRight: '1rem', width: '80px' }}>{t('Workload')}</div>
+          <div style={{ marginRight: '1rem', width: '80px' }}>{t('工作负载')}</div>
           <Select
             options={workloadOptions}
-            placeholder={t('Workload')}
+            placeholder={t('工作负载')}
             filterable
             value={selectedWorkload ?? undefined}
             onChange={(value: any) => {

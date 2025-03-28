@@ -34,11 +34,32 @@ export const useResourceProfile = (): IRouter[] => {
             title: t('云资源性能视图'),
           },
         },
+        // {
+        //   path: 'workload-insight',
+        //   Component: lazy(() => import('pages/ResourceProfile/costVisual/index')),
+        //   meta: {
+        //     title: t('成本可视化'),
+        //   },
+        // },
         {
-          path: 'workload-insight',
-          Component: lazy(() => import('pages/ResourceProfile/costVisual/index')),
+          path: 'cost-visual-cluster',
+          Component: lazy(() => import('pages/ResourceProfile/costVisual/cluster')),
           meta: {
-            title: t('成本可视化'),
+            title: t('成本可视化-集群'),
+          },
+        },
+        {
+          path: 'cost-visual-node',
+          Component: lazy(() => import('pages/ResourceProfile/costVisual/node')),
+          meta: {
+            title: t('成本可视化-节点'),
+          },
+        },
+        {
+          path: 'cost-visual-namespace',
+          Component: lazy(() => import('pages/ResourceProfile/costVisual/namespace')),
+          meta: {
+            title: t('成本可视化-命名空间'),
           },
         },
         // {

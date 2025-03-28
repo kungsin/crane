@@ -43,10 +43,10 @@ const SearchForm: React.FC<SearchFormProps> = ({ recommendation, setFilterParams
                 </FormItem>
               </Col>
               <Col>
-                <FormItem label={t('Namespace')} name='namespace' style={{ margin: '0px 10px' }}>
+                <FormItem label={t('命名空间')} name='namespace' style={{ margin: '0px 10px' }}>
                   <Select
                     options={nameSpaceOptions}
-                    placeholder={t('请选择Namespace')}
+                    placeholder={t('请选择命名空间')}
                     filterable
                     style={{ margin: '0px 20px' }}
                   />

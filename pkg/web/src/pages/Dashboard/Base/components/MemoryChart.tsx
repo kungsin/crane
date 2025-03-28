@@ -38,6 +38,7 @@ const MemoryChart = () => {
       <Col span={12}>
         <SeriesLineChart
           title={item.title}
+          unit={' GB'}
           subTitle={item.subTitle}
           datePicker={item.datePicker}
           lines={item.lines}

@@ -12,12 +12,12 @@ import { rangeMap } from 'utils/rangeMap';
 import { useFetchNamespaceListQuery } from '../../../services/namespaceApi';
 import _ from 'lodash';
 
-const ALL_NAMESPACE_VALUE = 'All';
+// const ALL_NAMESPACE_VALUE = 'All';
 
-export const OverviewSearchPanel = React.memo(() => {
+export const OverviewSearchPanel = React.memo((props) => {
   const dispatch = useDispatch();
   const { t } = useTranslation();
-
+  console.log('props', props);
   const customRange = useSelector((state) => state.insight.customRange);
   const window = useSelector((state) => state.insight.window);
   const selectedNamespace = useSelector((state) => state.insight.selectedNamespace);
@@ -110,29 +110,32 @@ export const OverviewSearchPanel = React.memo(() => {
             }}
           />
         </div>
-        <div
-          style={{
-            display: 'flex',
-            flexDirection: 'row',
-            alignItems: 'center',
-            marginRight: '1rem',
-            marginTop: 5,
-            marginBottom: 5,
-          }}
-        >
-          <div style={{ marginRight: '1rem', width: '80px' }}>{t('命名空间')}</div>
-          <Select
-            options={namespaceOptions}
-            placeholder={t('命名空间')}
-            filterable
-            value={selectedNamespace ?? undefined}
-            onChange={(value: any) => {
-              dispatch(insightAction.selectedNamespace(value));
-              dispatch(insightAction.selectedWorkloadType(undefined));
-              dispatch(insightAction.selectedWorkload(undefined));
+        {props.name === 'isNeedNamespace' ? (
+          <div
+            style={{
+              display: 'flex',
+              flexDirection: 'row',
+              alignItems: 'center',
+              marginRight: '1rem',
+              marginTop: 5,
+              marginBottom: 5,
             }}
-          />
-        </div>
+          >
+            <div style={{ marginRight: '1rem', width: '80px' }}>{t('命名空间')}</div>
+            <Select
+              options={namespaceOptions}
+              placeholder={t('命名空间')}
+              filterable
+              value={selectedNamespace ?? undefined}
+              onChange={(value: any) => {
+                dispatch(insightAction.selectedNamespace(value));
+                dispatch(insightAction.selectedWorkloadType(undefined));
+                dispatch(insightAction.selectedWorkload(undefined));
+              }}
+            />
+          </div>
+        ) : null}
+
         <div
           style={{
             display: 'flex',

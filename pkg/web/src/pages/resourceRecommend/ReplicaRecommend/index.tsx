@@ -160,7 +160,7 @@ export const SelectTable = () => {
             ellipsis: true,
           },
           {
-            title: t('推荐目标名称'),
+            title: t('推荐Workload名称'),
             colKey: 'spec.targetRef.name',
           },
           {

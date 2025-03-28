@@ -17,6 +17,7 @@ const MiddleChart = () => {
         <SeriesLineChart
           title={t('成本走势')}
           subTitle={t('( 元 )')}
+          unit={' 元'}
           datePicker={true}
           step={'1h'}
           tips={t('过去一段时间内的成本走势图')}
@@ -64,6 +65,7 @@ sum(
       <Col xs={12} xl={3}>
         <PieChart
           title={t('节点成本分布')}
+          unit={'元'}
           datePicker={true}
           step={'24h'}
           query={`sum(sum_over_time(node:node_cpu_hourly_cost:avg{}[{DURATION}m]) + sum_over_time(node:node_ram_hourly_cost:avg{}[{DURATION}m])) by (node) * (${craneDiscount}/100.0)`}

@@ -10,7 +10,7 @@ const DiskIoChart = () => {
   // 磁盘 IO 监控配置
   const item: ISeriesLineChart = {
     title: t('磁盘 IO 使用'),
-    subTitle: '(bytes/second)',
+    subTitle: '(MB/s)',
     datePicker: true,
     step: '1h',
     xAxis: { type: 'time' },
@@ -18,18 +18,18 @@ const DiskIoChart = () => {
       {
         name: 'read_bytes',
         // query: `sum(rate(node_disk_read_bytes_total[5m]) * on (instance) group_left() max(kube_node_labels{label_beta_kubernetes_io_instance_type!="eklet", label_node_kubernetes_io_instance_type!~"eklet"}) by (instance))`,
-        query: `sum(rate(node_disk_read_bytes_total[5m]) )`,
+        query: `sum(rate(node_disk_read_bytes_total[5m])) / 1024 / 1024`,
       },
       {
         name: 'written_bytes',
         // query: `sum(rate(node_disk_written_bytes_total{device!~"dm-.*"}[5m]) * on (instance) group_left() max(kube_node_labels{label_beta_kubernetes_io_instance_type!="eklet", label_node_kubernetes_io_instance_type!~"eklet"}) by (instance))`,
-        query: `sum(rate(node_disk_written_bytes_total{device!~"dm-.*"}[5m]) )`,
+        query: `sum(rate(node_disk_written_bytes_total{device!~"dm-.*"}[5m]) ) / 1024 / 1024`,
       },
-      {
-        name: 'io_time',
-        // query: `sum(rate(node_disk_io_time_seconds_total{device!~"dm-.*"}[5m]) * on (instance) group_left() max(kube_node_labels{label_beta_kubernetes_io_instance_type!="eklet", label_node_kubernetes_io_instance_type!~"eklet"}) by (instance))`,
-        query: `sum(rate(node_disk_io_time_seconds_total{device!~"dm-.*"}[5m]) )`,
-      },
+      // {
+      //   name: 'io_time',
+      //   // query: `sum(rate(node_disk_io_time_seconds_total{device!~"dm-.*"}[5m]) * on (instance) group_left() max(kube_node_labels{label_beta_kubernetes_io_instance_type!="eklet", label_node_kubernetes_io_instance_type!~"eklet"}) by (instance))`,
+      //   query: `sum(rate(node_disk_io_time_seconds_total{device!~"dm-.*"}[5m]) )`,
+      // },
     ],
   };
 
@@ -38,6 +38,7 @@ const DiskIoChart = () => {
       <Col span={12}>
         <SeriesLineChart
           title={item.title}
+          unit={' MB/s'}
           subTitle={item.subTitle}
           datePicker={item.datePicker}
           lines={item.lines}

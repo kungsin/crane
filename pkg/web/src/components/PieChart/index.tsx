@@ -18,6 +18,8 @@ export interface IPieChart {
   step?: string;
   // legend: string[];
   query: string;
+  // 显示单位
+  unit?: string;
 }
 
 const fetchPieData = (craneUrl: string, title: string, timeDateRangePicker: string[], step: string, query: string) => {
@@ -50,7 +52,7 @@ const fetchPieData = (craneUrl: string, title: string, timeDateRangePicker: stri
   return result;
 };
 
-const PieChart = ({ title, subTitle, datePicker, timeRange, step, query }: IPieChart) => {
+const PieChart = ({ title, subTitle, datePicker, timeRange, step, query, unit }: IPieChart) => {
   const { t } = useTranslation();
   const craneUrl: any = useCraneUrl();
 
@@ -97,6 +99,9 @@ const PieChart = ({ title, subTitle, datePicker, timeRange, step, query }: IPieC
   const dynamicPieChartOption = {
     tooltip: {
       trigger: 'item',
+      formatter: (params: any) => {
+        return `${params.name}: ${params.value}${unit ? ` ${unit}` : ''}`;
+      }
     },
     grid: {
       top: '0',
