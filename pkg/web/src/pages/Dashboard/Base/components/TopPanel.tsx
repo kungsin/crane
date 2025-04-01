@@ -13,6 +13,7 @@ const TopPanel = () => {
     {
       title: t('当月总成本'),
       countPrefix: '¥ ',
+      precision: 2,
       lineColor: '#fff',
       query: `sum (
       avg(
@@ -27,6 +28,7 @@ const TopPanel = () => {
     {
       title: t('预估每月成本'),
       countPrefix: '¥ ',
+      precision: 2,
       query: `sum (
       avg(
           avg_over_time(node_total_hourly_cost[1h])
@@ -48,6 +50,7 @@ const TopPanel = () => {
     ) by (node)
   ) * 730 * (${craneDiscount}/100.)`,
       countPrefix: '¥ ',
+      precision: 2,
       timeType: TimeType.Range,
       tips: t('以最近一小时CPU成本估算未来一个月的CPU成本。每小时CPU成本 * 24 * 30'),
     },
@@ -61,6 +64,7 @@ const TopPanel = () => {
     ) by (node)
   ) * 730 * (${craneDiscount}/100.)`,
       countPrefix: '¥ ',
+      precision: 2,
       timeType: TimeType.Range,
       tips: t('以最近一小时Memory成本估算未来一个月的Memory成本。每小时Memory成本 * 24 * 30'),
     },
