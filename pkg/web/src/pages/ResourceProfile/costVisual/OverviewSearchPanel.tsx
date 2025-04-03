@@ -146,7 +146,16 @@ export const OverviewSearchPanel = React.memo((props) => {
             marginBottom: 5,
           }}
         >
-          <div style={{ marginRight: '1rem', width: '70px' }}>{t('Discount')}</div>
+          <div style={{ marginRight: '1rem', width: '70px' }}>{t('CPU折扣')}</div>
+          <InputNumber
+            min={0}
+            theme='column'
+            value={discount}
+            onChange={(value) => {
+              dispatch(insightAction.discount(value));
+            }}
+          />
+          <div style={{ marginRight: '1rem', width: '70px' }}>{t('内存折扣')}</div>
           <InputNumber
             min={0}
             theme='column'
