@@ -122,8 +122,12 @@ image-craned: ## Build docker image with the crane manager.
 	docker build --build-arg LDFLAGS=$(LDFLAGS) --build-arg PKGNAME=craned -t ${MANAGER_IMG} .
 
 .PHONY: image-dashboard
+# image-dashboard: ## Build docker image with the crane dashboard.
+# 	docker build --build-arg LDFLAGS=$(LDFLAGS) --build-arg PKGNAME=web -t ${DASHBOARD_IMG} ./pkg/web
 image-dashboard: ## Build docker image with the crane dashboard.
-	docker build --build-arg LDFLAGS=$(LDFLAGS) --build-arg PKGNAME=web -t ${DASHBOARD_IMG} ./pkg/web
+	@echo "Building dashboard image with version: $(GIT_VERSION)"
+	@echo "Using commit hash: $(GIT_COMMIT_HASH)"
+	docker build --no-cache --build-arg LDFLAGS=$(LDFLAGS) --build-arg PKGNAME=web -t ${DASHBOARD_IMG} ./pkg/web
 
 .PHONY: image-crane-agent
 image-crane-agent: ## Build docker image with the crane agent.

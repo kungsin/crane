@@ -59,9 +59,7 @@ export default (params) => ({
         // 用于开发环境下的转发请求
         // 更多请参考：https://vitejs.dev/config/#server-proxy
         // Set to your craned address
-        // target: 'http://localhost:9090',
-        // target: 'http://10.1.60.127:9090',
-        target: 'http://10.1.60.129:30229',
+        target: 'http://10.1.60.129:30995',
         // target: 'http://dashboard.gocrane.io/',
         changeOrigin: true,
       },
