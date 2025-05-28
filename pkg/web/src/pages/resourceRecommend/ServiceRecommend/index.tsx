@@ -68,10 +68,12 @@ export const SelectTable = () => {
 
   // 将recommendation的写入优先级
   // 创建一个以 namespace 为键的映射，方便快速查找
-  const namespacePriorityMap = namespaceList?.data.reduce((map, item) => {
-    map[item.Namespace] = item.Priority;
-    return map;
-  }, {});
+  const namespacePriorityMap = namespaceList?.data
+    ? namespaceList.data.reduce((map, item) => {
+        map[item.Namespace] = item.Priority;
+        return map;
+      }, {})
+    : {}; // 如果 data 不存在，返回空对象
 
   // 遍历数组 a，根据 namespace 查找 Priority
   const result = recommendation.map((item) => {

@@ -16,7 +16,20 @@ import { BaseQueryFn, retry } from '@reduxjs/toolkit/query/react';
  * @returns
  */
 export const buildRetryFetchBaseQuery = (fn: any): BaseQueryFn => {
-  const staggeredBaseQuery = retry(fn, {
+  // 包装原始的 fetchBaseQuery 函数，添加自定义请求头
+  const baseQueryWithHeaders = async (args: any, api: any, extraOptions: any) => {
+    const originalArgs = typeof args === 'string' ? { url: args } : args;
+    const modifiedArgs = {
+      ...originalArgs,
+      headers: {
+        ...originalArgs.headers,
+        'ngrok-skip-browser-warning': 'true',
+      },
+    };
+    return fn(modifiedArgs, api, extraOptions);
+  };
+
+  const staggeredBaseQuery = retry(baseQueryWithHeaders, {
     maxRetries: 10,
   });
   return staggeredBaseQuery;
