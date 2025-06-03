@@ -74,10 +74,10 @@ interface UserInfoResult {
   error: string;
   data: any; // 根据实际返回的数据结构定义
 }
-// const URI1 = 'http://10.1.60.127:9999/user';
-// const URI2 = 'http://10.1.60.127:9999/namespace';
-const URI1 = 'https://faf6-222-128-47-125.ngrok-free.app/user';
-const URI2 = 'https://faf6-222-128-47-125.ngrok-free.app/namespace';
+const URI1 = 'http://10.1.60.127:9999/user';
+const URI2 = 'http://10.1.60.127:9999/namespace';
+// const URI1 = 'https://faf6-222-128-47-125.ngrok-free.app/user';
+// const URI2 = 'https://faf6-222-128-47-125.ngrok-free.app/namespace';
 
 // 获取token
 const getToken = () => {
