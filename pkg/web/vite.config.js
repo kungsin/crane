@@ -67,7 +67,7 @@ export default (params) => ({
       '/grafana': {
         // Set to your craned address
         // target: 'http://10.1.60.129:30454',
-        target: ' https://646a-222-128-47-125.ngrok-free.app',
+        target: 'https://0c94-222-128-47-125.ngrok-free.app',
         // target: 'http://dashboard.gocrane.io/',
         // target: 'http://localhost:9090',
         changeOrigin: true,
