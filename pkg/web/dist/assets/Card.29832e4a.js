@@ -1,1 +1,0 @@
-import{b as d}from"./index.c7fe2133.js";const e=({children:l,title:i=null,operations:n=null,style:r={},className:s})=>d("div",{className:s,style:{padding:20,...r},children:[d("div",{children:[i,n]}),l]});export{e as C};

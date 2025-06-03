@@ -1,0 +1,1 @@
+import{m as l,n as a}from"./index.6ef81d7d.js";const d=()=>{var t,s,r,u;const c=l(e=>e.insight.selectedClusterId);return(u=((r=(s=(t=a({}).data)==null?void 0:t.data)==null?void 0:s.items)!=null?r:[]).find(e=>e.id===c))==null?void 0:u.craneUrl};export{d as u};
