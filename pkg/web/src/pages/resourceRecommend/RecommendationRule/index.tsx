@@ -129,7 +129,7 @@ export const SelectTable = () => {
           },
           {
             title: t('推荐目标'),
-            width: 300,
+            width: 200,
             ellipsis: true,
             colKey: 'spec.resourceSelectors',
             cell({ row }) {

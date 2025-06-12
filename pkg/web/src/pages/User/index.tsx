@@ -86,7 +86,7 @@ export const SelectTable = () => {
       data={data}
       columns={[
         { colKey: 'id', title: 'id', width: '100' },
-        { colKey: 'name', title: '用户名', width: '100' },
+        { colKey: 'name', title: '用户名', width: '160' },
         { colKey: 'phone', title: '手机号', width: '160' },
         {
           colKey: 'status',
@@ -111,7 +111,7 @@ export const SelectTable = () => {
           ),
           width: '120',
         },
-        { colKey: 'registCode', title: '用户注册码', width: '120' },
+        // { colKey: 'registCode', title: '用户注册码', width: '120' },
         // userListMap
         {
           colKey: 'userPermission',
