@@ -18,12 +18,12 @@ const NetworkIoChart = () => {
     xAxis: { type: 'time' },
     lines: [
       {
-        name: 'receive_bytes',
+        name: '接受速率',
         // query: `sum(rate(node_network_receive_bytes_total{device!~"veth.*|docker.*|cni.*|flannel.*|cali.*|cbr.*"}[5m]) * on (instance) group_left() max(kube_node_labels{label_beta_kubernetes_io_instance_type!="eklet", label_node_kubernetes_io_instance_type!~"eklet"}) by (instance))`,
         query: `sum(rate(node_network_receive_bytes_total{device!~"veth.*|docker.*|cni.*|flannel.*|cali.*|cbr.*"}[5m]) )/1024/1024`,
       },
       {
-        name: 'transmit_bytes',
+        name: '发送速率',
         // query: `sum(rate(node_network_transmit_bytes_total{device!~"veth.*|docker.*|cni.*|flannel.*|cali.*|cbr.*"}[5m]) * on (instance) group_left() max(kube_node_labels{label_beta_kubernetes_io_instance_type!="eklet", label_node_kubernetes_io_instance_type!~"eklet"}) by (instance))`,
         query: `-sum(rate(node_network_transmit_bytes_total{device!~"veth.*|docker.*|cni.*|flannel.*|cali.*|cbr.*"}[5m]))/1024/1024`,
       },

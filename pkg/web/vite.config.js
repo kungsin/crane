@@ -59,15 +59,15 @@ export default (params) => ({
         // 用于开发环境下的转发请求
         // 更多请参考：https://vitejs.dev/config/#server-proxy
         // Set to your craned address
-        target: 'http://10.1.60.129:31148',
+        // target: 'http://10.1.60.129:31148',
         // target: 'https://a5bc-222-128-47-125.ngrok-free.app',
-        // target: 'http://dashboard.gocrane.io/',
+        target: 'http://dashboard.gocrane.io/',
         changeOrigin: true,
       },
       '/grafana': {
         // Set to your craned address
-        target: 'http://10.1.60.129:31624',
-        // target: 'https://0c94-222-128-47-125.ngrok-free.app',
+        // target: 'http://10.1.60.129:31624',
+        target: 'https://9ee5-222-128-47-125.ngrok-free.app',
         // target: 'http://dashboard.gocrane.io/',
         // target: 'http://localhost:9090',
         changeOrigin: true,

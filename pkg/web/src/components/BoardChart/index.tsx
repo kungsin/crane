@@ -34,6 +34,7 @@ export interface IBoardProps extends React.HTMLAttributes<HTMLElement> {
   // The latest value from the metrics
   count?: string;
   countPrefix?: string;
+  countSuffix?: string;
   Icon?: React.ReactElement;
   desc?: string;
   trend?: ETrend;
@@ -227,6 +228,7 @@ function getPercentageChange(oldNumber: any, newNumber: any) {
 const BoardChart = ({
   title,
   countPrefix,
+  countSuffix,
   desc,
   Icon,
   dark,
@@ -271,7 +273,7 @@ const BoardChart = ({
   ) {
     count = 'No Data';
   } else {
-    count = `${countPrefix || ''}${result?.data?.latestValue || ''}`;
+    count = `${countPrefix || ''}${result?.data?.latestValue || ''}  ${countSuffix || ''}`;
   }
 
   let trendNum;

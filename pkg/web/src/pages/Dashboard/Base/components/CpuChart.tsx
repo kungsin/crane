@@ -9,7 +9,7 @@ const CpuChart = () => {
 
   const item: ISeriesLineChart = {
     title: t('CPU 资源使用'),
-    subTitle: '(Core)',
+    subTitle: '(Cores)',
     datePicker: true,
     step: '1h',
     xAxis: { type: 'time' },
@@ -17,16 +17,19 @@ const CpuChart = () => {
       {
         name: 'capacity',
         // name: '容量',
-        query: `SUM(kube_node_status_capacity{resource="cpu", unit="core"}  * on (node) group_left() max(kube_node_labels{label_beta_kubernetes_io_instance_type!="eklet", label_node_kubernetes_io_instance_type!~"eklet"}) by (node))`,
+        // query: `SUM(kube_node_status_capacity{resource="cpu", unit="core"}  * on (node) group_left() max(kube_node_labels{label_beta_kubernetes_io_instance_type!="eklet", label_node_kubernetes_io_instance_type!~"eklet"}) by (node))`,
+        query: `SUM(max(kube_node_status_capacity{resource="cpu", unit="core"}) by (node)  * on (node) group_left() max(kube_node_labels{label_beta_kubernetes_io_instance_type!="eklet", label_node_kubernetes_io_instance_type!~"eklet"}) by (node))`,
       },
       {
         name: 'request',
         // name: '请求',
-        query: `SUM(kube_pod_container_resource_requests{resource="cpu", unit="core"}  * on (node) group_left() max(kube_node_labels{label_beta_kubernetes_io_instance_type!="eklet", label_node_kubernetes_io_instance_type!~"eklet"}) by (node))`,
+        // query: `SUM(kube_pod_container_resource_requests{resource="cpu", unit="core"}  * on (node) group_left() max(kube_node_labels{label_beta_kubernetes_io_instance_type!="eklet", label_node_kubernetes_io_instance_type!~"eklet"}) by (node))`,
+        query: `SUM(max(kube_pod_container_resource_requests{resource="cpu", unit="core"})by (node, pod, container)  * on (node) group_left() max(kube_node_labels{label_beta_kubernetes_io_instance_type!="eklet", label_node_kubernetes_io_instance_type!~"eklet"}) by (node))`,
       },
       {
         name: 'limit',
-        query: `SUM(kube_pod_container_resource_limits{resource="cpu", unit="core"}  * on (node) group_left() max(kube_node_labels{label_beta_kubernetes_io_instance_type!="eklet", label_node_kubernetes_io_instance_type!~"eklet"}) by (node))`,
+        // query: `SUM(kube_pod_container_resource_limits{resource="cpu", unit="core"}  * on (node) group_left() max(kube_node_labels{label_beta_kubernetes_io_instance_type!="eklet", label_node_kubernetes_io_instance_type!~"eklet"}) by (node))`,
+        query: `SUM(  max(kube_pod_container_resource_limits{resource="cpu", unit="core"}) by (node, pod, container, namespace)  * on (node) group_left()  max(kube_node_labels{    label_beta_kubernetes_io_instance_type!="eklet",    label_node_kubernetes_io_instance_type!~"eklet"  }) by (node))`,
       },
       {
         name: 'usage',

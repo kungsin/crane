@@ -12,7 +12,7 @@ const TopPanel = () => {
   const PANE_LIST: Array<IBoardProps> = [
     {
       title: t('当月总成本'),
-      countPrefix: '¥ ',
+      countSuffix: '元',
       precision: 2,
       lineColor: '#fff',
       query: `sum (
@@ -27,7 +27,7 @@ const TopPanel = () => {
     },
     {
       title: t('预估每月成本'),
-      countPrefix: '¥ ',
+      countSuffix: '元',
       precision: 2,
       query: `sum (
       avg(
@@ -49,7 +49,7 @@ const TopPanel = () => {
         ) by (node)
     ) by (node)
   ) * 730 * (${craneDiscount}/100.)`,
-      countPrefix: '¥ ',
+      countSuffix: '元',
       precision: 2,
       timeType: TimeType.Range,
       tips: t('以最近一小时CPU成本估算未来一个月的CPU成本。每小时CPU成本 * 24 * 30'),
@@ -63,7 +63,7 @@ const TopPanel = () => {
       ) by (node)
     ) by (node)
   ) * 730 * (${craneDiscount}/100.)`,
-      countPrefix: '¥ ',
+      countSuffix: '元',
       precision: 2,
       timeType: TimeType.Range,
       tips: t('以最近一小时Memory成本估算未来一个月的Memory成本。每小时Memory成本 * 24 * 30'),
@@ -80,6 +80,7 @@ const TopPanel = () => {
             trendNum={item.trendNum}
             count={item.count}
             countPrefix={item.countPrefix}
+            countSuffix={item.countSuffix}
             lineColor={item.lineColor}
             desc={t('自从上周以来')}
             Icon={item.Icon}

@@ -16,15 +16,18 @@ const MemoryChart = () => {
     lines: [
       {
         name: 'capacity',
-        query: `SUM(kube_node_status_capacity{resource="memory", unit="byte"}  * on (node) group_left() max(kube_node_labels{label_beta_kubernetes_io_instance_type!="eklet", label_node_kubernetes_io_instance_type!~"eklet"}) by (node)  / 1024 / 1024 / 1024 )`,
+        // query: `SUM(kube_node_status_capacity{resource="memory", unit="byte"}  * on (node) group_left() max(kube_node_labels{label_beta_kubernetes_io_instance_type!="eklet", label_node_kubernetes_io_instance_type!~"eklet"}) by (node)  / 1024 / 1024 / 1024 )`,
+        query: `sum(  max(kube_node_status_capacity{resource="memory", unit="byte"}) by (node)  * on (node) group_left()  max(kube_node_labels{    label_beta_kubernetes_io_instance_type!="eklet",    label_node_kubernetes_io_instance_type!~"eklet"  }) by (node)  / 1024 / 1024 / 1024)`,
       },
       {
         name: 'request',
-        query: `SUM(kube_pod_container_resource_requests{resource="memory", unit="byte", namespace!=""} * on (node) group_left() max(kube_node_labels{label_beta_kubernetes_io_instance_type!="eklet", label_node_kubernetes_io_instance_type!~"eklet"}) by (node)/ 1024 / 1024 / 1024)`,
+        // query: `SUM(kube_pod_container_resource_requests{resource="memory", unit="byte", namespace!=""} * on (node) group_left() max(kube_node_labels{label_beta_kubernetes_io_instance_type!="eklet", label_node_kubernetes_io_instance_type!~"eklet"}) by (node)/ 1024 / 1024 / 1024)`,
+        query: `sum(  max(kube_pod_container_resource_requests{    resource="memory",     unit="byte",    namespace!=""  }) by (node, pod, container, namespace)    * on (node) group_left()  max(kube_node_labels{    label_beta_kubernetes_io_instance_type!="eklet",    label_node_kubernetes_io_instance_type!~"eklet"  }) by (node)    / 1024 / 1024 / 1024)`,
       },
       {
         name: 'limits',
-        query: `SUM(kube_pod_container_resource_limits{resource="memory", unit="byte", namespace!=""} * on (node) group_left() max(kube_node_labels{label_beta_kubernetes_io_instance_type!="eklet", label_node_kubernetes_io_instance_type!~"eklet"}) by (node) / 1024 / 1024 / 1024)`,
+        // query: `SUM(kube_pod_container_resource_limits{resource="memory", unit="byte", namespace!=""} * on (node) group_left() max(kube_node_labels{label_beta_kubernetes_io_instance_type!="eklet", label_node_kubernetes_io_instance_type!~"eklet"}) by (node) / 1024 / 1024 / 1024)`,
+        query: `sum(  max(kube_pod_container_resource_limits{    resource="memory",     unit="byte",    namespace!=""  }) by (node, pod, container, namespace)    * on (node) group_left()  max(kube_node_labels{    label_beta_kubernetes_io_instance_type!="eklet",    label_node_kubernetes_io_instance_type!~"eklet"  }) by (node)    / 1024 / 1024 / 1024  )`,
       },
       {
         name: 'usage',
