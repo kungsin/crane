@@ -3,17 +3,17 @@ GOOS ?= $(shell go env GOOS)
 # Git information
 GIT_VERSION ?= $(shell git describe --tags --always)
 GIT_COMMIT_HASH ?= $(shell git rev-parse HEAD)
-GIT_TREESTATE = "clean"
+GIT_TREESTATE = clean
 GIT_DIFF = $(shell git diff --quiet >/dev/null 2>&1; if [ $$? -eq 1 ]; then echo "1"; fi)
 ifeq ($(GIT_DIFF), 1)
     GIT_TREESTATE = "dirty"
 endif
 BUILDDATE = $(shell date -u +'%Y-%m-%dT%H:%M:%SZ')
 
-LDFLAGS = "-X github.com/gocrane/crane/pkg/version.gitTag=$(GIT_VERSION) \
+LDFLAGS = -X github.com/gocrane/crane/pkg/version.gitTag=$(GIT_VERSION) \
                       -X github.com/gocrane/crane/pkg/version.gitCommit=$(GIT_COMMIT_HASH) \
                       -X github.com/gocrane/crane/pkg/version.gitTreeState=$(GIT_TREESTATE) \
-                      -X github.com/gocrane/crane/pkg/version.buildDate=$(BUILDDATE)"
+                      -X github.com/gocrane/crane/pkg/version.buildDate=$(BUILDDATE)
 
 # Images management
 REGISTRY ?= docker.io
@@ -95,7 +95,7 @@ test: fmt vet lint ## Run tests.
 
 .PHONY: echoLDFLAGS
 echoLDFLAGS:
-	@echo $(LDFLAGS)
+	@echo "$(LDFLAGS)"
 
 .PHONY: build
 build: craned crane-agent metric-adapter
@@ -104,38 +104,38 @@ build: craned crane-agent metric-adapter
 all: generate test craned  crane-agent metric-adapter
 .PHONY: craned
 craned: ## Build binary with the crane manager.
-	CGO_ENABLED=0 GOOS=$(GOOS) go build -ldflags $(LDFLAGS) -o bin/craned cmd/craned/main.go
+	CGO_ENABLED=0 GOOS=$(GOOS) go build -ldflags "$(LDFLAGS)" -o bin/craned cmd/craned/main.go
 
 .PHONY: crane-agent
 crane-agent: ## Build binary with the crane agent.
-	CGO_ENABLED=0 GOOS=$(GOOS) go build -ldflags $(LDFLAGS) -o bin/crane-agent cmd/crane-agent/main.go
+	CGO_ENABLED=0 GOOS=$(GOOS) go build -ldflags "$(LDFLAGS)" -o bin/crane-agent cmd/crane-agent/main.go
 
 .PHONY: metric-adapter
 metric-adapter: ## Build binary with the metric adapter.
-	CGO_ENABLED=0 GOOS=$(GOOS) go build -ldflags $(LDFLAGS) -o bin/metric-adapter cmd/metric-adapter/main.go
+	CGO_ENABLED=0 GOOS=$(GOOS) go build -ldflags "$(LDFLAGS)" -o bin/metric-adapter cmd/metric-adapter/main.go
 
 .PHONY: images
 images: image-craned image-crane-agent image-metric-adapter image-dashboard
 
 .PHONY: image-craned
 image-craned: ## Build docker image with the crane manager.
-	docker build --build-arg LDFLAGS=$(LDFLAGS) --build-arg PKGNAME=craned -t ${MANAGER_IMG} .
+	docker build --build-arg LDFLAGS="$(LDFLAGS)" --build-arg PKGNAME=craned -t ${MANAGER_IMG} .
 
 .PHONY: image-dashboard
 # image-dashboard: ## Build docker image with the crane dashboard.
-# 	docker build --build-arg LDFLAGS=$(LDFLAGS) --build-arg PKGNAME=web -t ${DASHBOARD_IMG} ./pkg/web
+# 	docker build --build-arg LDFLAGS="$(LDFLAGS)" --build-arg PKGNAME=web -t ${DASHBOARD_IMG} ./pkg/web
 image-dashboard: ## Build docker image with the crane dashboard.
 	@echo "Building dashboard image with version: $(GIT_VERSION)"
 	@echo "Using commit hash: $(GIT_COMMIT_HASH)"
-	docker build --no-cache --build-arg LDFLAGS=$(LDFLAGS) --build-arg PKGNAME=web -t ${DASHBOARD_IMG} ./pkg/web
+	docker build --no-cache --build-arg LDFLAGS="$(LDFLAGS)" --build-arg PKGNAME=web -t ${DASHBOARD_IMG} ./pkg/web
 
 .PHONY: image-crane-agent
 image-crane-agent: ## Build docker image with the crane agent.
-	docker build --build-arg LDFLAGS=$(LDFLAGS) --build-arg PKGNAME=crane-agent -t ${AGENT_IMG} .
+	docker build --build-arg LDFLAGS="$(LDFLAGS)" --build-arg PKGNAME=crane-agent -t ${AGENT_IMG} .
 
 .PHONY: image-metric-adapter
 image-metric-adapter: ## Build docker image with the metric adapter.
-	docker build --build-arg LDFLAGS=$(LDFLAGS) --build-arg PKGNAME=metric-adapter -t ${ADAPTER_IMG} .
+	docker build --build-arg LDFLAGS="$(LDFLAGS)" --build-arg PKGNAME=metric-adapter -t ${ADAPTER_IMG} .
 
 .PHONY: push-images
 push-images: push-image-craned push-image-crane-agent push-image-metric-adapter push-image-dashboard
